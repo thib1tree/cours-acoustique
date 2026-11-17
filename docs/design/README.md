@@ -5,7 +5,7 @@ partagent les **mêmes jetons physiques** (palette, durées, cibles tactiles) et
 par la structure de la page. Chacune comprend quatre vues : accueil, chapitre avec
 visualisation, carte du cours et mobile, en clair et en sombre.
 
-Captures (régénérables avec `node scripts/design-captures.cjs` après `pnpm install`) :
+Captures (régénérables avec `node scripts/design-captures.mjs` après `pnpm install`) :
 
 | | Bureau | Mobile |
 |---|---|---|

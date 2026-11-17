@@ -1,7 +1,8 @@
-const { chromium } = require('@playwright/test');
-const base = require('node:path').resolve(__dirname, '../docs/design');
+import { chromium } from '@playwright/test';
+import { fileURLToPath } from 'node:url';
+const base = fileURLToPath(new URL('../docs/design', import.meta.url));
 const out = base + '/captures';
-(async () => {
+await (async () => {
   const browser = await chromium.launch();
   const jobs = [];
   for (const d of ['a', 'b']) {
