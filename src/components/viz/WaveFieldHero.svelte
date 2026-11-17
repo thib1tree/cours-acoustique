@@ -30,6 +30,23 @@
   const AMP = 1;
   const SCALE = 0.12;
 
+  /**
+   * True when WebGL would run on a software rasterizer (no usable GPU). Probed on a
+   * throw-away canvas so the visible one can still fall back to a 2D context.
+   */
+  function softwareRenderer(): boolean {
+    try {
+      const probe = document.createElement('canvas').getContext('webgl2');
+      if (!probe) return true;
+      const info = probe.getExtension('WEBGL_debug_renderer_info');
+      const name = info ? String(probe.getParameter(info.UNMASKED_RENDERER_WEBGL)) : '';
+      probe.getExtension('WEBGL_lose_context')?.loseContext();
+      return /swiftshader|llvmpipe|software|basic render/i.test(name);
+    } catch {
+      return true;
+    }
+  }
+
   onMount(() => {
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const dpr = Math.min(devicePixelRatio || 1, 2);
@@ -41,52 +58,62 @@
     let ny = 0;
     let cell = 4;
 
+    let coarsen = 1; // raised when frames are too slow (adaptive resolution)
+    let software = softwareRenderer(); // no GPU: still frame, animate briefly after each touch
+    let burstUntil = 0;
     function setup() {
       const r = canvas.getBoundingClientRect();
       canvas.width = Math.round(r.width * dpr);
       canvas.height = Math.round(r.height * dpr);
-      // ~3 CSS px per cell on large screens, coarser on small/weak devices.
-      cell = r.width < 700 ? 3.5 : 3;
+      // ~3 CSS px per cell on large screens, coarser on small or slow devices.
+      cell = (r.width < 700 ? 3.5 : 3) * coarsen;
       nx = Math.max(64, Math.round(r.width / cell));
       ny = Math.max(64, Math.round(r.height / cell));
       sim?.dispose();
       sim = null;
       cpu = null;
-      try {
-        gl = canvas.getContext('webgl2', {
-          antialias: false,
-          alpha: false,
-          preserveDrawingBuffer: false,
-        });
-      } catch {
-        gl = null;
+      // A canvas keeps its first context type: only ask for WebGL when it will be used,
+      // otherwise the CPU fallback could not get its 2D context.
+      if (!software && !gl) {
+        try {
+          gl = canvas.getContext('webgl2', {
+            antialias: false,
+            alpha: false,
+            preserveDrawingBuffer: false,
+          });
+        } catch {
+          gl = null;
+        }
       }
-      if (gl) {
+      // Without a GPU, the CPU reference solver is faster than emulated WebGL.
+      if (gl && !software) {
         sim = createGpuFdtd(gl, nx, ny, COURANT, DAMPING);
         renderer ??= createFieldRenderer(gl);
         renderer.setLut(lut('pressure', currentTheme()));
       }
       if (!sim) {
         mode = 'cpu';
-        const cw = Math.round(nx / 2);
-        const ch = Math.round(ny / 2);
-        const g: Grid2D = { nx: cw, ny: ch, courant: COURANT, damping: DAMPING * 2 };
+        // Same grid and scheme as the GPU path: the still frame is computed in chunks.
+        const cw = nx;
+        const ch = ny;
+        const g: Grid2D = { nx: cw, ny: ch, courant: COURANT, damping: DAMPING };
         const off = document.createElement('canvas');
         off.width = cw;
         off.height = ch;
         cpu = { g, s: createFdtd2D(g), img: new ImageData(cw, ch), off };
       }
       seed();
+      canvas.dataset.state = `${sim ? 'gpu' : 'cpu'} ${nx}x${ny} coarsen=${coarsen} still=${still()}`;
     }
 
     function pulseAt(fx: number, fy: number, a = AMP) {
       if (sim) sim.pulse(fx * nx, (1 - fy) * ny, a, 2.2);
-      else if (cpu) addPulse(cpu.g, cpu.s, fx * cpu.g.nx, fy * cpu.g.ny, a, 1.4);
+      else if (cpu) addPulse(cpu.g, cpu.s, fx * cpu.g.nx, fy * cpu.g.ny, a, 2.2);
     }
 
     function step(n: number) {
       if (sim) sim.step(n);
-      else if (cpu) stepFdtd2D(cpu.g, cpu.s, Math.max(1, Math.round(n / 2)));
+      else if (cpu) stepFdtd2D(cpu.g, cpu.s, n);
     }
 
     function draw() {
@@ -111,35 +138,91 @@
           img.data[4 * k + 3] = 255;
         }
         off.getContext('2d')!.putImageData(img, 0, 0);
-        const ctx = canvas.getContext('2d')!;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
         ctx.imageSmoothingEnabled = true;
         ctx.drawImage(off, 0, 0, canvas.width, canvas.height);
       }
     }
 
+    // Opening scene: three pulses emitted at fixed steps of the animation. With reduced
+    // motion, the same scene is computed once, in an idle callback, to show a still frame.
+    const OPENING: [number, number, number][] = [
+      [0, 0.62, 0.32],
+      [140, 0.84, 0.62],
+      [200, 0.42, 0.22],
+    ];
+    let clock = 0;
+    function stepWithOpening(n: number) {
+      for (let i = 0; i < n; i++) {
+        for (const [at, x, y] of OPENING) if (clock === at) pulseAt(x, y);
+        step(1);
+        clock++;
+      }
+    }
+    const still = () => reduced || software;
     function seed() {
-      // A deterministic opening scene: three pulses, staggered.
-      pulseAt(0.62, 0.32);
-      step(140);
-      pulseAt(0.84, 0.62);
-      step(60);
-      pulseAt(0.42, 0.22);
-      step(60);
-      draw();
+      clock = 0;
+      if (still()) {
+        // Precompute the opening scene in small chunks so the page never blocks.
+        const idle = window.requestIdleCallback ?? ((cb: () => void) => setTimeout(cb, 30));
+        const chunk = () => {
+          stepWithOpening(sim ? 4 : 10);
+          draw();
+          if (clock < 260) idle(chunk);
+          else canvas.dataset.ready = 'true';
+        };
+        draw();
+        idle(chunk);
+      } else {
+        draw();
+        canvas.dataset.ready = 'true';
+      }
     }
 
     setup();
 
     let raf = 0;
     let visible = true;
-    const loop = () => {
+    // Graceful degradation, measured on the real device: three slow frames in a row
+    // coarsen the grid; if it is still too slow, switch to a still frame that only
+    // animates for a few seconds after each touch (also saves battery).
+    let slowStreak = 0;
+    let mildStreak = 0;
+    let lastFrame = 0;
+    const loop = (now: number) => {
       raf = 0;
-      step(2);
+      if (clock < 260) stepWithOpening(4);
+      else step(2);
       draw();
+      // GL calls are asynchronous: the cost shows up as the interval between frames.
+      const interval = lastFrame ? now - lastFrame : 0;
+      lastFrame = now;
+      // Budget: ≥ 36 fps (28 ms). Two frames over budget: still frame, animated only
+      // after a touch. Mildly slow (20–28 ms) for a while: coarsen the grid once.
+      if (interval > 28) slowStreak++;
+      else if (interval > 20) mildStreak++;
+      else {
+        slowStreak = 0;
+        mildStreak = 0;
+      }
+      if (slowStreak >= 2 && !software) {
+        software = true;
+        burstUntil = 0;
+        canvas.dataset.state += ' degraded';
+      } else if (mildStreak >= 8 && coarsen === 1) {
+        mildStreak = 0;
+        coarsen = 1.5;
+        setup();
+      }
       schedule();
     };
+    const animating = () => !reduced && (!software || performance.now() < burstUntil);
+    let started = false;
     const schedule = () => {
-      if (!raf && visible && !document.hidden && !reduced) raf = requestAnimationFrame(loop);
+      if (!started) return;
+      if (!raf && visible && !document.hidden && animating()) raf = requestAnimationFrame(loop);
+      else if (!raf) lastFrame = 0;
     };
     const io = new IntersectionObserver(([e]) => {
       visible = !!e?.isIntersecting;
@@ -154,7 +237,10 @@
       const fy = (e.clientY - r.top) / r.height;
       pulseAt(fx, fy);
       if (sound) void playPulse(0.7 + (1 - fy) * 0.8);
-      if (reduced) {
+      if (software) {
+        burstUntil = performance.now() + 5000;
+        schedule();
+      } else if (reduced) {
         // Frame by frame: advance a little so the pulse is visible.
         step(40);
         draw();
@@ -179,7 +265,12 @@
       renderer?.setLut(lut('pressure', currentTheme()));
       draw();
     });
-    schedule();
+    // Start animating once the page is idle, so hydration and first frames do not stack.
+    const idleStart = window.requestIdleCallback ?? ((cb: () => void) => setTimeout(cb, 200));
+    idleStart(() => {
+      started = true;
+      schedule();
+    });
     return () => {
       if (raf) cancelAnimationFrame(raf);
       io.disconnect();
@@ -218,6 +309,7 @@
     display: block;
     touch-action: manipulation;
     cursor: crosshair;
+    background: var(--color-bg);
   }
   .listen {
     position: absolute;

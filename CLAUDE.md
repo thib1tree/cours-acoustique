@@ -185,7 +185,7 @@ figures rédigées et intitulés d'encadrés en tête de bloc. Maquettes et comp
   `cssVar()` et les palettes avec `lut()` (`src/lib/viz/`), jamais en dur.
 - **Interaction** : la couleur d'interaction est l'encre. Un curseur prend la couleur de la
   grandeur physique qu'il commande (`quantity` dans la scène), sinon l'encre.
-- **Typographie** : `--font-serif` Source Serif 4 (texte, 18 px, interligne 1,62),
+- **Typographie** : `--font-serif` Source Serif 4, axe de graisse seul pour le poids de page (texte, 18 px, interligne 1,62),
   `--font-sans` Atkinson Hyperlegible Next (titres, interface), `--font-num` = la serif
   en chiffres tabulaires pour **toute valeur numérique** (le zéro barré de l'Atkinson se
   lit comme Ø). Classe utilitaire `.num`. Dans un canvas, utiliser `--font-num` pour les chiffres.

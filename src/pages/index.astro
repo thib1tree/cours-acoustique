@@ -18,7 +18,7 @@ const written = CURRICULUM.filter((n) => n.href);
       />
       <a class="wordmark" href={base}>
         <Fragment set:html={ICONS.mark} />
-        {t('site.title')}
+        <span class="wm-text">{t('site.title')}</span>
       </a>
       <div class="panel">
         <h1>Faites des ondes.</h1>
@@ -252,6 +252,26 @@ const written = CURRICULUM.filter((n) => n.href);
     }
     .about {
       padding: var(--space-7) var(--gutter);
+    }
+  }
+  @media (max-width: 420px) {
+    .wm-text {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+    }
+    h1 {
+      font-size: 1.875rem;
+    }
+    .panel p {
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+    .btn {
+      padding: var(--space-2) var(--space-4);
+      line-height: 1.25;
     }
   }
 </style>

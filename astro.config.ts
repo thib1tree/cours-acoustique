@@ -10,6 +10,8 @@ export default defineConfig({
   site: 'https://thib1tree.github.io',
   base: '/cours-acoustique/',
   trailingSlash: 'always',
+  // Inline CSS: no render-blocking stylesheet request before the first paint.
+  build: { inlineStylesheets: 'auto' },
   integrations: [
     svelte(),
     mdx(),
@@ -44,7 +46,6 @@ export default defineConfig({
         navigateFallback: null,
         globPatterns: ['**/*.{html,js,css,woff2,svg}'],
         globIgnores: ['lab/**', '**/*cyrillic*', '**/*vietnamese*'],
-        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
       },
     }),
   ],
