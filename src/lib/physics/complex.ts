@@ -16,3 +16,15 @@ export const abs = (a: Complex): number => Math.hypot(a[0], a[1]);
 export const arg = (a: Complex): number => Math.atan2(a[1], a[0]);
 /** e^{iθ}. */
 export const cis = (theta: number): Complex => [Math.cos(theta), Math.sin(theta)];
+export const div = (a: Complex, b: Complex): Complex => {
+  const d = b[0] * b[0] + b[1] * b[1];
+  return [(a[0] * b[0] + a[1] * b[1]) / d, (a[1] * b[0] - a[0] * b[1]) / d];
+};
+/** Principal square root. */
+export const sqrtC = (a: Complex): Complex => {
+  const r = abs(a);
+  const re = Math.sqrt((r + a[0]) / 2);
+  const im = Math.sign(a[1] || 1) * Math.sqrt(Math.max(0, (r - a[0]) / 2));
+  return [re, im];
+};
+export const expC = (a: Complex): Complex => scale(cis(a[1]), Math.exp(a[0]));
