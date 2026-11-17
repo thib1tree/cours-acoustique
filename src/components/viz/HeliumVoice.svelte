@@ -45,13 +45,14 @@
     for (let n = 1; n * F0 < 12000; n++) {
       const f = n * F0;
       const i = Math.round((Math.log(f / 50) / Math.log(12000 / 50)) * 240);
-      if (i >= 0 && i <= 240) pts.push([f, env[i]![1] - 12 * Math.log2(n) * 0.25]);
+      // Each harmonic is weighted by the vocal-tract filter at its frequency.
+      if (i >= 0 && i <= 240 && env[i]![1] > -50) pts.push([f, env[i]![1]]);
     }
     return pts;
   });
   const series: Series[] = $derived([
-    { points: envelope(1), color: 'var(--color-rule)', width: 1.5, dash: '5 4', label: 'air' },
-    { points: envelope(ratio), color: 'var(--color-ink)', width: 2, label: 'enveloppe (formants)' },
+    { points: envelope(1), color: 'var(--color-ink-muted)', width: 1.25, dash: '5 4' },
+    { points: envelope(ratio), color: 'var(--color-ink)', width: 2 },
   ]);
 </script>
 
@@ -77,6 +78,13 @@
       )} Hz, F2 = {formatNumber(FORMANTS_A[1].f * ratio)} Hz ; fondamentale inchangée : {F0} Hz
     </p>
   </div>
+  {#snippet legend()}
+    <div class="keys">
+      <span class="key"><i></i>résonances du conduit vocal</span>
+      <span class="key"><b>•</b>harmoniques de la voix</span>
+      <span class="key"><i class="dash"></i>dans l'air</span>
+    </div>
+  {/snippet}
   {#snippet controls()}
     <SymbolSlider scene="1a-helium" param="x" />
     <ListenButton
@@ -96,8 +104,30 @@
   .pad {
     padding-top: var(--space-3);
   }
+  .keys {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-4);
+    color: var(--color-ink-muted);
+  }
+  .key {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .key i {
+    width: 22px;
+    height: 2px;
+    background: var(--color-ink);
+  }
+  .key i.dash {
+    background: repeating-linear-gradient(
+      to right,
+      var(--color-ink-muted) 0 5px,
+      transparent 5px 9px
+    );
+  }
   .readout {
-    font-family: var(--font-sans);
     color: var(--color-ink-muted);
     margin: var(--space-2) 0 0;
   }

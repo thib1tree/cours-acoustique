@@ -38,9 +38,12 @@
 
 /* Wide elements: visualizations leave the reading column and use the margin too. */
 .prose > astro-island,
-.prose > .bench,
 .prose > .wide {
   display: block;
+}
+.prose > astro-island,
+.prose > .bench,
+.prose > .wide {
   clear: both;
   width: calc(100% + var(--margin) + var(--space-7));
 }
@@ -391,8 +394,8 @@
 .bench {
   margin: var(--space-6) 0;
   display: grid;
-  grid-template-columns: minmax(0, var(--measure)) minmax(0, 1fr);
-  gap: var(--space-7);
+  grid-template-columns: minmax(0, 30rem) minmax(0, 1fr);
+  gap: var(--space-6);
 }
 .bench-text > :first-child {
   margin-top: 0;

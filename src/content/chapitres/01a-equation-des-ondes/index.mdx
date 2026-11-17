@@ -1,0 +1,373 @@
+---
+curriculumId: ondes
+title: Équation des ondes et célérité
+summary: D’une chaîne de masses à l’équation des ondes ; pourquoi le son va plus vite dans l’eau que dans l’air ; l’erreur de Newton ; la solution de d’Alembert.
+number: 1a
+level: M1
+duration: 60
+keyConcepts: [équation des ondes, célérité, linéarisation, compression adiabatique, descriptions eulérienne et lagrangienne, solution de d’Alembert]
+prerequisites: [fluides, edp]
+references: [pierce, bruneau, kinsler, finn, marczak, codata, peterson]
+---
+
+import MassSpringChain from '../../../components/viz/MassSpringChain.svelte';
+import StiffnessChart from '../../../components/viz/StiffnessChart.svelte';
+import NewtonLaplace from '../../../components/viz/NewtonLaplace.svelte';
+import TubeWave from '../../../components/viz/TubeWave.svelte';
+import PulseLab from '../../../components/viz/PulseLab.svelte';
+import HeliumVoice from '../../../components/viz/HeliumVoice.svelte';
+import LiveEquation from '../../../components/ui/LiveEquation.svelte';
+import MarginNote from '../../../components/content/MarginNote.astro';
+import Insight from '../../../components/content/Insight.astro';
+import Misconception from '../../../components/content/Misconception.astro';
+import ModelLimits from '../../../components/content/ModelLimits.astro';
+import Advanced from '../../../components/content/Advanced.astro';
+import RealWorld from '../../../components/content/RealWorld.astro';
+import Derivation from '../../../components/content/Derivation.astro';
+import Step from '../../../components/content/Step.astro';
+import Bench from '../../../components/content/Bench.astro';
+import Prediction from '../../../components/content/Prediction.astro';
+import Quiz from '../../../components/content/Quiz.astro';
+import G from '../../../components/content/G.astro';
+import Cite from '../../../components/content/Cite.astro';
+
+<p class="lede">L'eau est huit cents fois plus dense que l'air. Un son y voyage-t-il plus vite ou plus lentement&nbsp;? Pour répondre sans réciter une formule, il faut savoir ce qui fixe la vitesse d'une onde : de quoi est faite une onde sonore, quelle force fait avancer la perturbation, et ce qui la retient.</p>
+
+<Prediction id="eau" options={['Plus lentement que dans l’air : il y a plus de matière à mettre en mouvement.', 'À peu près à la même vitesse : c’est toujours une onde de pression.', 'Plus vite que dans l’air.']}>
+Avant toute explication : le son va-t-il plus vite ou plus lentement dans l'eau que dans l'air&nbsp;?
+</Prediction>
+
+## Une chaîne de masses et de ressorts
+
+Commençons par un modèle qu'on sait résoudre : des masses $m$ alignées, reliées par des ressorts de raideur $K$, au repos espacées de $a$. On note $u_j$ le déplacement de la masse $j$. Elle n'est soumise qu'aux deux ressorts qui la touchent :
+
+$$
+m\,\ddot u_j = K\,(u_{j+1} - u_j) - K\,(u_j - u_{j-1}) = K\,(u_{j+1} - 2u_j + u_{j-1}).
+$$
+
+La parenthèse est la **différence seconde** des déplacements. Si les trois masses avancent ensemble, ou si les déplacements varient linéairement le long de la chaîne, elle est nulle : les deux ressorts tirent également, la masse n'accélère pas. Elle ne bouge que si le profil des déplacements est **courbé**.
+
+<MassSpringChain client:visible number="1a.1" title="De la chaîne au milieu continu" alt="Une chaîne de masses entre deux murs, traversée par une impulsion de déplacement. Sous la chaîne, le déplacement de chaque masse comparé à la solution exacte d'un milieu continu." />
+
+Réglez $N$ sur 6 : l'impulsion se déforme et laisse derrière elle une traîne d'oscillations. Montez à 100 : la chaîne suit la courbe en tirets du milieu continu. Coupez les ressorts : chaque masse garde la vitesse qu'on lui a donnée, et plus rien ne se transmet.
+
+<Derivation title="Passage au continu" hypotheses="déplacements variant lentement à l'échelle de l'espacement a.">
+<Step title="Développement de Taylor" open>
+
+Si le déplacement varie peu d'une masse à la suivante, on peut le voir comme un champ continu $u(x, t)$ avec $u_j = u(ja, t)$. Au voisinage de $x = ja$ :
+
+$$
+u_{j\pm1} = u \pm a\,\frac{\partial u}{\partial x} + \frac{a^2}{2}\,\frac{\partial^2 u}{\partial x^2} \pm \frac{a^3}{6}\,\frac{\partial^3 u}{\partial x^3} + \dots
+$$
+
+Dans la somme $u_{j+1} + u_{j-1}$, les termes impairs s'annulent :
+
+$$
+u_{j+1} - 2u_j + u_{j-1} = a^2\,\frac{\partial^2 u}{\partial x^2} + \frac{a^4}{12}\,\frac{\partial^4 u}{\partial x^4} + \dots
+$$
+
+</Step>
+<Step title="Équation des ondes">
+
+Au premier ordre, $m\,\ddot u = K a^2\,\partial^2 u/\partial x^2$, soit
+
+$$
+\frac{\partial^2 u}{\partial t^2} = c^2\,\frac{\partial^2 u}{\partial x^2}, \qquad c = a\sqrt{\frac{K}{m}}.
+$$
+
+C'est l'équation des ondes, et $c$ a bien la dimension d'une vitesse.
+
+</Step>
+<Step title="Ce qu'on a négligé : la dispersion de réseau">
+
+Le terme suivant, en $a^4\,\partial^4 u/\partial x^4$, est petit devant le premier si $a$ est petit devant la longueur sur laquelle $u$ varie. Pour une onde $e^{i(kx-\omega t)}$, l'équation discrète donne exactement
+
+$$
+\omega = 2\sqrt{\frac{K}{m}}\,\left|\sin\frac{ka}{2}\right|,
+$$
+
+qui se réduit à $\omega = ck$ quand $ka \ll 1$. Pour des longueurs d'onde de l'ordre de l'espacement, la vitesse dépend de la fréquence : c'est la traîne que vous avez vue à faible $N$.
+
+</Step>
+</Derivation>
+
+<Insight>
+
+Dans l'équation des ondes, $\partial^2 u/\partial x^2$ n'est rien d'autre que la force nette des deux ressorts voisins sur une masse. L'équation des ondes, c'est la loi de Newton appliquée tranche par tranche : une tranche n'accélère que si sa voisine de gauche et sa voisine de droite ne la tirent pas de la même façon.
+
+</Insight>
+
+## Raideur contre inertie
+
+Un fluide n'a ni masses ni ressorts, mais il en a l'équivalent. Découpons une colonne de fluide de section $S$ en tranches d'épaisseur $a$. Chaque tranche a une masse $m = \rho_0 S a$. Comprimer une tranche d'une longueur $\delta$ réduit son volume de la fraction $\delta/a$ et coûte une surpression $K_s\,\delta/a$, où $K_s$ est le <G id="compressibilite">module de compressibilité</G> : la tranche se comporte comme un ressort de raideur $K = K_s S/a$. En reportant dans $c = a\sqrt{K/m}$, l'épaisseur $a$ disparaît :
+
+<LiveEquation client:visible scene="1a-stiffness" tex={String.raw`c_0 = \sqrt{\frac{\term{K}{K_s}}{\term{rho}{\rho_0}}} = \val{c}\ \mathrm{m/s}`} number="1a.1" label="Célérité en fonction du module de compressibilité et de la masse volumique" />
+
+Avant tout calcul, l'analyse dimensionnelle l'annonçait : avec un module en pascals et une masse volumique en kg/m³, $\sqrt{K_s/\rho_0}$ est la seule vitesse qu'on puisse former. La raideur pousse la perturbation en avant ; l'inertie la retient.
+
+<StiffnessChart client:visible number="1a.2" title="Raideur contre inertie" alt="Diagramme logarithmique de la masse volumique (abscisse) et du module de compressibilité (ordonnée). Les droites en tirets relient les milieux de même célérité ; l'hélium, l'air, l'eau et l'acier y sont placés. Un point réglable affiche sa célérité." />
+
+Le paradoxe de l'eau se dissout : l'eau est environ 800 fois plus dense que l'air, mais environ 15 000 fois plus raide. Le rapport des célérités vaut donc $\sqrt{15\,000/800} \approx 4{,}3$.<MarginNote n="1">Pour un **solide**, une onde longitudinale ne fait pas que comprimer : elle cisaille aussi. Le module pertinent est le module d'onde de compression $M = K + \tfrac{4}{3}G$, où $G$ est le module de cisaillement. Avec $K$ seul, on sous-estimerait la célérité de l'acier d'environ 20 %. Dans une barre mince, libre de gonfler sur les côtés, c'est le module d'Young qui compte, $c = \sqrt{E/\rho}$ (chapitre 8).</MarginNote> L'acier va encore plus loin : sa densité est environ 8 fois celle de l'eau, mais il est plus de 100 fois plus raide.
+
+<Misconception>
+
+« En altitude, l'air est moins dense, donc le son y va plus vite. » Ou plus lentement, selon l'intuition de chacun. Pour un gaz parfait comprimé adiabatiquement, $K_s = \gamma p_0$ et $\rho_0 = p_0 M/(RT)$ : la pression s'élimine,
+
+$$
+c_0 = \sqrt{\frac{\gamma p_0}{\rho_0}} = \sqrt{\frac{\gamma R T}{M}}.
+$$
+
+Moins dense, l'air d'altitude est aussi moins raide, exactement dans la même proportion. À température égale, le son va à la même vitesse au sommet de l'Everest qu'au niveau de la mer. Ce qui compte, c'est la température : $c_0$ varie comme $\sqrt{T}$.
+
+</Misconception>
+
+## L'erreur de Newton
+
+Newton a été le premier à calculer la vitesse du son. Il supposait, avec la loi de Boyle, que la température du gaz reste constante pendant la compression : $pV$ constant, donc $K = p_0$. Son résultat était trop faible d'environ 15 % <Cite k="finn" />.{/* TODO-VERIFY: valeur historique de Newton (Principia, 1687) et date de la correction de Laplace (vers 1816). */} Il a fallu plus d'un siècle pour que Laplace comprenne pourquoi.
+
+<NewtonLaplace client:visible number="1a.3" title="Isotherme ou adiabatique" alt="À gauche, diagramme pression-volume avec l'isotherme et l'adiabatique passant par l'état de repos ; à droite, le rapport entre la longueur de diffusion thermique et la longueur d'onde, croissant comme la racine de la fréquence." />
+
+Coupez l'interrupteur « compression adiabatique » : la célérité prédite tombe à environ 290 m/s, alors que la mesure donne 343 m/s. Le rapport vaut exactement $\sqrt{\gamma} = \sqrt{1{,}4}$.
+
+Le mécanisme est thermique. Une tranche comprimée s'échauffe ; si la chaleur avait le temps de s'écouler vers les tranches voisines raréfiées, plus froides, la température resterait uniforme et le gaz serait plus mou. Or la chaleur ne diffuse, pendant une période, que sur une longueur $\delta = \sqrt{2D/\omega}$, où $D \approx 2{,}1 \times 10^{-5}$ m²/s est la diffusivité thermique de l'air.{/* TODO-VERIFY: diffusivité thermique de l'air à 20 °C (κ ≈ 0,0257 W/(m·K), c_p ≈ 1005 J/(kg·K)). */} À 1 kHz, $\delta \approx 80\ \mu$m, alors que les compressions et raréfactions sont séparées d'une demi-longueur d'onde, 17 cm. La chaleur n'a aucune chance de les égaliser : la compression est **adiabatique**, et le gaz comprimé est plus raide d'un facteur $\gamma$.
+
+<Insight>
+
+Le son est un phénomène thermodynamique autant que mécanique. La raideur de l'air dépend de la vitesse à laquelle on le comprime : trop vite pour que la chaleur s'échappe, il est 1,4 fois plus raide que s'il restait à température constante. L'erreur de Newton n'était pas un défaut de calcul mais une hypothèse thermodynamique fausse.
+
+</Insight>
+
+À 94 dB, l'échauffement d'une tranche comprimée vaut $T'/T_0 = \frac{\gamma-1}{\gamma}\,p/p_0$, soit environ un millième de degré.
+
+<Advanced title="Pour le lecteur avancé : quand le son redevient isotherme">
+
+Le rapport $\delta/\lambda$ croît comme $\sqrt{f}$ : l'hypothèse adiabatique est une approximation de **basse** fréquence. Elle cesserait de valoir vers $f^* = c_0^2/(4\pi D)$, de l'ordre de quelques centaines de mégahertz dans l'air, une fréquence où les longueurs d'onde approchent le libre parcours moyen des molécules et où le modèle continu lui-même ne tient plus. En revanche, dans les **pores** d'un matériau absorbant, la longueur à comparer à $\delta$ n'est plus $\lambda$ mais le rayon du pore : aux basses fréquences, l'air y est isotherme, aux hautes fréquences adiabatique. Ce changement de régime est l'un des mécanismes de dissipation des matériaux poreux (chapitre 2).{/* TODO-VERIFY: discussion du régime isotherme à haute fréquence chez Pierce. */}
+
+</Advanced>
+
+## Les particules ne voyagent pas
+
+<Prediction id="tranche" options={['Elle est emportée avec l’onde, à la vitesse du son.', 'Elle oscille autour de sa position, sans dériver.', 'Elle avance lentement dans le sens de l’onde.']}>
+Pendant qu'une onde sonore traverse la pièce, que fait une petite tranche d'air située au milieu&nbsp;?
+</Prediction>
+
+La figure suivante montre la même onde de deux façons. La bande colorée est le champ de pression vu par des sondes fixes : c'est la description <G id="eulerien">eulérienne</G>. Les traits verticaux sont des tranches de fluide que l'on suit : c'est la description <G id="lagrangien">lagrangienne</G>.<MarginNote n="2">Les déplacements sont fortement amplifiés pour être visibles, et le temps est ralenti. Le facteur exact est affiché au-dessus de la figure.</MarginNote> Suivez la tranche tracée en trait plein.
+
+<TubeWave client:visible scene="1a-tube" number="1a.4" title="Champ et particules" sliders={['f', 'L']} views={['view']} alt="Tube d'air excité par un piston. En haut, la pression le long du tube en couleur et des tranches de fluide qui oscillent sur place ; en bas, la pression et la vitesse particulaire le long du tube, en phase." />
+
+<Misconception>
+
+« Le son transporte de l'air. » La tranche suivie oscille sur place : elle avance pendant le passage d'une compression, recule pendant celui d'une raréfaction, et revient toujours à sa position de départ. Ce qui voyage à 343 m/s, c'est l'**état** de compression, transmis de tranche en tranche. À 94 dB et 500 Hz, la tranche se déplace d'environ un micromètre, à une vitesse de l'ordre de 3 mm/s, soit cent mille fois moins que la célérité.
+
+</Misconception>
+
+Un second piège se cache dans la même figure. Où la pression est-elle maximale : là où les tranches sont le plus déplacées, ou ailleurs&nbsp;? La surpression mesure une **compression**, donc un rapprochement des tranches voisines, pas un déplacement :
+
+<LiveEquation client:visible scene="1a-tube" tex={String.raw`\term{p}{p} = -K_s\,\frac{\partial \term{xi}{\xi}}{\partial x}`} number="1a.2" label="La pression est proportionnelle au resserrement des tranches" />
+
+La pression culmine là où les tranches convergent, c'est-à-dire là où le déplacement change le plus vite le long du tube. Dans une onde progressive, ce sont aussi les endroits où les tranches vont le plus vite : $p$ et $v$ sont en phase, et tous deux en quadrature avec $\xi$.
+
+<Insight>
+
+Ce qui voyage, c'est un état de compression, pas la matière. Chaque tranche pousse sa voisine puis revient : la perturbation avance à $c_0$, la matière fait du sur-place.
+
+</Insight>
+
+## De trois équations à l'équation des ondes
+
+On repart des trois équations de la [mécanique des fluides](../../prerequis/mecanique-des-fluides/) et on les linéarise autour du repos. À droite, la paillasse suit la dérivation : chaque terme se coupe et l'on voit ce qu'il fait.
+
+<Bench label="Figure 1a.5 : colonne d'air">
+<Derivation title="Dérivation pas à pas" hypotheses="fluide parfait au repos, petites perturbations (|p| ≪ ρ₀c₀²), écoulement unidimensionnel, transformation adiabatique.">
+<Step title="Repos et petites perturbations" open>
+
+On écrit $p_{\mathrm{tot}} = p_0 + p$, $\rho_{\mathrm{tot}} = \rho_0 + \rho'$, $v$ petite. Le repos ($p_0$, $\rho_0$ uniformes, $v = 0$) vérifie trivialement les équations. On garde les termes du **premier ordre** en $(p, \rho', v)$ et on néglige leurs produits.
+
+</Step>
+<Step title="Continuité">
+
+$\partial \rho_{\mathrm{tot}}/\partial t + \partial(\rho_{\mathrm{tot}} v)/\partial x = 0$ devient, en négligeant le produit $\rho' v$ (second ordre) :
+
+$$
+\frac{\partial \rho'}{\partial t} + \rho_0\,\frac{\partial v}{\partial x} = 0.
+$$
+
+</Step>
+<Step title="Euler" scene="1a-terms" set='{"terms":{"inertia":true,"compressibility":true}}'>
+
+$\rho_{\mathrm{tot}}\,(\partial v/\partial t + v\,\partial v/\partial x) = -\partial p/\partial x$ devient, en négligeant $\rho'\,\partial v/\partial t$ et le terme convectif $v\,\partial v/\partial x$, tous deux du second ordre :
+
+$$
+\rho_0\,\frac{\partial v}{\partial t} = -\frac{\partial p}{\partial x}.
+$$
+
+C'est le terme d'**inertie** : la masse de la tranche que le gradient de pression doit accélérer.
+
+</Step>
+<Step title="Équation d'état">
+
+$p = p(\rho_{\mathrm{tot}}) - p_0 \approx (\partial p/\partial \rho)_s\,\rho'$, d'où $p = c_0^2\,\rho'$ avec $c_0^2 = (\partial p/\partial\rho)_s = K_s/\rho_0$. En reportant dans la continuité :
+
+$$
+\frac{1}{K_s}\,\frac{\partial p}{\partial t} = -\frac{\partial v}{\partial x}.
+$$
+
+C'est le terme de **compressibilité** : la tranche dont la vitesse varie le long de $x$ se comprime ou se dilate.
+
+</Step>
+<Step title="Sans inertie" scene="1a-terms" set='{"terms":{"inertia":false,"compressibility":true}}'>
+
+Sans masse, $\partial p/\partial x = 0$ : la pression est uniforme, et nulle ici puisque le tube débouche sur un milieu au repos. Rien ne s'oppose au piston, la colonne le suit sans se comprimer. Aucune onde.
+
+</Step>
+<Step title="Sans compressibilité" scene="1a-terms" set='{"terms":{"inertia":true,"compressibility":false}}'>
+
+Incompressible, $\partial v/\partial x = 0$ : toute la colonne bouge d'un bloc avec le piston, dès qu'il bouge. Il faut alors une pression considérable pour accélérer d'un coup toute la masse de la colonne : le gradient de pression vaut $\rho_0\,\partial v/\partial t$ partout.
+
+</Step>
+<Step title="Les deux ensemble : l'équation des ondes" scene="1a-terms" set='{"terms":{"inertia":true,"compressibility":true}}'>
+
+On dérive la première équation par rapport à $x$, la seconde par rapport à $t$, et on élimine $\partial^2 v/\partial x\,\partial t$ :
+
+$$
+\frac{\partial^2 p}{\partial t^2} = c_0^2\,\frac{\partial^2 p}{\partial x^2}, \qquad c_0 = \sqrt{\frac{K_s}{\rho_0}}.
+$$
+
+En trois dimensions, la même démarche avec $\nabla$ donne $\partial^2 p/\partial t^2 = c_0^2\,\nabla^2 p$.
+
+</Step>
+</Derivation>
+<TubeWave slot="viz" client:visible scene="1a-terms" title="Colonne d'air" toggles alt="Colonne d'air excitée par un piston, dont on peut couper l'inertie ou la compressibilité." />
+</Bench>
+
+<LiveEquation client:visible scene="1a-terms" tex={String.raw`\term{inertia}{\rho_0\,\frac{\partial v}{\partial t}} = -\frac{\partial \term{p}{p}}{\partial x}, \qquad \term{compressibility}{\frac{1}{K_s}\,\frac{\partial p}{\partial t}} = -\frac{\partial \term{v}{v}}{\partial x}, \qquad c_0 = \val{c}\ \mathrm{m/s}`} toggles number="1a.3" label="Système linéarisé ; chaque terme se coupe dans la simulation" />
+
+<Insight>
+
+La célérité est finie parce que le fluide a à la fois une masse et une souplesse. Sans masse, rien ne résiste ; sans souplesse, tout bouge d'un bloc. Dans les deux cas, la réponse est instantanée. L'onde est le compromis entre les deux : chaque tranche doit être comprimée avant de pousser la suivante, et elle met du temps à se mettre en mouvement.
+
+</Insight>
+
+Le cas incompressible n'est pas qu'une curiosité. Près d'une source plus petite que la longueur d'onde, le fluide se comporte localement comme s'il était incompressible : c'est le champ proche du chapitre 4. La masse de la colonne qu'on accélère d'un bloc y porte le nom de masse rayonnée ; c'est la même physique que la correction de bout d'un tube (chapitre 3).
+
+<ModelLimits>
+
+La linéarisation suppose $|p| \ll \rho_0 c_0^2 = \gamma p_0 \approx 1{,}4 \times 10^5$ Pa dans l'air. À 94 dB, le rapport vaut environ $10^{-5}$ ; il atteint $10^{-2}$ vers 154 dB et l'unité au-delà de 190 dB. Mais ce critère local ne suffit pas : de petits écarts à la linéarité se **cumulent** au fil de la propagation, et une onde intense finit par former un choc bien avant que le rapport n'approche 1. Le chapitre 1b montre cette rupture.
+
+</ModelLimits>
+
+## Deux impulsions qui se croisent
+
+L'équation des ondes à une dimension a une solution générale remarquablement simple, due à d'Alembert :
+
+$$
+p(x, t) = f(x - c_0 t) + g(x + c_0 t).
+$$
+
+<Derivation title="Vérification" hypotheses="milieu homogène, sans pertes, illimité.">
+<Step title="Par substitution">
+
+Avec $\eta = x - c_0 t$, $\partial f/\partial t = -c_0 f'(\eta)$ et $\partial f/\partial x = f'(\eta)$, donc $\partial^2 f/\partial t^2 = c_0^2 f''$ et $\partial^2 f/\partial x^2 = f''$ : $f$ vérifie l'équation, quelle que soit sa forme. De même pour $g(x + c_0 t)$.
+
+</Step>
+<Step title="Les conditions initiales fixent f et g">
+
+Avec l'équation d'Euler, une onde vers les $x$ croissants vérifie $p = \rho_0 c_0 v$ et une onde vers les $x$ décroissants $p = -\rho_0 c_0 v$. À partir de $p$ et $v$ initiaux :
+
+$$
+f = \tfrac12\,(p + \rho_0 c_0\,v), \qquad g = \tfrac12\,(p - \rho_0 c_0\,v).
+$$
+
+</Step>
+</Derivation>
+
+<PulseLab client:visible number="1a.6" title="Superposition et sens de propagation" alt="Pression et vitesse le long d'une ligne ; des impulsions se propagent dans les deux sens et se croisent. À droite, l'énergie totale cinétique et potentielle." />
+
+Trois expériences à faire dans cette figure :
+
+1. **Au repos** : une surpression lâchée sans vitesse se scinde en deux moitiés qui partent en sens opposés.
+2. **Vers la droite** : avec la vitesse $v = p/(\rho_0 c_0)$, l'impulsion part d'un seul côté, sans se déformer.
+3. **Deux impulsions** de signes opposés se croisent. Au moment de la rencontre, la pression s'annule partout : l'énergie n'a pas disparu, elle est devenue entièrement cinétique. Puis les impulsions ressortent, intactes.
+
+Dessinez votre propre impulsion : quelle que soit sa forme, elle se propage sans se déformer. Le milieu continu n'est pas dispersif, contrairement à la chaîne à faible $N$.
+
+<Insight>
+
+Ce qui fixe le sens de propagation, c'est la relation entre la pression et la vitesse. Une surpression qui avance vers la droite pousse le fluide vers la droite, exactement de $p/(\rho_0 c_0)$. Ce rapport $\rho_0 c_0$, l'impédance caractéristique, est le sujet du chapitre 1b.
+
+</Insight>
+
+## Monde réel
+
+<RealWorld title="La vitesse du son dans quatre milieux">
+
+| Milieu | $\rho_0$ (kg/m³) | Module (Pa) | $c_0$ (m/s) | Source |
+|---|---|---|---|---|
+| Hélium, 20 °C | 0,166 | $1{,}69 \times 10^5$ | 1 007 | calcul, gaz parfait ($\gamma = 5/3$) |
+| Air, 20 °C | 1,20 | $1{,}42 \times 10^5$ | 343 | calcul, gaz parfait ($\gamma = 1{,}4$) <Cite k="codata" /> |
+| Eau douce, 20 °C | 998 | $2{,}19 \times 10^9$ | 1 482 | <Cite k="marczak" /> |
+| Acier | 7 850 | $2{,}7 \times 10^{11}$ ($M$) | ≈ 5 900 | valeurs génériques |
+
+{/* TODO-VERIFY: propriétés de l'acier (E ≈ 200 GPa, ν ≈ 0,30, ρ ≈ 7850 kg/m³) et source à citer (Kaye & Laby / NPL). */}
+
+L'hélium et l'air ont presque la même raideur, puisque pour un gaz $K_s = \gamma p_0$ et que les deux sont à la même pression : l'hélium n'est plus raide que d'un facteur $(5/3)/1{,}4 \approx 1{,}2$. Toute la différence vient de l'inertie : l'hélium est sept fois moins dense.
+
+</RealWorld>
+
+<RealWorld title="Compter les secondes après l'éclair">
+
+À 20 °C, le son parcourt un kilomètre en $1000/343 \approx 2{,}9$ s, d'où la règle des trois secondes par kilomètre. La lumière arrive pratiquement instantanément. La règle dépend peu de la température : $c_0$ varie comme $\sqrt{T}$, soit de 331 m/s à 0 °C à 349 m/s à 30 °C (calcul). Elle suppose aussi une propagation en ligne droite ; les gradients de température de l'atmosphère courbent les rayons sonores, ce qui explique qu'on n'entende parfois pas un orage pourtant visible (chapitre 10).
+
+</RealWorld>
+
+<RealWorld title="La voix à l'hélium">
+
+Après une inspiration d'hélium, la voix devient nasillarde et aiguë. Pourtant, sa **hauteur** ne change presque pas : la fréquence fondamentale est fixée par la vibration des cordes vocales, un tissu dont la masse et la tension ne dépendent pas du gaz. Ce qui change, ce sont les **résonances du conduit vocal**, les formants. Le conduit est un tube d'environ 17 cm ; ses résonances sont proportionnelles à la célérité du gaz qu'il contient (chapitre 3).
+
+<HeliumVoice client:visible number="1a.7" title="Une voyelle dans l'air et dans l'hélium" alt="Enveloppe spectrale d'une voyelle /a/ ; quand la fraction d'hélium augmente, les pics de résonance glissent vers les hautes fréquences alors que les harmoniques restent aux mêmes fréquences." />
+
+Faites varier la fraction d'hélium en écoutant : la note reste la même, le timbre glisse. Les harmoniques (points) ne bougent pas ; c'est l'enveloppe qui les filtre qui se déplace. Dans la réalité, le conduit contient un mélange d'hélium et d'air dont la composition varie au cours de la phrase.{/* TODO-VERIFY: fraction molaire typique d'hélium dans le conduit vocal après inspiration (ordre de 50 à 80 %), et formants de /a/ de Peterson & Barney (1952). */} Les formants utilisés pour la synthèse sont ceux d'une voyelle /a/ masculine <Cite k="peterson" />.
+
+</RealWorld>
+
+## Vérification
+
+<Quiz kind="numeric" answer={1.414} tolerance={0.01}>
+<Fragment slot="question">On double la température **absolue** d'un gaz parfait, à pression constante. Par quel facteur la célérité du son est-elle multipliée&nbsp;?</Fragment>
+<Fragment slot="explanation">$c_0 = \sqrt{\gamma RT/M}$ : doubler $T$ multiplie $c_0$ par $\sqrt2 \approx 1{,}41$. Mécanisme : à pression constante, la raideur $\gamma p_0$ ne change pas, mais la masse volumique est divisée par deux ; l'inertie diminue, la célérité augmente.</Fragment>
+</Quiz>
+
+<Quiz kind="choice" answer="b">
+<Fragment slot="question">Quel terme faut-il supprimer pour que toute la colonne d'air bouge d'un bloc avec le piston&nbsp;?</Fragment>
+<Fragment slot="a">L'inertie $\rho_0\,\partial v/\partial t$.</Fragment>
+<Fragment slot="b">La compressibilité $(1/K_s)\,\partial p/\partial t$.</Fragment>
+<Fragment slot="c">Aucun : c'est le comportement normal à basse fréquence.</Fragment>
+<Fragment slot="explanation">Sans compressibilité, $\partial v/\partial x = 0$ : la vitesse est la même partout, la colonne est rigide. L'option C contient pourtant une part de vérité : quand la colonne est très courte devant la longueur d'onde, elle se comporte presque ainsi. C'est l'approximation de champ proche du chapitre 4.</Fragment>
+</Quiz>
+
+<Quiz kind="choice" answer="c">
+<Fragment slot="question">Dans une chaîne de masses où la longueur d'onde ne fait que quatre espacements, une impulsion courte&nbsp;:</Fragment>
+<Fragment slot="a">se propage à la célérité $a\sqrt{K/m}$ sans se déformer.</Fragment>
+<Fragment slot="b">ne se propage pas.</Fragment>
+<Fragment slot="c">se déforme, parce que ses composantes courtes vont moins vite que les longues.</Fragment>
+<Fragment slot="explanation">La relation $\omega = 2\sqrt{K/m}\,|\sin(ka/2)|$ fait chuter la vitesse de phase quand $ka$ n'est plus petit : la chaîne est dispersive. À $\lambda = 4a$, $ka = \pi/2$ et la vitesse de phase vaut $\sin(\pi/4)/(\pi/4) \approx 0{,}90$ fois la célérité du continu.</Fragment>
+</Quiz>
+
+<Quiz kind="choice" answer="b">
+<Fragment slot="question">Dans une onde progressive, où la pression acoustique est-elle maximale&nbsp;?</Fragment>
+<Fragment slot="a">Là où les tranches de fluide sont le plus déplacées vers l'avant.</Fragment>
+<Fragment slot="b">Là où les tranches voisines sont le plus resserrées.</Fragment>
+<Fragment slot="c">Là où les tranches sont immobiles.</Fragment>
+<Fragment slot="explanation">$p = -K_s\,\partial\xi/\partial x$ : la pression mesure un resserrement, pas un déplacement. Là où $\xi$ est extrémal, sa dérivée est nulle et la pression aussi. Dans une onde progressive, le resserrement maximal coïncide avec la vitesse maximale : $p$ et $v$ sont en phase.</Fragment>
+</Quiz>
+
+<Quiz kind="numeric" answer={5.83} tolerance={0.02} unit="s">
+<Fragment slot="question">Un éclair frappe à 2 km. Combien de temps s'écoule avant d'entendre le tonnerre, à 20 °C&nbsp;?</Fragment>
+<Fragment slot="explanation">$2000/343{,}2 \approx 5{,}8$ s. La lumière met environ 7 µs : on peut la considérer comme instantanée.</Fragment>
+</Quiz>
+
+## Pour aller plus loin
+
+- **Relaxation moléculaire.** Dans l'air réel, les molécules d'oxygène et d'azote échangent de l'énergie entre translation et vibration avec un certain retard. La raideur dépend alors de la fréquence, ce qui produit une légère dispersion et surtout l'essentiel de l'absorption atmosphérique aux fréquences audibles (chapitre 10).
+- **Équation des ondes en 3D.** La démarche de cette page s'étend directement avec $\nabla$ ; la solution de d'Alembert n'a alors plus d'équivalent aussi simple, sauf pour les ondes sphériques (chapitre 4).
+- **Références.** Pierce <Cite k="pierce" /> et Bruneau <Cite k="bruneau" /> dérivent l'équation des ondes dans le cadre général des équations de la mécanique des fluides avec dissipation ; Kinsler et al. <Cite k="kinsler" /> donnent une présentation plus élémentaire.

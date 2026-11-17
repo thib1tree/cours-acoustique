@@ -159,6 +159,35 @@ export const waveEquationScenes: SceneSpec[] = [
     ],
   },
   {
+    // Same physics as 1a-tube, separate state: the derivation bench switches terms off.
+    id: '1a-terms',
+    params: [freq(300), level(94)],
+    terms: [
+      { key: 'inertia', label: 'inertie', toggleable: true },
+      { key: 'compressibility', label: 'compressibilité', toggleable: true },
+    ],
+    derived: [
+      {
+        key: 'c',
+        digits: 1,
+        unit: 'm/s',
+        fn: (_p, t) => (t.inertia !== false && t.compressibility !== false ? C_AIR : Infinity),
+      },
+    ],
+    views: [
+      {
+        key: 'view',
+        label: 'Vue',
+        default: 'both',
+        options: [
+          { key: 'euler', label: 'Eulérienne' },
+          { key: 'lagrange', label: 'Lagrangienne' },
+          { key: 'both', label: 'Les deux' },
+        ],
+      },
+    ],
+  },
+  {
     id: '1a-dalembert',
     params: [
       {

@@ -1,0 +1,248 @@
+---
+curriculumId: impedance
+title: Impédance, énergie, niveaux
+summary: Pourquoi pression et vitesse sont en phase dans une onde progressive, où va l’énergie, pourquoi des décibels, et quand la linéarité cède.
+number: 1b
+level: M1
+duration: 55
+keyConcepts: [impédance caractéristique, intensité acoustique, équipartition de l’énergie, onde stationnaire, décibels, distance de formation de choc]
+prerequisites: [ondes, complexes]
+references: [pierce, bruneau, kinsler, hamilton, codata, marczak]
+---
+
+import PistonColumn from '../../../components/viz/PistonColumn.svelte';
+import TubeWave from '../../../components/viz/TubeWave.svelte';
+import LevelRuler from '../../../components/viz/LevelRuler.svelte';
+import ShockSteepening from '../../../components/viz/ShockSteepening.svelte';
+import LiveEquation from '../../../components/ui/LiveEquation.svelte';
+import MarginNote from '../../../components/content/MarginNote.astro';
+import Insight from '../../../components/content/Insight.astro';
+import Misconception from '../../../components/content/Misconception.astro';
+import ModelLimits from '../../../components/content/ModelLimits.astro';
+import Advanced from '../../../components/content/Advanced.astro';
+import RealWorld from '../../../components/content/RealWorld.astro';
+import Derivation from '../../../components/content/Derivation.astro';
+import Step from '../../../components/content/Step.astro';
+import Prediction from '../../../components/content/Prediction.astro';
+import Quiz from '../../../components/content/Quiz.astro';
+import G from '../../../components/content/G.astro';
+import Cite from '../../../components/content/Cite.astro';
+
+<p class="lede">Au chapitre 1a, une impulsion lâchée au repos se scindait en deux, alors qu'une impulsion accompagnée de la bonne vitesse partait d'un seul côté. Cette « bonne vitesse » est fixée par une seule grandeur du milieu, l'impédance caractéristique. Elle dit comment le fluide répond quand on le pousse, combien d'énergie l'onde emporte, et pourquoi le son passe si mal de l'air à l'eau.</p>
+
+<Prediction id="piston" options={['La même pression : c’est la même vitesse de piston.', 'Une pression plus faible dans l’eau : le son y va plus vite et « s’échappe » plus facilement.', 'Une pression beaucoup plus forte dans l’eau.']}>
+On pousse un piston à la même vitesse, une fois dans l'air, une fois dans l'eau. Quelle pression faut-il exercer&nbsp;?
+</Prediction>
+
+## Le piston et l'impédance
+
+Un piston, au repos au fond d'un tube, se met brusquement en mouvement à la vitesse constante $v$. Que se passe-t-il dans le fluide&nbsp;?
+
+<PistonColumn client:visible number="1b.1" title="Mettre une colonne de fluide en mouvement" alt="Piston poussé à vitesse constante dans un tube : la zone de fluide mise en mouvement, en couleur, s'étend à la vitesse du son devant le piston ; au-delà, le fluide est encore au repos." />
+
+Le fluide collé au piston part à la vitesse $v$. Plus loin, il n'est pas encore informé : la frontière entre fluide en mouvement et fluide au repos avance à la célérité $c_0$. Pendant chaque intervalle $\mathrm{d}t$, une nouvelle couche de fluide, d'épaisseur $c_0\,\mathrm{d}t$, est mise en mouvement.
+
+<Derivation title="L'impédance sans calcul" hypotheses="onde plane, petites perturbations (v ≪ c₀).">
+<Step title="Bilan de quantité de mouvement" open>
+
+Par unité de surface, la couche mise en mouvement pendant $\mathrm{d}t$ a une masse $\rho_0 c_0\,\mathrm{d}t$ et acquiert la vitesse $v$. Sa quantité de mouvement vaut $\rho_0 c_0\,v\,\mathrm{d}t$. Elle lui a été donnée par la surpression $p$ du piston pendant $\mathrm{d}t$ :
+
+$$
+p\,\mathrm{d}t = \rho_0 c_0\,v\,\mathrm{d}t \quad\Longrightarrow\quad p = \rho_0 c_0\,v.
+$$
+
+</Step>
+<Step title="Même résultat par les équations linéarisées">
+
+Pour une onde progressive $p = f(x - c_0 t)$, l'équation d'Euler linéarisée $\rho_0\,\partial v/\partial t = -\partial p/\partial x$ donne $\rho_0\,\partial v/\partial t = -f'$. Or $\partial p/\partial t = -c_0 f'$, donc $\rho_0\,\partial v/\partial t = (1/c_0)\,\partial p/\partial t$. En intégrant à partir du repos, $p = \rho_0 c_0\,v$. Pour une onde vers les $x$ décroissants, $p = -\rho_0 c_0\,v$.
+
+</Step>
+</Derivation>
+
+<LiveEquation client:visible scene="1b-piston" tex={String.raw`\term{p}{p} = \term{Z}{\rho_0 c_0}\,\term{v}{v} \qquad \rho_0 c_0 = \val{Z}\ \mathrm{Pa{\cdot}s/m}, \quad p = \val{p}\ \mathrm{Pa}`} number="1b.1" label="Impédance caractéristique" />
+
+Le produit $Z_c = \rho_0 c_0$ est l'<G id="impedance-caracteristique">impédance caractéristique</G> du milieu. Basculez la figure sur l'eau : à la même vitesse de piston, il faut environ 3 600 fois plus de pression. L'eau est à la fois plus dense (plus de masse par couche) et plus rapide (des couches plus épaisses à chaque instant) : les deux effets s'ajoutent.
+
+**Pourquoi $p$ et $v$ sont-ils en phase&nbsp;?** Dans une onde qui avance vers la droite, une compression doit progresser vers la droite. Pour cela, le fluide doit s'accumuler à son front, donc s'écouler vers la droite là où la pression est élevée. La surpression et la vitesse vont ensemble ; dans une onde vers la gauche, elles sont de signes opposés.
+
+<Insight>
+
+L'impédance caractéristique est une **résistance** : la force par unité de surface que le fluide oppose à qui veut le mettre en mouvement à une vitesse donnée. Comme dans une résistance électrique, la pression et la vitesse y sont en phase et l'énergie fournie ne revient jamais : elle part avec l'onde. Un tube terminé exactement par $\rho_0 c_0$ ne réfléchit rien (chapitre 3).
+
+</Insight>
+
+<Misconception>
+
+« Dans une cloche à vide, le son ralentit, puis s'arrête. » La célérité d'un gaz ne dépend pas de sa pression (chapitre 1a) : elle reste à 343 m/s quand on pompe l'air. Ce qui s'effondre, c'est l'impédance $\rho_0 c_0$, proportionnelle à $p_0$. Pour une même vibration de la cloche, la puissance transmise au gaz, de l'ordre de $\rho_0 c_0 v^2$ par unité de surface, diminue avec la pression : à un centième d'atmosphère, elle a perdu 20 dB. Le son ne ralentit pas, il ne se transmet plus.{/* TODO-VERIFY: expérience de Boyle (1660) et rôle des transmissions solides par le support de la cloche. */}
+
+</Misconception>
+
+## Où va l'énergie
+
+Une onde transporte de l'énergie sous deux formes : l'énergie **cinétique** du fluide en mouvement, et l'énergie **potentielle** élastique de la compression, comme celle d'un ressort comprimé. Leurs densités valent
+
+$$
+e_c = \tfrac12\,\rho_0\,v^2, \qquad e_p = \frac{p^2}{2\rho_0 c_0^2}.
+$$
+
+<Derivation title="Bilan d'énergie" hypotheses="acoustique linéaire, fluide parfait, onde plane.">
+<Step title="Conservation locale" open>
+
+On multiplie l'équation d'Euler linéarisée par $v$ et l'équation de continuité (écrite pour $p$) par $p/(\rho_0 c_0^2)$, puis on additionne :
+
+$$
+\frac{\partial}{\partial t}\left(\tfrac12\rho_0 v^2 + \frac{p^2}{2\rho_0 c_0^2}\right) + \frac{\partial (p\,v)}{\partial x} = 0.
+$$
+
+C'est une équation de conservation : l'énergie $e = e_c + e_p$ ne varie en un point que si un flux $I = p\,v$ l'apporte ou l'emporte. Ce flux est l'<G id="intensite">intensité acoustique</G>.
+
+</Step>
+<Step title="Onde progressive : équipartition">
+
+Avec $p = \rho_0 c_0 v$, $e_p = \rho_0^2 c_0^2 v^2/(2\rho_0 c_0^2) = \tfrac12\rho_0 v^2 = e_c$ : les deux formes d'énergie sont égales en chaque point, à chaque instant. L'intensité vaut $I = p v = \rho_0 c_0 v^2 = e\,c_0$ : l'énergie avance à la célérité.
+
+</Step>
+<Step title="Moyenne temporelle">
+
+Pour une onde harmonique d'amplitude $P$, la moyenne de $p\,v$ sur une période donne l'intensité active
+
+$$
+\langle I \rangle = \frac{P^2}{2\rho_0 c_0} = \frac{p_{\mathrm{eff}}^2}{\rho_0 c_0}.
+$$
+
+En notation complexe, $\langle I \rangle = \tfrac12\operatorname{Re}\{P\,V^*\}$.
+
+</Step>
+</Derivation>
+
+<TubeWave client:visible scene="1b-energy" number="1b.2" title="De l'onde progressive à l'onde stationnaire" sliders={['f', 'R']} views={['curves']} alt="Tube d'air : pression en couleur, densités d'énergie cinétique et potentielle le long du tube, et flèches d'intensité instantanée. Le coefficient de réflexion R fait passer d'une onde progressive à une onde stationnaire." />
+
+Avec $R = 0$, les deux courbes d'énergie se superposent et les flèches d'intensité pointent toutes vers la droite : l'énergie s'écoule. Montez progressivement $R$, l'amplitude d'une onde réfléchie qui revient vers la gauche. À $R = 1$, l'onde est **stationnaire** : énergie cinétique et potentielle se séparent dans l'espace et dans le temps, et les flèches battent sur place. L'énergie fait des allers-retours entre les ventres de vitesse et les ventres de pression, mais rien ne s'écoule.
+
+<LiveEquation client:visible scene="1b-energy" tex={String.raw`\langle I \rangle = \left(1 - \term{R}{R}^2\right)\,\frac{P^2}{2\rho_0 c_0} \qquad 1 - R^2 = \val{ratio}`} number="1b.2" label="Intensité active pour une onde incidente plus une onde réfléchie" />
+
+<Insight>
+
+L'intensité instantanée $p\,v$ et l'intensité active $\langle p\,v\rangle$ ne racontent pas la même chose. La première décrit l'énergie qui se déplace à chaque instant, dans un sens ou dans l'autre ; la seconde ce qui part vraiment. Une onde stationnaire a beaucoup d'intensité instantanée et aucune intensité active. On retrouvera cette distinction près des petites sources, dans le champ proche réactif (chapitre 4).
+
+</Insight>
+
+## Pourquoi des décibels
+
+L'oreille perçoit des pressions efficaces allant d'environ 20 µPa à plusieurs dizaines de pascals : un rapport d'un million. En intensité, c'est un rapport de $10^{12}$. On mesure donc des **niveaux**, sur une échelle logarithmique :
+
+$$
+L_p = 20\log_{10}\frac{p_{\mathrm{eff}}}{p_{\mathrm{ref}}}, \qquad p_{\mathrm{ref}} = 20\ \mu\mathrm{Pa}.
+$$
+
+Le facteur 20, et non 10, vient de ce que l'énergie est proportionnelle au carré de la pression : $L_p$ coïncide ainsi avec le niveau d'intensité $10\log_{10}(I/I_{\mathrm{ref}})$ pour une onde plane progressive, à une fraction de décibel près.<MarginNote n="1">Avec $I_{\mathrm{ref}} = 10^{-12}$ W/m², l'égalité exacte supposerait $\rho_0 c_0 = p_{\mathrm{ref}}^2/I_{\mathrm{ref}} = 400$ Pa·s/m. Pour l'air à 20 °C, $\rho_0 c_0 \approx 413$ Pa·s/m : l'écart est de 0,14 dB.</MarginNote>
+
+<LevelRuler client:visible number="1b.3" title="Échelle des niveaux" alt="Règle graduée de 0 à 200 dB portant des repères : la pression de référence, la conversation, un calibreur à 94 dB, le seuil de douleur et la limite de 194 dB. Un curseur indique le niveau choisi ; une bascule montre la même échelle en pascals." />
+
+Passez l'échelle en pascals : tous les repères s'écrasent sur zéro, sauf le dernier. Une échelle linéaire est inutilisable sur une telle étendue.
+
+<Misconception>
+
+« Deux sources identiques font deux fois plus de bruit. » Deux sources indépendantes doublent la **puissance** : $+10\log_{10}2 \approx +3$ dB. C'est un écart audible mais modeste ; il faut environ dix fois plus de puissance pour qu'un son paraisse deux fois plus fort (chapitre 13).{/* TODO-VERIFY: règle « +10 dB ≈ sonie doublée » (Stevens) et sa source. */} Et si les deux sources sont **cohérentes et en phase**, ce sont les pressions qui s'ajoutent : $+6$ dB, soit quatre fois la puissance d'une seule source au point d'écoute. D'où vient l'énergie supplémentaire&nbsp;? Des interférences : ailleurs, les ondes se compensent. Le chapitre 4 le montre.
+
+</Misconception>
+
+Le repère de 194 dB n'est pas arbitraire : la pression efficace y égale la pression atmosphérique. Au-delà, la raréfaction d'une sinusoïde demanderait une pression absolue négative, ce qu'un gaz ne peut pas fournir. C'est une limite de l'onde sinusoïdale elle-même, pas seulement du modèle linéaire.
+
+## Quand la linéarité cède
+
+Le chapitre 1a a négligé, en linéarisant, deux effets du second ordre. Ils semblaient minuscules : à 140 dB, la vitesse particulaire ne vaut que 0,2 % de la célérité. Pourtant, une onde intense finit toujours par se raidir en choc. Comment un effet de 0,2 % peut-il changer la forme de l'onde&nbsp;?
+
+Chaque point de l'onde avance à $c_0 + \beta v$, un peu plus vite dans les compressions, un peu moins dans les raréfactions. Deux mécanismes contribuent à $\beta$ :
+
+- **la convection** : dans une compression, le fluide avance lui-même et emporte la perturbation avec lui (le terme $v\,\partial v/\partial x$ négligé dans Euler) ;
+- **la non-linéarité de l'état** : l'air comprimé est plus chaud, donc plus raide, et le son y va plus vite.
+
+Pour un gaz parfait, $\beta = 1 + (\gamma-1)/2 = (\gamma+1)/2 = 1{,}2$ dans l'air. L'écart de vitesse est petit, mais il **se cumule** : au bout d'une distance $\bar x$, les crêtes ont rattrapé les creux.
+
+<ShockSteepening client:visible number="1b.4" title="Une sinusoïde qui se raidit" alt="Forme d'onde de pression en fonction du temps retardé, en un point situé à une distance réglable de la source. Plus la distance est grande, plus le front montant se raidit ; au-delà de la distance de choc, la courbe se replie sur elle-même." />
+
+<Derivation title="Distance de formation du choc" hypotheses="onde plane progressive, sans dissipation, nombre de Mach acoustique ε = v₀/c₀ ≪ 1.">
+<Step title="Le décalage cumulé" open>
+
+Un point de l'onde où la vitesse vaut $v$ met, pour parcourir $x$, le temps $x/(c_0 + \beta v) \approx (x/c_0)(1 - \beta v/c_0)$. Par rapport à un point de vitesse nulle, il prend une avance $\Delta t = \beta v\,x/c_0^2$.
+
+</Step>
+<Step title="Quand la crête rattrape le zéro">
+
+Pour une sinusoïde de pulsation $\omega$ et d'amplitude de vitesse $v_0$, le front montant devient vertical quand l'avance relative de la crête égale le temps de montée, au sens de la pente : $\beta v_0\,\omega\,\bar x / c_0^2 = 1$, soit
+
+$$
+\bar x = \frac{c_0^2}{\beta\,\omega\,v_0} = \frac{1}{\beta\,\varepsilon\,k}, \qquad \varepsilon = \frac{v_0}{c_0}.
+$$
+
+La solution exacte de l'onde simple (Poisson) confirme ce résultat : la pente au passage par zéro est multipliée par $1/(1 - x/\bar x)$ et diverge à $x = \bar x$.
+
+</Step>
+</Derivation>
+
+À 1 kHz et 140 dB, le choc se forme vers 20 m ; à 120 dB, vers 2 km (calcul sans pertes). Coupez chacun des deux termes dans la figure : sans convection, $\beta$ tombe à 0,2 et le choc recule d'un facteur six ; sans les deux, il ne se forme jamais.
+
+<ModelLimits>
+
+Le critère de linéarité n'est pas seulement $p/(\rho_0 c_0^2) \ll 1$, qui est un critère **local**. Il faut aussi que la distance de propagation reste petite devant $\bar x$, critère **cumulatif**. En pratique, l'absorption atmosphérique, qui croît avec la fréquence, s'oppose au raidissement : une onde ne forme un choc que si $\bar x$ est plus court que la distance sur laquelle elle s'atténue. Le rapport des deux longueurs, le nombre de Goldberg, décide de l'issue (chapitre 11) <Cite k="hamilton" />. La divergence géométrique d'une onde sphérique retarde aussi le choc.
+
+</ModelLimits>
+
+## Monde réel
+
+<RealWorld title="Pourquoi on n'entend pas un nageur crier depuis la berge">
+
+Quand une onde passe de l'air à l'eau à incidence normale, la fraction de l'intensité transmise vaut $4Z_1Z_2/(Z_1+Z_2)^2$ (chapitre 2). Avec $Z_{\mathrm{air}} \approx 413$ Pa·s/m et $Z_{\mathrm{eau}} \approx 1{,}48 \times 10^6$ Pa·s/m, elle vaut environ $1{,}1 \times 10^{-3}$ : le son perd près de 30 dB au passage de l'interface, dans un sens comme dans l'autre.
+
+Le mécanisme est celui du piston. L'air, très peu impédant, ne peut pas fournir la pression qu'il faudrait pour mettre l'eau en mouvement à la même vitesse ; l'eau, très impédante, ne peut pas communiquer à l'air une vitesse suffisante. L'énergie est presque entièrement réfléchie. C'est aussi pour cela que l'oreille moyenne existe : elle adapte l'impédance de l'air à celle du liquide de l'oreille interne (chapitre 13).{/* TODO-VERIFY: formulation du rôle d'adaptation d'impédance de l'oreille moyenne. */}
+
+</RealWorld>
+
+<RealWorld title="Quelle puissance transporte une conversation&nbsp;?">
+
+À 60 dB, la pression efficace vaut 20 mPa et l'intensité $p_{\mathrm{eff}}^2/(\rho_0 c_0) \approx 10^{-6}$ W/m² (calcul). Une sphère de 1 m de rayon autour de la bouche reçoit donc environ 12 µW. La parole est un signal énergétiquement minuscule : l'oreille en tire pourtant l'essentiel de l'information.{/* TODO-VERIFY: niveau typique de la voix conversationnelle à 1 m (≈ 60 dB). */}
+
+</RealWorld>
+
+## Vérification
+
+<Quiz kind="numeric" answer={1480} tolerance={0.02} unit="Pa">
+<Fragment slot="question">Un piston vibre dans l'eau avec une vitesse de 1 mm/s. Quelle pression rayonne-t-il dans une onde plane ($\rho_0 c_0 \approx 1{,}48 \times 10^6$ Pa·s/m)&nbsp;?</Fragment>
+<Fragment slot="explanation">$p = \rho_0 c_0 v \approx 1{,}48 \times 10^6 \times 10^{-3} \approx 1\,480$ Pa, soit plus de 150 dB si c'était dans l'air (avec la référence de l'air). Dans l'eau, on utilise d'ailleurs une autre référence, 1 µPa.</Fragment>
+</Quiz>
+
+<Quiz kind="choice" answer="b">
+<Fragment slot="question">Dans le tube de la figure 1b.2, on règle $R = 0{,}5$. L'intensité active est&nbsp;:</Fragment>
+<Fragment slot="a">nulle, puisqu'il y a une onde réfléchie.</Fragment>
+<Fragment slot="b">positive, égale aux trois quarts de celle de l'onde incidente seule.</Fragment>
+<Fragment slot="c">négative.</Fragment>
+<Fragment slot="explanation">$\langle I \rangle = (1 - R^2)\,P^2/(2\rho_0 c_0)$ : l'onde incidente apporte $P^2/(2\rho_0c_0)$, l'onde réfléchie en remporte $R^2$ fois autant. Le bilan net vaut 75 % de l'incident. Il n'est nul que pour $R = 1$.</Fragment>
+</Quiz>
+
+<Quiz kind="numeric" answer={6.02} tolerance={0.01} unit="dB">
+<Fragment slot="question">Quatre machines identiques et indépendantes fonctionnent ensemble. De combien de décibels le niveau augmente-t-il par rapport à une seule&nbsp;?</Fragment>
+<Fragment slot="explanation">Sources incohérentes : les puissances s'ajoutent, $10\log_{10}4 \approx 6{,}0$ dB. Pour des sources cohérentes en phase, on aurait $20\log_{10}4 \approx 12$ dB au point où elles interfèrent constructivement.</Fragment>
+</Quiz>
+
+<Quiz kind="choice" answer="a">
+<Fragment slot="question">À même niveau, pourquoi le choc se forme-t-il plus tôt à haute fréquence&nbsp;?</Fragment>
+<Fragment slot="a">Parce que la crête n'a besoin de gagner qu'une fraction de période, plus courte à haute fréquence.</Fragment>
+<Fragment slot="b">Parce que les hautes fréquences vont plus vite.</Fragment>
+<Fragment slot="c">Parce que l'absorption est plus faible à haute fréquence.</Fragment>
+<Fragment slot="explanation">L'avance accumulée $\beta v_0 x/c_0^2$ ne dépend pas de la fréquence ; ce qui en dépend, c'est l'avance nécessaire pour raidir le front, de l'ordre de $1/\omega$. D'où $\bar x \propto 1/\omega$. La réponse C est fausse : l'absorption croît avec la fréquence et s'oppose au contraire au raidissement.</Fragment>
+</Quiz>
+
+<Quiz kind="choice" answer="c">
+<Fragment slot="question">On pompe l'air d'une cloche jusqu'à un dixième d'atmosphère, à température constante. Que devient la célérité du son dans le gaz restant&nbsp;?</Fragment>
+<Fragment slot="a">Elle est divisée par $\sqrt{10}$.</Fragment>
+<Fragment slot="b">Elle est multipliée par $\sqrt{10}$.</Fragment>
+<Fragment slot="c">Elle ne change pas ; c'est l'impédance qui est divisée par dix.</Fragment>
+<Fragment slot="explanation">$c_0 = \sqrt{\gamma p_0/\rho_0}$ et $\rho_0 \propto p_0$ à température constante : le rapport ne change pas. En revanche $\rho_0 c_0$ est proportionnel à $\rho_0$, donc à $p_0$ : le gaz raréfié se laisse mettre en mouvement sans opposer de pression, et la puissance rayonnée chute.</Fragment>
+</Quiz>
+
+## Pour aller plus loin
+
+- **Impédance spécifique et impédance de surface.** Pour une onde qui n'est pas plane, le rapport $p/v$ devient complexe : la pression et la vitesse ne sont plus en phase, et une partie de l'énergie oscille sur place. C'est le point de départ du rayonnement (chapitre 4) et des matériaux absorbants (chapitre 2).
+- **Équation de Burgers.** En ajoutant la dissipation au raidissement, on obtient une équation qui décrit à la fois la formation du choc et son épaisseur finie (chapitre 11) <Cite k="hamilton" />.
+- **Références.** Kinsler et al. <Cite k="kinsler" /> pour l'énergie et l'intensité ; Pierce <Cite k="pierce" /> pour la formulation générale de la conservation de l'énergie acoustique.

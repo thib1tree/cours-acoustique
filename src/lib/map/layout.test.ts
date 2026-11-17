@@ -26,7 +26,7 @@ describe('course map layout', () => {
     const ids = new Set(CURRICULUM.map((n) => n.id));
     for (const dir of ['chapitres', 'prerequis']) {
       const base = new URL(`../../content/${dir}/`, import.meta.url);
-      let entries: string[] = [];
+      let entries: string[];
       try {
         entries = readdirSync(base);
       } catch {
