@@ -246,7 +246,7 @@ pnpm build          # build statique (dist/)
 pnpm preview        # sert le build
 pnpm test           # Vitest (physique + logique)
 pnpm test:e2e       # Playwright (5 tailles d'écran), après pnpm build
-pnpm test:e2e -- --update-snapshots   # régénérer les captures de référence
+workflow « Update visual baselines » (GitHub Actions) # régénère les captures de référence dans l'environnement de la CI
 pnpm lint           # ESLint + Prettier --check + astro check
 pnpm format         # Prettier --write
 pnpm gen:tokens     # régénère src/styles/palette.css depuis palette.ts

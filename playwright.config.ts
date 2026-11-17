@@ -11,6 +11,9 @@ export default defineConfig({
   testDir: 'tests/e2e',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
+  // Baselines are produced by CI (.github/workflows/update-snapshots.yml): font
+  // antialiasing differs between machines. A missing baseline is written, not failed.
+  updateSnapshots: 'missing',
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
   use: {
