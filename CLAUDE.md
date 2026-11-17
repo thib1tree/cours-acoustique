@@ -253,6 +253,10 @@ pnpm gen:tokens     # régénère src/styles/palette.css depuis palette.ts
 node scripts/design-captures.mjs      # captures des maquettes (docs/design)
 ```
 
+Déploiement : automatique après une CI verte sur la branche par défaut du dépôt
+(`.github/workflows/deploy.yml`, déclencheur `workflow_run`), ou à la main
+(« Run workflow »). L'environnement `github-pages` n'accepte que cette branche.
+
 Note : dans cet environnement, `astro preview` passe en arrière-plan s'il détecte un
 agent ; utiliser `pnpm astro preview --ignore-lock` (c'est ce que fait Playwright).
 
