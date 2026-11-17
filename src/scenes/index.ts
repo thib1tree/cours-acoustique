@@ -6,7 +6,8 @@ import type { SceneSpec } from '../lib/scene/types';
 import { fluidScenes } from './fluids';
 import { waveEquationScenes } from './wave-equation';
 import { labScenes } from './lab';
+import { planeWaveScenes } from './plane-waves';
 
-const all: SceneSpec[] = [...fluidScenes, ...waveEquationScenes, ...labScenes];
+const all: SceneSpec[] = [...fluidScenes, ...waveEquationScenes, ...planeWaveScenes, ...labScenes];
 
 export const SCENES: Record<string, SceneSpec> = Object.fromEntries(all.map((s) => [s.id, s]));

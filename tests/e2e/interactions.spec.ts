@@ -83,3 +83,15 @@ test('course map shows the missing prerequisite path', async ({ page }) => {
   await expect(page.locator('.d-title')).toHaveText('Rayonnement');
   await expect(page.locator('.d-path li').first()).toBeVisible();
 });
+
+test('chapter 2: interface presets change the reflection coefficient', async ({ page }) => {
+  await page.goto('chapitres/02-ondes-planes/');
+  const eq = page.locator('figure.eq[aria-label^="Coefficient de réflexion"]');
+  await hydrated(page, eq);
+  await expect(eq).toContainText('0,600');
+  const preset = page.getByRole('button', { name: 'Surface libre' });
+  await hydrated(page, preset);
+  await preset.click();
+  await eq.scrollIntoViewIfNeeded();
+  await expect(eq).toContainText(/[−-]1,000/);
+});

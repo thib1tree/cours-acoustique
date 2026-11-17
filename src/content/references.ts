@@ -59,6 +59,22 @@ export const REFERENCES: Record<string, Reference> = {
     full: 'B. Ottosson, « A perceptual color space for image processing », 2020.',
     url: 'https://bottosson.github.io/posts/oklab/',
   },
+  delany: {
+    short: 'Delany et Bazley, 1970',
+    full: 'M. E. Delany, E. N. Bazley, « Acoustical properties of fibrous absorbent materials », <i>Applied Acoustics</i> 3(2), 105–116, 1970.',
+    url: 'https://doi.org/10.1016/0003-682X(70)90031-9',
+    note: 'TODO-VERIFY : coefficients du modèle et domaine de validité 0,01 < X < 1.',
+  },
+  allard: {
+    short: 'Allard et Atalla, 2009',
+    full: 'J.-F. Allard, N. Atalla, <i>Propagation of Sound in Porous Media</i>, 2<sup>e</sup> éd., Wiley, 2009.',
+    url: 'https://doi.org/10.1002/9780470747339',
+  },
+  iso10534: {
+    short: 'ISO 10534',
+    full: 'ISO 10534-1 et 10534-2, <i>Acoustique : détermination du facteur d’absorption acoustique et de l’impédance dans les tubes d’impédance</i> (méthode du taux d’ondes stationnaires ; méthode de la fonction de transfert).',
+    note: 'TODO-VERIFY : intitulés et années des deux parties.',
+  },
   kinsler: {
     short: 'Kinsler et al., 2000',
     full: 'L. E. Kinsler, A. R. Frey, A. B. Coppens, J. V. Sanders, <i>Fundamentals of Acoustics</i>, 4<sup>e</sup> éd., Wiley, 2000.',

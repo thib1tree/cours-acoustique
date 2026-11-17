@@ -5,7 +5,8 @@
       "url": [
         "http://localhost/cours-acoustique/",
         "http://localhost/cours-acoustique/chapitres/01a-equation-des-ondes/",
-        "http://localhost/cours-acoustique/carte/"
+        "http://localhost/cours-acoustique/carte/",
+        "http://localhost/cours-acoustique/chapitres/02-ondes-planes/"
       ],
       "numberOfRuns": 3,
       "settings": {

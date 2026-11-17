@@ -18,6 +18,11 @@ import FluidParcel from '../../components/viz/FluidParcel.svelte';
 import CompressDemo from '../../components/viz/CompressDemo.svelte';
 import ScalarField2D from '../../components/viz/ScalarField2D.svelte';
 import PolarPlot from '../../components/viz/PolarPlot.svelte';
+import InterfacePulse from '../../components/viz/InterfacePulse.svelte';
+import ObliqueField from '../../components/viz/ObliqueField.svelte';
+import StandingWave from '../../components/viz/StandingWave.svelte';
+import AbsorberCurve from '../../components/viz/AbsorberCurve.svelte';
+import GapTransmission from '../../components/viz/GapTransmission.svelte';
 import GpuCpuCheck from '../../components/viz/GpuCpuCheck.svelte';
 ---
 
@@ -98,6 +103,31 @@ import GpuCpuCheck from '../../components/viz/GpuCpuCheck.svelte';
     </section>
     <section id="field">
       <ScalarField2D client:visible number="L.13" title="Champ phaseur" alt="Dipôle." />
+    </section>
+    <section id="iface">
+      <InterfacePulse
+        client:visible
+        number="L.15"
+        title="Interface"
+        alt="Impulsion à une interface."
+      />
+    </section>
+    <section id="oblique">
+      <ObliqueField client:visible number="L.16" title="Incidence oblique" alt="Champ oblique." />
+    </section>
+    <section id="standing">
+      <StandingWave
+        client:visible
+        number="L.17"
+        title="Onde stationnaire"
+        alt="Onde stationnaire."
+      />
+    </section>
+    <section id="absorber">
+      <AbsorberCurve client:visible number="L.18" title="Absorbants" alt="Absorption." />
+    </section>
+    <section id="gap">
+      <GapTransmission client:visible number="L.19" title="Lame d'air" alt="Lame d'air." />
     </section>
     <section id="polar">
       <PolarPlot client:visible number="L.14" title="Piston bafflé" alt="Directivité." />

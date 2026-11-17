@@ -10,6 +10,7 @@ export function createLoop(
   let visible = false;
   let raf = 0;
   let last = 0;
+  let poll = 0;
   const tick = (now: number) => {
     raf = 0;
     const dt = last ? Math.min(0.05, (now - last) / 1000) : 0;
@@ -19,7 +20,12 @@ export function createLoop(
   };
   const schedule = () => {
     if (!raf && visible && !document.hidden && isPlaying()) raf = requestAnimationFrame(tick);
-    else if (!isPlaying()) last = 0;
+    else if (!isPlaying()) {
+      last = 0;
+      // Paused but on screen: check cheaply for "play" (5 times per second).
+      if (visible && !document.hidden && !poll)
+        poll = window.setTimeout(() => ((poll = 0), schedule()), 200);
+    }
   };
   const io = new IntersectionObserver(
     (entries) => {
@@ -41,6 +47,7 @@ export function createLoop(
       io.disconnect();
       document.removeEventListener('visibilitychange', onVis);
       if (raf) cancelAnimationFrame(raf);
+      if (poll) clearTimeout(poll);
     },
   };
 }

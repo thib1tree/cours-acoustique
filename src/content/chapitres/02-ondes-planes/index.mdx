@@ -1,0 +1,258 @@
+---
+curriculumId: planes
+title: Ondes planes aux interfaces
+summary: Pourquoi une interface réfléchit, ce que deviennent pression et énergie, l'accord des traces en incidence oblique, et comment absorber le son.
+number: '2'
+level: M1
+duration: 60
+keyConcepts: [coefficient de réflexion, transmission d'énergie, loi de Snell, angle critique, onde évanescente, impédance de surface, absorption]
+prerequisites: [impedance]
+references: [pierce, kinsler, bruneau, allard, delany, iso10534]
+---
+
+import InterfacePulse from '../../../components/viz/InterfacePulse.svelte';
+import ObliqueField from '../../../components/viz/ObliqueField.svelte';
+import StandingWave from '../../../components/viz/StandingWave.svelte';
+import AbsorberCurve from '../../../components/viz/AbsorberCurve.svelte';
+import GapTransmission from '../../../components/viz/GapTransmission.svelte';
+import LiveEquation from '../../../components/ui/LiveEquation.svelte';
+import MarginNote from '../../../components/content/MarginNote.astro';
+import Insight from '../../../components/content/Insight.astro';
+import Misconception from '../../../components/content/Misconception.astro';
+import ModelLimits from '../../../components/content/ModelLimits.astro';
+import Advanced from '../../../components/content/Advanced.astro';
+import RealWorld from '../../../components/content/RealWorld.astro';
+import Derivation from '../../../components/content/Derivation.astro';
+import Step from '../../../components/content/Step.astro';
+import Prediction from '../../../components/content/Prediction.astro';
+import Quiz from '../../../components/content/Quiz.astro';
+import G from '../../../components/content/G.astro';
+import Cite from '../../../components/content/Cite.astro';
+
+<p class="lede">Depuis le bord d'une piscine, vous criez pour qu'un plongeur vous entende. Il n'entend presque rien. Pourtant, là où votre voix frappe la surface, la pression qui pénètre dans l'eau est presque <em>deux fois</em> plus forte que celle qui arrive. Ce chapitre explique ce paradoxe, puis ce que devient une onde qui rencontre une paroi, et comment on s'y prend pour qu'elle ne revienne pas.</p>
+
+<Prediction id="interface" options={['Beaucoup plus faible que la pression incidente : l’eau est très difficile à mettre en mouvement.', 'À peu près égale à la pression incidente.', 'Presque le double de la pression incidente.']}>
+Une onde sonore passe de l'air dans l'eau à incidence normale. Juste sous la surface, la pression acoustique transmise est&nbsp;:
+</Prediction>
+
+## Deux conditions à l'interface
+
+À la frontière entre deux fluides, deux choses doivent être vraies à chaque instant.
+
+- **La pression est la même des deux côtés.** L'interface n'a pas de masse : une différence de pression, même minuscule, lui donnerait une accélération infinie.
+- **La vitesse normale est la même des deux côtés.** Les deux fluides ne se décollent pas et ne s'interpénètrent pas.
+
+Or chaque milieu impose son propre rapport entre pression et vitesse : $p = Z_1 v$ dans une onde qui avance dans le milieu 1, $p = Z_2 v$ dans le milieu 2 (chapitre 1b). Si $Z_1 \ne Z_2$, l'onde incidente seule ne peut pas satisfaire les deux conditions à la fois. Il faut une troisième onde : l'**onde réfléchie**, pour laquelle $p = -Z_1 v$. Elle corrige la pression et la vitesse dans des sens opposés, exactement de ce qu'il faut.
+
+<InterfacePulse client:visible number="2.1" title="Une impulsion rencontre une interface" alt="Une impulsion de pression avance dans le milieu 1 et frappe une interface verticale ; une partie est réfléchie, une partie transmise dans le milieu 2. À droite, la part de l'énergie incidente réfléchie et transmise." />
+
+<Derivation title="Coefficients de réflexion et de transmission" hypotheses="incidence normale, deux fluides parfaits, interface plane infinie, acoustique linéaire.">
+<Step title="Les trois ondes" open>
+
+Dans le milieu 1 ($x < 0$), une onde incidente d'amplitude $P_i$ et une onde réfléchie $R\,P_i$ ; dans le milieu 2, une onde transmise $T\,P_i$. Les vitesses s'en déduisent par l'impédance, avec un signe moins pour l'onde qui va vers les $x$ décroissants :
+
+$$
+v_1 = \frac{P_i}{Z_1}\,(1 - R), \qquad v_2 = \frac{T\,P_i}{Z_2}.
+$$
+
+</Step>
+<Step title="Continuité de p et de v">
+
+$$
+1 + R = T, \qquad \frac{1 - R}{Z_1} = \frac{T}{Z_2}.
+$$
+
+</Step>
+<Step title="Résultat">
+
+$$
+R = \frac{Z_2 - Z_1}{Z_2 + Z_1}, \qquad T = \frac{2Z_2}{Z_2 + Z_1}.
+$$
+
+La fraction de l'intensité transmise vaut $\tau = T^2 Z_1/Z_2 = 4Z_1Z_2/(Z_1+Z_2)^2$, et l'on vérifie que $R^2 + \tau = 1$ : rien ne se perd à l'interface.
+
+</Step>
+</Derivation>
+
+<LiveEquation client:visible scene="2-interface" tex={String.raw`R = \frac{\term{Z2}{Z_2} - \term{Z1}{Z_1}}{Z_2 + Z_1} = \val{R}, \qquad \tau = \frac{4 Z_1 Z_2}{(Z_1 + Z_2)^2} = \val{tau}\ \%`} number="2.1" label="Coefficient de réflexion et part de l'énergie transmise" />
+
+<Insight>
+
+La réflexion est le prix d'un désaccord d'impédance. Le second milieu exige un autre rapport entre pression et vitesse que celui qu'apporte l'onde incidente ; l'onde réfléchie est la seule façon de satisfaire à la fois la continuité de la pression et celle de la vitesse. Deux milieux de même impédance ne réfléchissent rien, même si leurs célérités diffèrent : essayez le préréglage « Impédances égales ».
+
+</Insight>
+
+<Misconception>
+
+« Si la pression transmise double, le son passe mieux. » Choisissez « Air vers eau » : $T \approx 2$, la pression double bien sous la surface. Mais l'énergie transmise ne vaut que 0,11 % de l'énergie incidente. La puissance transportée est $p\,v = p^2/Z$ : l'eau, environ 3 600 fois plus impédante que l'air, n'est mise en mouvement qu'à une vitesse infime par cette pression. Une pression n'est pas une énergie. L'interface se comporte presque comme une paroi rigide, où la pression double aussi alors que rien ne passe.
+
+</Misconception>
+
+## Paroi rigide, surface libre
+
+Deux cas limites encadrent tous les autres.
+
+- **Paroi rigide** ($Z_2 \to \infty$) : $R = +1$. La vitesse est nulle à la paroi, parce que les vitesses incidente et réfléchie s'annulent ; la pression y double.
+- **Surface libre** ($Z_2 \to 0$) : $R = -1$. Le milieu 2 ne peut opposer aucune pression : la pression est nulle à l'interface, l'onde réfléchie revient **inversée**, et c'est la vitesse qui double.
+
+Essayez les deux préréglages. Avec la surface libre, une surpression revient en dépression. C'est ce qui se passe, vu de l'intérieur de l'eau, à la surface de la mer ($R \approx -1$ de l'eau vers l'air)<MarginNote n="1">C'est aussi, approximativement, ce qui arrive au bout ouvert d'un tube : l'air extérieur ne peut pas y maintenir de surpression, la pression y reste presque nulle et l'onde revient inversée. La correction de bout du chapitre 3 mesure l'écart à ce modèle idéal.</MarginNote>.
+
+## Incidence oblique : l'accord des traces
+
+Quand l'onde arrive en biais, la continuité de la pression doit être vraie en **chaque point** de l'interface. Le long de celle-ci, les fronts d'onde des deux côtés doivent donc se raccorder : ils doivent avoir la même longueur d'onde apparente, la **trace**, $\lambda/\sin\theta$.
+
+<ObliqueField client:visible number="2.2" title="Incidence oblique sur une interface" alt="Champ de pression de part et d'autre d'une interface verticale : à gauche, ondes incidente et réfléchie qui interfèrent ; à droite, onde transmise, ou onde évanescente qui s'atténue loin de l'interface au-delà de l'angle critique. Des flèches indiquent les directions de propagation." />
+
+Regardez l'interface : les crêtes se raccordent exactement de part et d'autre, quelle que soit l'incidence. Puisque la trace se déplace à la vitesse $c/\sin\theta$ des deux côtés, on obtient la loi de Snell-Descartes :
+
+$$
+\frac{\sin\theta_1}{c_1} = \frac{\sin\theta_2}{c_2}.
+$$
+
+Si le second milieu est plus rapide ($c_2 > c_1$), l'onde transmise se couche vers l'interface quand $\theta_1$ augmente, jusqu'à l'<G id="angle-critique">angle critique</G> $\sin\theta_c = c_1/c_2$. Au-delà, la trace avance plus lentement que $c_2$ : aucune onde plane du milieu 2 ne peut la suivre. Le champ transmis devient une <G id="onde-evanescente">onde évanescente</G>, qui décroît exponentiellement loin de l'interface. Toute l'énergie est réfléchie.
+
+<Derivation title="Coefficient de réflexion en incidence oblique" hypotheses="mêmes hypothèses qu'à incidence normale, angle d'incidence θ₁.">
+<Step title="Impédances normales" open>
+
+Seule la composante normale de la vitesse doit être continue. Pour une onde plane d'incidence $\theta$, $v_n = v\cos\theta = (p/Z)\cos\theta$ : le rapport $p/v_n$ vaut $Z/\cos\theta$. Le calcul de l'incidence normale reste valable en remplaçant $Z$ par cette impédance normale :
+
+$$
+R(\theta_1) = \frac{Z_2/\cos\theta_2 - Z_1/\cos\theta_1}{Z_2/\cos\theta_2 + Z_1/\cos\theta_1}.
+$$
+
+</Step>
+<Step title="Au-delà de l'angle critique">
+
+$\sin\theta_2 > 1$ : $\cos\theta_2 = \sqrt{1 - \sin^2\theta_2}$ devient imaginaire pur, $i\sqrt{\sin^2\theta_2 - 1}$, avec le signe qui fait décroître le champ dans le milieu 2 (convention $e^{-i\omega t}$). L'impédance normale du milieu 2 est alors purement réactive, et $|R| = 1$ : la réflexion est totale, avec un déphasage.
+
+</Step>
+<Step title="Angle d'intromission">
+
+Pour certaines combinaisons de densités et de célérités, il existe un angle où $Z_2/\cos\theta_2 = Z_1/\cos\theta_1$ : la réflexion s'annule, toute l'énergie passe. Cherchez-le dans la figure avec un second milieu plus dense et plus lent.
+
+</Step>
+</Derivation>
+
+<Insight>
+
+La loi de Snell n'est pas une règle de géométrie : c'est un accord de nombres d'onde. Les deux côtés de l'interface doivent vibrer avec la même trace. Ce même accord reviendra deux fois : quand une onde de flexion d'une vitre a la même trace qu'une onde acoustique (la fréquence de coïncidence, chapitre 8), et quand une source plus rapide que le son impose sa trace au fluide (le cône de Mach, chapitre 5).
+
+</Insight>
+
+<Advanced title="Pour le lecteur avancé : l'onde évanescente ne transporte rien, en moyenne">
+
+Au-delà de l'angle critique, la pression évanescente et la vitesse normale sont en quadrature : l'intensité normale moyenne est nulle, l'énergie fait des allers-retours à travers l'interface sans la franchir. Si un troisième milieu est placé à une distance comparable à la longueur de décroissance, l'onde évanescente l'atteint et y redevient propagative : c'est la réflexion totale frustrée, analogue acoustique de l'effet tunnel.
+
+</Advanced>
+
+## Impédance de surface et ondes stationnaires
+
+Une paroi quelconque (un mur, une moquette, un panneau perforé) se résume, pour l'onde qui la frappe, à son <G id="impedance-surface">impédance de surface</G> $Z_s = p/v_n$. À incidence normale, la formule de l'interface s'applique avec $Z_s$ à la place de $Z_2$ :
+
+$$
+R = \frac{Z_s - \rho_0 c_0}{Z_s + \rho_0 c_0}, \qquad \alpha = 1 - |R|^2,
+$$
+
+où $\alpha$ est le <G id="absorption">coefficient d'absorption</G>. En général $Z_s$ est complexe : sa partie réelle (résistance) dissipe, sa partie imaginaire (réactance) stocke et rend l'énergie.
+
+Devant la paroi, ondes incidente et réfléchie forment une onde partiellement stationnaire. Un microphone que l'on déplace lit une enveloppe qui oscille entre $1 + |R|$ et $1 - |R|$ : leur rapport donne $|R|$, la position des minima donne la phase de $R$. C'est ainsi qu'on mesure l'absorption dans un tube d'impédance <Cite k="iso10534" />.
+
+<StandingWave client:visible number="2.3" title="Devant une paroi absorbante" alt="Pression instantanée et enveloppe de l'onde stationnaire devant une paroi située à droite ; l'écart entre maxima et minima de l'enveloppe diminue quand la paroi absorbe davantage." />
+
+<LiveEquation client:visible scene="2-standing" tex={String.raw`\frac{Z_s}{\rho_0 c_0} = \term{res}{\zeta'} + i\,\term{reac}{\zeta''}, \qquad \alpha = 1 - \left|\frac{Z_s - \rho_0c_0}{Z_s + \rho_0c_0}\right|^2 = \val{alpha}, \qquad \frac{|P|_{\max}}{|P|_{\min}} = \val{swr}`} number="2.2" label="Impédance de surface, absorption et taux d'ondes stationnaires" />
+
+<Misconception>
+
+« Une paroi souple, qui cède sous la pression, absorbe le son. » Réglez la résistance $\zeta'$ au minimum et faites varier la réactance $\zeta''$ : les minima se déplacent, l'enveloppe change de forme, mais elle revient toujours à zéro aux minima, et $\alpha$ reste presque nul. Une paroi qui cède élastiquement, comme un ressort ou une masse, rend toute l'énergie qu'elle reçoit. Pour absorber, il faut une **résistance** : un frottement qui transforme l'énergie acoustique en chaleur. L'absorption maximale, $\alpha = 1$, est atteinte pour $Z_s = \rho_0 c_0$ exactement.
+
+</Misconception>
+
+## Comment absorber : de la résistance là où l'air bouge
+
+Placez un écran résistif mince (un tissu, une toile, une tôle microperforée) devant un mur rigide. Il dissipe de l'énergie quand l'air le **traverse** : sa résistance $r$ relie la chute de pression à la vitesse qui le franchit. Encore faut-il que l'air bouge à l'endroit où il se trouve. Contre le mur, la vitesse est nulle ; elle est maximale à un quart de longueur d'onde.
+
+<LiveEquation client:visible scene="2-absorber" tex={String.raw`Z_s = \term{r}{r} + \term{gap}{i\,\rho_0 c_0 \cot(kd)}, \qquad \alpha\!\left(d = \tfrac{\lambda}{4}\right) = \val{alphaq}`} toggles number="2.3" label="Impédance d'un écran résistif placé à la distance d d'un mur rigide" />
+
+La lame d'air de profondeur $d$ entre l'écran et le mur ajoute la réactance $i\rho_0c_0\cot(kd)$ : un ressort à basse fréquence, une masse au-dessus de $d = \lambda/4$, nulle exactement à $\lambda/4$. Coupez ce terme dans l'équation : l'absorption devient indépendante de la fréquence, ce que le dispositif réel ne fait jamais. Coupez la résistance : plus rien n'est absorbé, à aucune fréquence.
+
+<AbsorberCurve client:visible number="2.4" title="Absorption d'un écran ou d'une couche poreuse" alt="Coefficient d'absorption en fonction de la fréquence, sur une échelle logarithmique, pour un écran résistif ou une couche poreuse placés devant un mur rigide ; les lignes verticales marquent les fréquences où la distance d vaut un quart, trois quarts et cinq quarts de longueur d'onde." />
+
+Avec un écran de résistance $\rho_0c_0$, l'absorption est totale quand $d = \lambda/4$, puis s'effondre quand $d = \lambda/2$, où l'écran se retrouve à un nœud de vitesse. Basculez sur la couche poreuse : une laine minérale de même épaisseur se comporte comme une infinité d'écrans répartis dans l'épaisseur. Le frottement visqueux dans les pores, réglé par la <G id="resistivite">résistivité au passage de l'air</G> $\sigma$, et les échanges de chaleur avec les fibres (le passage de l'adiabatique à l'isotherme du chapitre 1a) dissipent l'énergie. Le modèle utilisé est le modèle empirique de Delany et Bazley <Cite k="delany" />.
+
+<Misconception>
+
+« Une mousse de quelques centimètres collée au mur traite les basses. » Basculez sur la couche poreuse et réglez $d$ sur 3 cm : l'absorption ne dépasse 0,5 qu'au-dessus de 800 Hz environ. À 100 Hz, un quart de longueur d'onde fait 86 cm. Collé au mur, le matériau est là où l'air ne bouge presque pas. Pour absorber les basses, il faut de l'épaisseur, ou une lame d'air derrière le matériau, ou d'autres mécanismes : résonateurs et membranes (chapitre 3).
+
+</Misconception>
+
+<ModelLimits>
+
+- **Incidence normale et réaction localisée.** Les courbes supposent une onde qui arrive perpendiculairement et une paroi à <G id="reaction-localisee">réaction localisée</G>. Une couche poreuse épaisse peut propager l'onde parallèlement à sa surface (réaction étendue) : son absorption dépend alors de l'angle autrement que par $\cos\theta$.
+- **Modèle de Delany-Bazley.** C'est un ajustement empirique sur des matériaux fibreux, valable pour $0{,}01 < \rho_0 f/\sigma < 1$. {/* TODO-VERIFY: domaine de validité exact. */} Hors de ce domaine, le modèle peut même prédire une absorption légèrement négative, ce qui est physiquement impossible : la figure trace ces portions en tirets. Pour les mousses ou matériaux granulaires, on utilise des modèles physiques (Johnson-Champoux-Allard) <Cite k="allard" />.
+- **Squelette immobile.** On néglige la vibration des fibres elles-mêmes, ce qui est raisonnable pour un matériau lourd et rigide mais pas pour une mousse légère à basse fréquence.
+
+</ModelLimits>
+
+## Monde réel
+
+<RealWorld title="Le plongeur et le cône de 13°">
+
+De l'air vers l'eau, $\tau \approx 1{,}1 \times 10^{-3}$ : le son perd environ 30 dB en traversant la surface, quelle que soit sa fréquence (calcul avec $\rho_0c_0 = 413$ et $1{,}48 \times 10^6$ Pa·s/m). L'incidence oblique aggrave les choses : l'eau étant plus rapide que l'air, l'angle critique vaut $\arcsin(343/1482) \approx 13°$. Seul le son qui frappe la surface dans un cône de 13° autour de la verticale peut pénétrer dans l'eau ; tout le reste est entièrement réfléchi. Inversement, un son émis sous l'eau ne sort dans l'air que s'il atteint la surface dans ce même cône.
+
+</RealWorld>
+
+<RealWorld title="Pourquoi le gel d'échographie">
+
+Les tissus mous ont une impédance proche de celle de l'eau.{/* TODO-VERIFY: impédance des tissus mous ≈ 1,5 à 1,7 MRayl. */} Entre la sonde et la peau, la moindre couche d'air est une interface doublement désadaptée. La figure ci-dessous calcule la transmission d'énergie à travers une lame d'air prise entre deux milieux d'impédance de l'eau, pour une sonde de quelques mégahertz.{/* TODO-VERIFY: gamme typique des fréquences d'échographie, 2 à 15 MHz. */}
+
+<GapTransmission client:visible number="2.5" title="Une lame d'air entre la sonde et la peau" alt="Énergie transmise en décibels en fonction de l'épaisseur d'une lame d'air, de 1 nanomètre à 10 micromètres : la transmission chute très vite au-delà de quelques nanomètres." />
+
+Une lame d'air d'un micromètre fait perdre environ 44 dB à 5 MHz (calcul), et l'écho doit la traverser deux fois. Le gel remplace l'air par un milieu d'impédance voisine de celle des tissus : l'interface disparaît, acoustiquement parlant. La lame d'air se comporte d'ailleurs comme un ressort très mou entre deux masses : c'est le même mécanisme que la lame d'air de l'écran résistif, à une tout autre échelle.
+
+</RealWorld>
+
+<RealWorld title="Les dièdres des chambres anéchoïques">
+
+Les parois d'une chambre anéchoïque sont couvertes de dièdres en matériau poreux. Leur forme effilée fait passer progressivement l'impédance de celle de l'air à celle du matériau : il n'y a plus d'interface brutale qui réfléchirait l'onde, celle-ci s'enfonce et se dissipe. Pour que cette transition soit progressive à l'échelle de l'onde, les dièdres doivent être comparables au quart de la longueur d'onde à la plus basse fréquence traitée, ce qui fixe leur longueur, souvent près d'un mètre.{/* TODO-VERIFY: règle « longueur des dièdres ≈ λ/4 à la fréquence de coupure basse » et longueurs typiques. */}
+
+</RealWorld>
+
+## Vérification
+
+<Quiz kind="numeric" answer={0.75} tolerance={0.01}>
+<Fragment slot="question">Une paroi a une impédance de surface purement résistive $Z_s = 3\rho_0c_0$. Quel est son coefficient d'absorption à incidence normale&nbsp;?</Fragment>
+<Fragment slot="explanation">$R = (3 - 1)/(3 + 1) = 0{,}5$, donc $\alpha = 1 - 0{,}25 = 0{,}75$. Trop de résistance réfléchit autant qu'une paroi trop peu résistante : l'optimum est $Z_s = \rho_0c_0$.</Fragment>
+</Quiz>
+
+<Quiz kind="choice" answer="b">
+<Fragment slot="question">Un sonar émet une impulsion de surpression vers la surface de la mer, depuis l'eau. Que revient-il vers lui&nbsp;?</Fragment>
+<Fragment slot="a">Une surpression presque intacte : l'air est très différent de l'eau.</Fragment>
+<Fragment slot="b">Une dépression d'amplitude presque égale : l'air se comporte comme une surface libre.</Fragment>
+<Fragment slot="c">Presque rien : l'énergie passe dans l'air.</Fragment>
+<Fragment slot="explanation">De l'eau vers l'air, $Z_2 \ll Z_1$ et $R \approx -1$ : la réflexion est presque totale et inversée. L'air ne peut pas opposer de pression à l'eau qui le pousse : c'est une surface libre. L'énergie transmise est la même fraction minuscule que dans l'autre sens.</Fragment>
+</Quiz>
+
+<Quiz kind="numeric" answer={19.9} tolerance={0.02} unit="°">
+<Fragment slot="question">Un film infiniment mince sépare de l'air (343 m/s) d'un volume d'hélium (1 007 m/s), à 20 °C. Au-delà de quel angle d'incidence, en degrés, le son venant de l'air est-il totalement réfléchi&nbsp;?</Fragment>
+<Fragment slot="explanation">$\sin\theta_c = c_1/c_2 = 343/1007 \approx 0{,}34$, d'où $\theta_c \approx 19{,}9°$. Au-delà, la trace le long de l'interface est plus lente que le son dans l'hélium : aucune onde ne peut s'y propager avec cette trace.</Fragment>
+</Quiz>
+
+<Quiz kind="numeric" answer={0.86} tolerance={0.03} unit="m">
+<Fragment slot="question">À quelle distance d'un mur faut-il placer un écran résistif pour qu'il absorbe au mieux à 100 Hz&nbsp;?</Fragment>
+<Fragment slot="explanation">Au quart de la longueur d'onde, là où la vitesse de l'air est maximale : $\lambda/4 = 343/(4 \times 100) \approx 0{,}86$ m. C'est la raison pour laquelle traiter les basses fréquences demande de la profondeur.</Fragment>
+</Quiz>
+
+<Quiz kind="choice" answer="c">
+<Fragment slot="question">Une paroi a une impédance de surface purement imaginaire (une masse, ou un ressort). Que vaut son coefficient d'absorption&nbsp;?</Fragment>
+<Fragment slot="a">Il dépend de la fréquence et peut atteindre 1 à la résonance.</Fragment>
+<Fragment slot="b">0,5 en moyenne.</Fragment>
+<Fragment slot="c">Zéro, à toutes les fréquences.</Fragment>
+<Fragment slot="explanation">Avec $Z_s = iX$, $|R| = |iX - \rho_0c_0|/|iX + \rho_0c_0| = 1$ exactement. Une masse ou un ressort idéal stocke l'énergie et la rend. La réponse A décrit un résonateur qui contient aussi une résistance : c'est elle, et elle seule, qui absorbe.</Fragment>
+</Quiz>
+
+## Pour aller plus loin
+
+- **Matériaux poreux.** Le modèle de Johnson-Champoux-Allard décrit le fluide équivalent à partir de paramètres physiques (porosité, tortuosité, longueurs caractéristiques visqueuse et thermique), et la théorie de Biot ajoute la vibration du squelette <Cite k="allard" />.
+- **Couches d'adaptation.** Une couche d'épaisseur $\lambda/4$ et d'impédance $\sqrt{Z_1Z_2}$ supprime la réflexion entre deux milieux à sa fréquence de conception : c'est le principe des couches d'adaptation des sondes ultrasonores et des traitements antireflet.
+- **Solides et parois.** Entre un fluide et un solide, l'onde peut se convertir en onde de cisaillement ; une paroi mince réagit comme une masse et transmet selon la loi de masse (chapitre 8).
+- **Références.** Kinsler et al. <Cite k="kinsler" /> pour les coefficients de réflexion ; Pierce <Cite k="pierce" /> pour l'incidence oblique et les ondes évanescentes.
