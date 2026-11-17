@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Carte du cours — Direction A</title>
+<link rel="stylesheet" href="../../../node_modules/katex/dist/katex.min.css" />
+<link rel="stylesheet" href="../shared/fonts.css" />
+<link rel="stylesheet" href="../shared/palette.css" />
+<link rel="stylesheet" href="../shared/base.css" />
+<link rel="stylesheet" href="a.css" />
+<style>
+  .map .narrow { display: none; }
+  @media (max-width: 760px) { .map .wide { display: none; } .map .narrow { display: block; } }
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="bar">
+    <a class="wordmark" href="accueil.html"><span data-icon="mark"></span>Cours d'acoustique</a>
+    <nav aria-label="Navigation principale"><a href="carte.html" aria-current="page">Carte du cours</a><a href="#">Notations</a><a href="#">Glossaire</a></nav>
+    <button class="icon-btn" data-icon="theme" data-theme-toggle aria-label="Changer de thème"></button>
+  </div>
+  <div class="ruler"></div>
+</header>
+<main class="map-page">
+  <section class="map-wrap">
+    <h1>Carte du cours</h1>
+    <p class="sub">Chaque lien est un prérequis. Choisissez un chapitre pour voir le chemin qui y mène.</p>
+    <div class="map"><svg class="wide" id="map" role="img" aria-label="Graphe des prérequis entre chapitres"></svg><svg class="narrow" id="map-m" role="img" aria-label="Graphe des prérequis entre chapitres"></svg></div>
+  </section>
+  <aside class="map-side">
+    <div style="color:var(--color-ink-muted)">Chapitre 4</div>
+    <h2>Rayonnement</h2>
+    <p style="font-family:var(--font-serif);margin:0 0 var(--space-4)">Monopôle, dipôle, piston bafflé, champ proche et champ lointain, intégrale de Kirchhoff-Helmholtz.</p>
+    <div><b>Il vous reste 5 étapes</b>, dans cet ordre&nbsp;:</div>
+    <ol>
+      <li><span class="n">1a</span><span>Équation des ondes et célérité <span style="color:var(--color-ink-muted)">(en cours)</span></span></li>
+      <li><span class="n">0.1</span><span>Nombres complexes et phaseurs</span></li>
+      <li><span class="n">1b</span><span>Impédance, énergie, niveaux</span></li>
+      <li><span class="n">0.5</span><span>Fonctions spéciales</span></li>
+      <li><span class="n">0.6</span><span>Fonctions de Green</span></li>
+    </ol>
+    <a class="btn" href="chapitre.html">Reprendre le chapitre 1a</a>
+    <div class="states">
+      <span><svg width="16" height="16"><circle cx="8" cy="8" r="6" fill="var(--color-ink)"/></svg>vu</span>
+      <span><svg width="16" height="16"><circle cx="8" cy="8" r="7" fill="none" stroke="var(--color-ink)" stroke-width="1.5"/><circle cx="8" cy="8" r="3.5" fill="var(--color-ink)"/></svg>en cours</span>
+      <span><svg width="16" height="16"><circle cx="8" cy="8" r="6" fill="none" stroke="var(--color-ink)" stroke-width="1.5"/></svg>accessible</span>
+      <span><svg width="16" height="16"><circle cx="8" cy="8" r="6" fill="none" stroke="var(--color-ink-muted)" stroke-width="1.5" stroke-dasharray="2 2.5"/></svg>prérequis manquants</span>
+      <span style="color:var(--color-ink-muted)">Progression enregistrée sur cet appareil uniquement.</span>
+    </div>
+  </aside>
+</main>
+<script src="../../../node_modules/katex/dist/katex.min.js"></script>
+<script src="../shared/luts.js"></script>
+<script src="../shared/mock.js"></script>
+<script src="../shared/map.js"></script>
+<script src="../shared/icons.js"></script>
+<script>
+  document.fonts.ready.then(() => { drawLayeredMap(document.getElementById('map'), 'c4'); drawArcMap(document.getElementById('map-m'), 'c4', { width: 358, left: 96, rowH: 44, fontSize: 14 }); });
+</script>
+</body>
+</html>

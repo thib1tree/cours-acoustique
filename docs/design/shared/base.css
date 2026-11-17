@@ -1,0 +1,25 @@
+/* Tokens shared by both directions (mockups). Physical colors come from palette.css. */
+:root {
+  --font-serif: 'Source Serif 4', Georgia, serif;
+  --font-sans: 'Atkinson Hyperlegible Next', system-ui, sans-serif;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 24px;
+  --space-6: 32px; --space-7: 48px; --space-8: 64px; --space-9: 96px;
+  --dur-fast: 150ms; --dur: 200ms; --dur-slow: 250ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --touch: 44px;
+  --gutter: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--color-bg); color: var(--color-ink); }
+button, input { font: inherit; color: inherit; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 2px; }
+.num { font-variant-numeric: tabular-nums lining-nums; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.katex { font-size: 1.08em; }
+.term { border-radius: 2px; padding: 0 1px; transition: background var(--dur-fast) var(--ease); }
+.term { --q: var(--color-ink); cursor: pointer; }
+.term[data-q='p'] { --q: var(--color-pressure-pos); }
+.term[data-q='v'] { --q: var(--color-velocity); }
+.term:hover, .term-on { background: color-mix(in oklab, var(--q) 12%, transparent); box-shadow: 0 2px 0 var(--q); }

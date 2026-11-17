@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cours d'acoustique — Direction A</title>
+<link rel="stylesheet" href="../../../node_modules/katex/dist/katex.min.css" />
+<link rel="stylesheet" href="../shared/fonts.css" />
+<link rel="stylesheet" href="../shared/palette.css" />
+<link rel="stylesheet" href="../shared/base.css" />
+<link rel="stylesheet" href="a.css" />
+</head>
+<body>
+<main class="home">
+  <canvas id="field" role="img" aria-label="Champ de pression simulé en temps réel. Touchez ou cliquez pour émettre une impulsion."></canvas>
+  <div class="top">
+    <a class="wordmark" href="#"><span data-icon="mark"></span>Cours d'acoustique</a>
+    <button class="btn ghost" style="background:var(--color-bg)"><span data-icon="sound" style="width:20px;height:20px;display:inline-grid"></span>Écouter</button>
+  </div>
+  <section class="panel">
+    <h1>Faites des ondes.</h1>
+    <p>Chaque clic émet une impulsion de pression. Elle se propage, se réfléchit sur les bords et interfère avec les autres&nbsp;: vous regardez une solution de l'équation des ondes, calculée en direct.</p>
+    <div class="actions">
+      <a class="btn" href="chapitre.html">Commencer par l'équation des ondes</a>
+      <a class="btn ghost" href="carte.html">Carte du cours</a>
+    </div>
+  </section>
+  <div class="hud">
+    <div class="legend">
+      <div class="name"><span>pression <span data-tex="p"></span></span><span>unité arbitraire</span></div>
+      <div class="ramp"></div>
+      <div class="ticks num"><span>−</span><span>0</span><span>+</span></div>
+    </div>
+    <div style="color:var(--color-ink-muted)">Parois rigides. Schéma aux différences finies, nombre de Courant 0,5.</div>
+  </div>
+</main>
+<script src="../../../node_modules/katex/dist/katex.min.js"></script>
+<script src="../shared/luts.js"></script>
+<script src="../shared/mock.js"></script>
+<script src="../shared/icons.js"></script>
+<script>
+  document.fonts.ready.then(() => MOCK.hero(document.getElementById('field'), { seeds: [[0.62, 0.32, 0], [0.84, 0.62, 70], [0.42, 0.22, 130]], steps: 230 }));
+</script>
+</body>
+</html>

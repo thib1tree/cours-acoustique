@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Carte du cours — Direction B</title>
+<link rel="stylesheet" href="../../../node_modules/katex/dist/katex.min.css" />
+<link rel="stylesheet" href="../shared/fonts.css" />
+<link rel="stylesheet" href="../shared/palette.css" />
+<link rel="stylesheet" href="../shared/base.css" />
+<link rel="stylesheet" href="b.css" />
+</head>
+<body>
+<header class="site-header">
+  <a class="wordmark" href="accueil.html">Cours d'acoustique</a>
+  <nav aria-label="Navigation principale"><a href="carte.html" aria-current="page">Carte du cours</a><a href="#">Notations</a><a href="#">Glossaire</a></nav>
+  <button class="icon-btn" data-icon="theme" data-theme-toggle aria-label="Changer de thème"></button>
+</header>
+<main class="map-page">
+  <section>
+    <h1>Carte du cours</h1>
+    <p class="sub">Du haut vers le bas, chaque chapitre ne suppose que ceux qui le précèdent. Les arcs relient un chapitre à ses prérequis.</p>
+    <div class="map"><svg id="map" role="img" aria-label="Graphe des prérequis entre chapitres"></svg></div>
+  </section>
+  <aside class="map-detail">
+    <div class="ui" style="font-size:15px;color:var(--color-ink-muted)">Chapitre 4</div>
+    <h2>Rayonnement</h2>
+    <p>Monopôle, dipôle, piston bafflé, champ proche et champ lointain, intégrale de Kirchhoff-Helmholtz.</p>
+    <p class="ui" style="font-size:15px"><b>Votre chemin jusqu'ici</b>, cinq étapes&nbsp;:</p>
+    <ol class="path">
+      <li><span class="nn">1a</span><span>Équation des ondes et célérité <em style="color:var(--color-ink-muted)">en cours</em></span></li>
+      <li><span class="nn">0.1</span><span>Nombres complexes et phaseurs</span></li>
+      <li><span class="nn">1b</span><span>Impédance, énergie, niveaux</span></li>
+      <li><span class="nn">0.5</span><span>Fonctions spéciales</span></li>
+      <li><span class="nn">0.6</span><span>Fonctions de Green</span></li>
+    </ol>
+    <a class="link-btn" href="chapitre.html">Reprendre le chapitre 1a</a>
+    <div class="states">
+      <span><svg width="14" height="14"><circle cx="7" cy="7" r="5.5" fill="var(--color-ink)"/></svg>vu</span>
+      <span><svg width="18" height="18"><circle cx="9" cy="9" r="8" fill="none" stroke="var(--color-ink)" stroke-width="1.5"/><circle cx="9" cy="9" r="4" fill="var(--color-ink)"/></svg>en cours</span>
+      <span><svg width="14" height="14"><circle cx="7" cy="7" r="5.5" fill="none" stroke="var(--color-ink)" stroke-width="1.5"/></svg>accessible</span>
+      <span><svg width="14" height="14"><circle cx="7" cy="7" r="5.5" fill="none" stroke="var(--color-ink-muted)" stroke-width="1.5" stroke-dasharray="2 2.5"/></svg>prérequis manquants</span>
+    </div>
+  </aside>
+</main>
+<script src="../../../node_modules/katex/dist/katex.min.js"></script>
+<script src="../shared/luts.js"></script>
+<script src="../shared/mock.js"></script>
+<script src="../shared/map.js"></script>
+<script src="../shared/icons.js"></script>
+<script>
+  document.fonts.ready.then(() => { const svg = document.getElementById('map'); const w = svg.parentElement.clientWidth; const m = w < 500; drawArcMap(svg, 'c4', { width: w, left: m ? 70 : 150, rowH: m ? 44 : 40, fontSize: m ? 14.5 : 17, font: 'Literata, serif' }); });
+</script>
+</body>
+</html>
