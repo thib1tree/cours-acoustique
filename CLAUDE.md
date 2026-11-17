@@ -4,9 +4,8 @@ Guide opérationnel pour toute session de travail sur ce dépôt (humaine ou IA)
 Il résume le cahier des charges de l'auteur. En cas de doute : **demander à l'auteur
 plutôt que trancher seul** sur toute question pédagogique ou scientifique.
 
-> État : phase 1 (preuve de concept), plan validé (décisions : `docs/plan-phase-1.md` § 10).
+> État : phase 1 (preuve de concept) livrée pour relecture (décisions : `docs/plan-phase-1.md` § 10).
 > Plan détaillé : [`docs/plan-phase-1.md`](docs/plan-phase-1.md).
-> Les sections marquées _(à compléter)_ le seront quand la direction visuelle sera choisie.
 
 ---
 
@@ -167,8 +166,62 @@ Couleurs sémantiques (constantes dans tout le site, ajustées en mode sombre) :
   titre, émojis, illustrations génériques, numérotation décorative.
 - Seul élément « osé » : le champ d'onde vivant plein écran de l'accueil (FDTD GPU).
 
-Jetons (couleurs, typographie, espacements, rayons, durées) : _(à compléter après le
-choix de la direction visuelle)_.
+### Direction retenue : A « Instrument »
+
+La page est un appareil de mesure : graduations porteuses d'information (règle de
+progression de lecture dont les graduations sont les sections, axes gradués des figures),
+interface en Atkinson, valeurs éditables. Deux emprunts à la direction B : légendes de
+figures rédigées et intitulés d'encadrés en tête de bloc. Maquettes et comparaison :
+`docs/design/`.
+
+### Jetons (sources : `src/styles/tokens.css`, `src/lib/color/palette.ts`)
+
+- **Couleurs** : définies une seule fois dans `palette.ts` (OKLCh), générées dans
+  `src/styles/palette.css` par `pnpm gen:tokens` (un test échoue si le fichier dérive).
+  Variables : `--color-bg`, `--color-surface`, `--color-ink`, `--color-ink-muted`,
+  `--color-rule`, `--color-pressure-neg`, `--color-pressure-pos`, `--color-velocity`,
+  `--color-energy`, `--gradient-pressure`, `--gradient-energy`. Le centre de la palette de
+  pression est exactement la couleur du fond. Dans un canvas, lire les couleurs avec
+  `cssVar()` et les palettes avec `lut()` (`src/lib/viz/`), jamais en dur.
+- **Interaction** : la couleur d'interaction est l'encre. Un curseur prend la couleur de la
+  grandeur physique qu'il commande (`quantity` dans la scène), sinon l'encre.
+- **Typographie** : `--font-serif` Source Serif 4 (texte, 18 px, interligne 1,62),
+  `--font-sans` Atkinson Hyperlegible Next (titres, interface), `--font-num` = la serif
+  en chiffres tabulaires pour **toute valeur numérique** (le zéro barré de l'Atkinson se
+  lit comme Ø). Classe utilitaire `.num`. Dans un canvas, utiliser `--font-num` pour les chiffres.
+- **Mesures** : colonne `--measure` 40rem, rail `--rail` 12,25rem, marge `--margin` 15,5rem,
+  gouttière mobile 16 px, cibles `--touch` 44 px.
+- **Espacements** : `--space-1` à `--space-9` = 4, 8, 12, 16, 24, 32, 48, 64, 96 px.
+- **Formes** : `--radius` 2 px, filets 1 px, filet d'encadré 2 px (4 px pour « Le déclic »).
+  Pas d'ombre portée, pas de carte arrondie.
+- **Mouvement** : `--dur-fast` 150 ms, `--dur` 200 ms, `--dur-slow` 250 ms, `--ease`.
+
+### Composants (à assembler, ne pas recréer)
+
+- **Contenu MDX** (`src/components/content/`) : `MarginNote` (dans un paragraphe),
+  `Insight` (« Le déclic »), `Misconception` (« Intuition piège »), `ModelLimits`,
+  `Advanced`, `RealWorld`, `Prediction`, `Quiz` (choix ou valeur numérique avec tolérance),
+  `Derivation` + `Step` (dépliables, numérotées, préréglage de scène optionnel), `Bench`
+  (paillasse persistante, figure dans `slot="viz"`), `G` (terme du glossaire), `Cite`,
+  `References`.
+- **Interface** (`src/components/ui/`) : `SymbolSlider`, `LiveEquation` (macros `\term{clé}{…}`
+  et `\val{clé}`), `TermToggles`, `ViewToggle`, `ListenButton`, `Tex`.
+- **Visualisations** (`src/components/viz/`) : `VizFrame` (cadre commun : transport,
+  réinitialiser, agrandir, partager), `ColorLegend`, `Plot` (SVG générique, axes
+  log/lin), `PolarPlot`, `ScalarField2D` (WebGL2, phaseur), `WaveFieldHero` (FDTD GPU),
+  `TubeWave`, `MassSpringChain`, `PulseLab`, `StiffnessChart`, `NewtonLaplace`,
+  `HeliumVoice`, `PistonColumn`, `LevelRuler`, `ShockSteepening`, `FluidParcel`,
+  `CompressDemo`. Page de démonstration interne : `/lab/`.
+- **Scènes** (`src/scenes/`) : paramètres, termes désactivables, vues et grandeurs dérivées
+  partagés par identifiant entre îlots. Une nouvelle figure déclare d'abord sa scène.
+
+### Conventions de contenu
+
+- Dans le MDX, écrire le TeX des équations vivantes avec ``tex={String.raw`…`}`` (sinon
+  `\t`, `\f`, `\r` sont interprétés).
+- Marqueurs à vérifier dans le MDX : `{/* TODO-VERIFY: … */}` (les commentaires HTML sont
+  interdits en MDX).
+- Équations longues : les couper avec `aligned` pour qu'elles tiennent sur mobile.
 
 ## 9. Expérience et performance
 
@@ -184,7 +237,7 @@ choix de la direction visuelle)_.
   « casque recommandé » pour le binaural, déverrouillage iOS, avertissement bouton silencieux.
 - Lighthouse mobile ≥ 90 (performance et accessibilité).
 
-## 10. Commandes (prévues ; à mettre à jour après l'échafaudage)
+## 10. Commandes
 
 ```sh
 pnpm install
@@ -192,9 +245,20 @@ pnpm dev            # serveur de développement
 pnpm build          # build statique (dist/)
 pnpm preview        # sert le build
 pnpm test           # Vitest (physique + logique)
-pnpm test:e2e       # Playwright (toutes tailles d'écran)
+pnpm test:e2e       # Playwright (5 tailles d'écran), après pnpm build
+pnpm test:e2e -- --update-snapshots   # régénérer les captures de référence
 pnpm lint           # ESLint + Prettier --check + astro check
 pnpm format         # Prettier --write
+pnpm gen:tokens     # régénère src/styles/palette.css depuis palette.ts
+node scripts/design-captures.mjs      # captures des maquettes (docs/design)
+```
+
+Note : dans cet environnement, `astro preview` passe en arrière-plan s'il détecte un
+agent ; utiliser `pnpm astro preview --ignore-lock` (c'est ce que fait Playwright).
+
+```text
+Physique : chaque module de src/lib/physics a son *.test.ts (tolérance écrite dans le test).
+Solveur GPU : tests/e2e/physics-gpu.spec.ts le compare à la référence CPU.
 ```
 
 ## 11. Méthode de travail

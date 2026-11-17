@@ -7,3 +7,5 @@ test-results
 docs/design
 *.mdx
 src/styles/palette.css
+dist-lhci
+lhci-report

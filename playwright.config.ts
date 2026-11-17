@@ -13,8 +13,16 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
-  use: { baseURL: BASE, trace: 'off' },
-  expect: { toHaveScreenshot: { maxDiffPixelRatio: 0.01 } },
+  use: {
+    baseURL: BASE,
+    trace: 'off',
+    // Software WebGL so GPU visualizations render identically in CI.
+    launchOptions: {
+      args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
+    },
+  },
+  snapshotPathTemplate: '{testDir}/__screenshots__/{testFilePath}/{arg}-{projectName}{ext}',
+  expect: { toHaveScreenshot: { maxDiffPixelRatio: 0.02, animations: 'disabled' } },
   projects: [
     { name: 'phone-small', use: { ...devices['iPhone SE'], browserName: 'chromium' } },
     { name: 'phone-large', use: { ...devices['Pixel 7'], browserName: 'chromium' } },

@@ -38,6 +38,7 @@ const fullTitle = title === t('site.title') ? title : `${title} | ${t('site.titl
     <meta name="color-scheme" content="light dark" />
     <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
     <link rel="manifest" href={`${base}manifest.webmanifest`} />
+    <link rel="apple-touch-icon" href={`${base}icons/apple-touch-icon.png`} />
     <meta name="theme-color" content="#F6F7F9" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0B111E" media="(prefers-color-scheme: dark)" />
     <script is:inline>
@@ -55,6 +56,46 @@ const fullTitle = title === t('site.title') ? title : `${title} | ${t('site.titl
     </a>
     {!bare && <SiteHeader ruler={ruler} {...(current ? { current } : {})} />}
     <slot />
+    <script>
+      // Equations wider than the screen scroll horizontally inside their box: make
+      // only those focusable so keyboard users can scroll them (WCAG 2.1.1).
+      const markScrollable = () => {
+        for (const el of document.querySelectorAll<HTMLElement>(
+          '.katex-display, figure.eq .display, .prose table',
+        )) {
+          const scrollable = el.scrollWidth > el.clientWidth + 1;
+          if (scrollable && !el.dataset.scrollable) {
+            el.dataset.scrollable = '1';
+            el.tabIndex = 0;
+            el.setAttribute('role', 'group');
+            el.setAttribute(
+              'aria-label',
+              el.tagName === 'TABLE'
+                ? 'Tableau (défilement horizontal)'
+                : 'Équation (défilement horizontal)',
+            );
+          } else if (!scrollable && el.dataset.scrollable) {
+            delete el.dataset.scrollable;
+            el.removeAttribute('tabindex');
+            el.removeAttribute('role');
+            el.removeAttribute('aria-label');
+          }
+        }
+      };
+      addEventListener('load', markScrollable);
+      addEventListener('resize', markScrollable);
+      new MutationObserver(() => requestAnimationFrame(markScrollable)).observe(document.body, {
+        subtree: true,
+        childList: true,
+      });
+    </script>
+    <script is:inline define:vars={{ base }}>
+      if ('serviceWorker' in navigator && location.protocol === 'https:') {
+        addEventListener('load', () =>
+          navigator.serviceWorker.register(`${base}sw.js`, { scope: base }),
+        );
+      }
+    </script>
   </body>
 </html>
 

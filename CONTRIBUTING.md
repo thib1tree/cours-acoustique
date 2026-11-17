@@ -37,15 +37,26 @@ loin) est décrite dans `CLAUDE.md` § 3.
 - Commits au format [Conventional Commits](https://www.conventionalcommits.org/fr/)
   (`feat(viz): …`, `fix(physics): …`, `docs(content): …`).
 
+## Écrire dans le MDX
+
+- Les équations statiques s'écrivent en LaTeX entre `$…$` ou `$$…$$` (rendu KaTeX au build).
+  Coupez les équations longues avec `\begin{aligned}` pour qu'elles tiennent sur un téléphone.
+- Les équations vivantes utilisent `<LiveEquation scene="…" tex={String.raw`…`} />` avec
+  les macros `\term{clé}{…}` (terme relié à la figure) et `\val{clé}` (valeur en direct).
+- Les commentaires HTML sont interdits en MDX : écrivez `{/* TODO-VERIFY: … */}`.
+- Une note en marge s'écrit dans le paragraphe : `texte<MarginNote n="1">note</MarginNote> suite`.
+
 ## Ajouter un chapitre
 
-1. Créez `src/content/chapitres/NN-slug/index.mdx` avec les métadonnées obligatoires :
-   `title`, `summary`, `number`, `level`, `duration`, `keyConcepts`, `prerequisites`
-   (le build échoue si l'une manque).
-2. Assemblez des composants existants de `src/components/` ; si une brique manque,
-   rendez-la générique avant de l'ajouter.
-3. Placez les formules et solveurs dans `src/lib/physics/` avec leurs tests.
-4. Vérifiez en local : `pnpm lint && pnpm test && pnpm build && pnpm test:e2e`.
+1. Déclarez le chapitre et ses prérequis dans `src/content/curriculum.ts` (la carte du
+   cours en est tirée), puis créez `src/content/chapitres/NN-slug/index.mdx` avec les
+   métadonnées obligatoires : `curriculumId`, `title`, `summary`, `number`, `level`,
+   `duration`, `keyConcepts`, `prerequisites`, `references` (le build échoue si l'une manque).
+2. Déclarez les scènes interactives dans `src/scenes/`.
+3. Assemblez des composants existants de `src/components/` (catalogue dans `CLAUDE.md` § 8) ;
+   si une brique manque, rendez-la générique avant de l'ajouter.
+4. Placez les formules et solveurs dans `src/lib/physics/` avec leurs tests.
+5. Vérifiez en local : `pnpm lint && pnpm test && pnpm build && pnpm test:e2e`.
 
 ## Relecture scientifique
 

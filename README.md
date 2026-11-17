@@ -8,7 +8,11 @@ retard de phase, où va l'énergie) jusqu'à ce que l'équation devienne éviden
 Public : étudiants de L3 et master en physique, mécanique ou ingénierie, ingénieurs,
 chercheurs d'autres domaines. Ce n'est pas de la vulgarisation.
 
-**Site** : https://thib1tree.github.io/cours-acoustique/ (en construction, phase 1)
+**Site** : https://thib1tree.github.io/cours-acoustique/
+
+État : phase 1, preuve de concept. Disponible : la page de prérequis « Rappels de
+mécanique des fluides » et le chapitre 1 (« Équation des ondes et célérité », « Impédance,
+énergie, niveaux »). La carte du cours montre le reste du programme.
 
 ## Principes
 
@@ -28,8 +32,19 @@ Prérequis : Node.js ≥ 22 et pnpm 10.
 pnpm install
 pnpm dev          # http://localhost:4321/cours-acoustique/
 pnpm test         # tests physiques (Vitest)
-pnpm test:e2e     # tests de bout en bout (Playwright), après pnpm build
+pnpm build && pnpm test:e2e   # tests de bout en bout (Playwright, 5 tailles d'écran)
 pnpm lint
+```
+
+## Organisation
+
+```
+src/lib/physics/     formules et solveurs, chacun testé contre une solution analytique
+src/lib/audio/       moteur audio (limiteur, volume bas, déverrouillage iOS)
+src/lib/scene/       état partagé des visualisations, encodé dans l'URL
+src/components/      visualisations (Svelte), interface, blocs de contenu
+src/content/         chapitres en MDX, curriculum, glossaire, notations
+docs/                plan de la phase 1, directions visuelles
 ```
 
 ## Technologies

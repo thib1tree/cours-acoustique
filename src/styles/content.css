@@ -518,3 +518,26 @@
     padding: 0 var(--gutter);
   }
 }
+
+/* Tables: scroll inside their own box on narrow screens, never the page. */
+.prose table,
+.realworld table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 1rem;
+  margin: var(--space-4) 0 var(--space-5);
+}
+.prose th,
+.prose td {
+  text-align: left;
+  padding: var(--space-2) var(--space-3) var(--space-2) 0;
+  border-bottom: 1px solid var(--color-rule);
+  vertical-align: top;
+}
+.prose th {
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
+  border-bottom-color: var(--color-ink);
+}
