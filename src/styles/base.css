@@ -1,0 +1,100 @@
+@import './palette.css';
+@import './tokens.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--header-h) + var(--space-4));
+}
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-serif);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+}
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-sans);
+  font-weight: 650;
+  line-height: var(--leading-tight);
+  text-wrap: balance;
+}
+h1 {
+  font-size: var(--text-h1);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+h2 {
+  font-size: var(--text-h2);
+  margin: var(--space-8) 0 var(--space-4);
+}
+h3 {
+  font-size: var(--text-h3);
+  margin: var(--space-6) 0 var(--space-3);
+}
+p {
+  margin: 0 0 var(--space-4);
+}
+a {
+  color: inherit;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+a:hover {
+  text-decoration-thickness: 2px;
+}
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+img,
+svg,
+canvas {
+  max-width: 100%;
+}
+.num {
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.ui {
+  font-family: var(--font-sans);
+}
+.muted {
+  color: var(--color-ink-muted);
+}
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.katex {
+  font-size: 1.05em;
+}
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: var(--space-1) 0;
+}
+::selection {
+  background: color-mix(in oklab, var(--color-ink) 18%, transparent);
+}

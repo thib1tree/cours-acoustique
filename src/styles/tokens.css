@@ -1,0 +1,70 @@
+/*
+ * Design tokens, direction A « Instrument » (see docs/design/README.md).
+ * Physical colors live in palette.css (generated); everything else is here.
+ */
+:root {
+  /* Typography */
+  --font-serif: 'Source Serif 4 Variable', 'Source Serif 4', Georgia, serif;
+  --font-sans:
+    'Atkinson Hyperlegible Next Variable', 'Atkinson Hyperlegible Next', system-ui, sans-serif;
+  /* Numbers that change live use the serif's tabular figures: the sans has a slashed
+     zero that reads like Ø (diameter, empty set). */
+  --font-num: var(--font-serif);
+
+  --text-body: 1.125rem; /* 18 px */
+  --text-lede: 1.3125rem; /* 21 px */
+  --text-small: 0.875rem; /* 14 px, UI and margin notes */
+  --text-ui: 0.9375rem; /* 15 px */
+  --text-h1: 2.625rem; /* 42 px */
+  --text-h2: 1.625rem; /* 26 px */
+  --text-h3: 1.1875rem; /* 19 px */
+  --leading-body: 1.62;
+  --leading-tight: 1.2;
+
+  /* Layout */
+  --measure: 40rem; /* 640 px ≈ 68 characters of Source Serif 4 at 18 px */
+  --rail: 12.25rem;
+  --margin: 15.5rem;
+  --gutter: 16px;
+  --header-h: 56px;
+
+  /* Spacing scale (4 px base) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+
+  /* Shape */
+  --radius: 2px;
+  --rule-w: 1px;
+  --box-rule-w: 2px;
+  --touch: 44px;
+
+  /* Motion: physics and responses to actions only */
+  --dur-fast: 150ms;
+  --dur: 200ms;
+  --dur-slow: 250ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+}
+
+@media (max-width: 760px) {
+  :root {
+    --text-body: 1.0625rem; /* 17 px */
+    --text-lede: 1.1875rem;
+    --text-h1: 2rem;
+    --text-h2: 1.4375rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur: 0ms;
+    --dur-slow: 0ms;
+  }
+}
