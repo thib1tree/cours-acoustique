@@ -12,8 +12,8 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   // Baselines are produced by CI (.github/workflows/update-snapshots.yml): font
-  // antialiasing differs between machines. A missing baseline is written, not failed.
-  updateSnapshots: 'missing',
+  // antialiasing differs between machines. Visual tests skip until baselines exist.
+  updateSnapshots: 'none',
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
   use: {

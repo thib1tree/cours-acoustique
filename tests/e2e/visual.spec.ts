@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 
 // Visual regression on the first screen of key pages, light and dark. Animations are
@@ -12,7 +13,12 @@ const SHOTS = [
 
 for (const theme of ['light', 'dark'] as const) {
   for (const s of SHOTS) {
-    test(`${s.name} (${theme})`, async ({ page }) => {
+    test(`${s.name} (${theme})`, async ({ page }, info) => {
+      const baseline = info.snapshotPath(`${s.name}-${theme}.png`);
+      test.skip(
+        !existsSync(baseline) && info.config.updateSnapshots === 'none',
+        'no baseline yet: run the "Update visual baselines" workflow',
+      );
       await page.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
       await page.goto(s.path);
       await page.evaluate(() => document.fonts.ready);

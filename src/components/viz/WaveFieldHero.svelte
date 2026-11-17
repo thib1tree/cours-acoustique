@@ -168,9 +168,12 @@
         const idle = window.requestIdleCallback ?? ((cb: () => void) => setTimeout(cb, 30));
         const chunk = () => {
           stepWithOpening(sim ? 4 : 10);
-          draw();
+          if (clock % 50 === 0) draw();
           if (clock < 260) idle(chunk);
-          else canvas.dataset.ready = 'true';
+          else {
+            draw();
+            canvas.dataset.ready = 'true';
+          }
         };
         draw();
         idle(chunk);

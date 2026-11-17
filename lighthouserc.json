@@ -7,7 +7,7 @@
         "http://localhost/cours-acoustique/chapitres/01a-equation-des-ondes/",
         "http://localhost/cours-acoustique/carte/"
       ],
-      "numberOfRuns": 1,
+      "numberOfRuns": 3,
       "settings": {
         "formFactor": "mobile",
         "screenEmulation": {
