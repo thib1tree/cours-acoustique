@@ -1,0 +1,23 @@
+name: Erreur scientifique
+description: Une formule, une valeur, une explication ou une simulation incorrecte.
+labels: ['science']
+body:
+  - type: input
+    id: page
+    attributes:
+      label: Page concernée
+      placeholder: URL ou chemin du fichier
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Ce qui est faux
+      description: Citez le passage et expliquez le problème.
+    validations:
+      required: true
+  - type: textarea
+    id: reference
+    attributes:
+      label: Référence
+      description: Ouvrage, article ou calcul qui appuie la correction (avec page si possible).

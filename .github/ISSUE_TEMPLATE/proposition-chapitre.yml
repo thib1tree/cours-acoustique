@@ -1,0 +1,20 @@
+name: Proposition de chapitre ou de visualisation
+description: Proposer un chapitre, une section ou une visualisation.
+labels: ['contenu']
+body:
+  - type: textarea
+    id: declics
+    attributes:
+      label: Déclics visés
+      description: Pour chaque déclic, la phrase-clé et la visualisation qui le provoque.
+    validations:
+      required: true
+  - type: textarea
+    id: misconception
+    attributes:
+      label: Intuition piège
+      description: La fausse intuition que le chapitre met à l'épreuve.
+  - type: textarea
+    id: realworld
+    attributes:
+      label: Exemples « monde réel » et sources

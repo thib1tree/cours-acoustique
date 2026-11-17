@@ -6,7 +6,7 @@ plutôt que trancher seul** sur toute question pédagogique ou scientifique.
 
 > État : phase 1 (preuve de concept), plan validé (décisions : `docs/plan-phase-1.md` § 10).
 > Plan détaillé : [`docs/plan-phase-1.md`](docs/plan-phase-1.md).
-> Les sections marquées *(à compléter)* le seront quand la direction visuelle sera choisie.
+> Les sections marquées _(à compléter)_ le seront quand la direction visuelle sera choisie.
 
 ---
 
@@ -15,7 +15,7 @@ plutôt que trancher seul** sur toute question pédagogique ou scientifique.
 Un cours d'acoustique **open source** de niveau master et au-delà, dont la valeur
 ajoutée est l'**interactivité** : pour chaque notion, le lecteur manipule, voit et
 entend. Le texte guide l'expérimentation, jamais l'inverse. Ce n'est **pas** de la
-vulgarisation : on explique *pourquoi* et *comment*, jusqu'au mécanisme physique.
+vulgarisation : on explique _pourquoi_ et _comment_, jusqu'au mécanisme physique.
 
 Rôles : l'auteur (master en acoustique) est relecteur scientifique et décideur.
 Claude est ingénieur principal (architecture, code, visualisations) et co-rédacteur ;
@@ -57,6 +57,7 @@ Métadonnées obligatoires (frontmatter) : `prerequisites`, `duration`, `level`
 (`L3` | `M1` | `M2` | `beyond`), `keyConcepts`.
 
 Deux niveaux de visualisation :
+
 - **Schéma** : un seul mécanisme, 1 à 3 curseurs reliés à un symbole, couleurs
   sémantiques, équations vivantes. Le lecteur doit pouvoir prédire avant de bouger.
 - **Monde réel** : cas concrets avec ordres de grandeur réels **sourcés**.
@@ -74,8 +75,8 @@ Le son est une troisième dimension : l'entendre dès que c'est pertinent.
 - Le fichier [`src/content/notations.md`](src/content/notations.md) **fait foi** ;
   il donne aussi la correspondance avec Bruneau et Pierce.
 - Chaque dérivation énonce ses hypothèses (linéarité, fluide parfait, petites perturbations…).
-- Références de niveau et de notation : **Bruneau** (*Manuel d'acoustique fondamentale*)
-  et **Pierce** (*Acoustics*). Nous n'avons pas ces livres : **jamais** de numéro de
+- Références de niveau et de notation : **Bruneau** (_Manuel d'acoustique fondamentale_)
+  et **Pierce** (_Acoustics_). Nous n'avons pas ces livres : **jamais** de numéro de
   page, d'équation ou de section sans marqueur `TODO-VERIFY`.
 
 ## 5. Garde-fous non négociables
@@ -119,6 +120,7 @@ tests/
 ```
 
 Règles :
+
 - `lib/physics` n'importe **jamais** le DOM ni Svelte.
 - Un nouveau chapitre doit **assembler des briques existantes** ; une brique créée pour un
   chapitre est rendue générique avant d'être fusionnée.
@@ -141,14 +143,14 @@ couleur. Chaque trait, chaque couleur, chaque animation porte une information.
 
 Couleurs sémantiques (constantes dans tout le site, ajustées en mode sombre) :
 
-| Grandeur | Rôle | Point de départ |
-|---|---|---|
-| p < 0 (raréfaction) | pôle bas de la palette divergente | cobalt `#2F5BD3` |
-| p > 0 (compression) | pôle haut de la palette divergente | carmin `#C0265E` |
-| vitesse particulaire | courbes, vecteurs | sarcelle `#0E8A7E` |
-| énergie, intensité | palette séquentielle, flux | ambre `#D2961B` |
-| fond | — | `#F6F7F9` |
-| encre | texte | `#1D2330` |
+| Grandeur             | Rôle                               | Point de départ    |
+| -------------------- | ---------------------------------- | ------------------ |
+| p < 0 (raréfaction)  | pôle bas de la palette divergente  | cobalt `#2F5BD3`   |
+| p > 0 (compression)  | pôle haut de la palette divergente | carmin `#C0265E`   |
+| vitesse particulaire | courbes, vecteurs                  | sarcelle `#0E8A7E` |
+| énergie, intensité   | palette séquentielle, flux         | ambre `#D2961B`    |
+| fond                 | —                                  | `#F6F7F9`          |
+| encre                | texte                              | `#1D2330`          |
 
 - La couleur est **réservée aux grandeurs physiques et aux éléments interactifs**.
 - Palette divergente (signé) / séquentielle (positif), perceptuellement uniformes,
@@ -165,8 +167,8 @@ Couleurs sémantiques (constantes dans tout le site, ajustées en mode sombre) :
   titre, émojis, illustrations génériques, numérotation décorative.
 - Seul élément « osé » : le champ d'onde vivant plein écran de l'accueil (FDTD GPU).
 
-Jetons (couleurs, typographie, espacements, rayons, durées) : *(à compléter après le
-choix de la direction visuelle)*.
+Jetons (couleurs, typographie, espacements, rayons, durées) : _(à compléter après le
+choix de la direction visuelle)_.
 
 ## 9. Expérience et performance
 

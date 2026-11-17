@@ -81,24 +81,25 @@ Les maquettes des deux directions visuelles viendront juste après la validation
 
 Je suis le brief, avec les précisions suivantes.
 
-| Brique | Choix | Justification / remarque |
-|---|---|---|
-| Site | **Astro 7** + **MDX** | Statique, îlots ; MDX éditable par des non-développeurs. Collections de contenu typées (Zod) : un chapitre sans `prerequisites`/`level`/`duration` ne compile pas. |
-| Interactif | **Svelte 5** (runes), **TypeScript strict** | `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`. TypeScript 7 si `astro check`/`svelte-check` le supportent au moment de l'échafaudage, sinon la dernière 5.x/6.x compatible. |
-| Équations | **KaTeX** côté build (`remark-math` + `rehype-katex`) | Les équations statiques ne chargent pas de JS. Les **équations vivantes** utilisent KaTeX côté client, chargé à la demande (cf. § 3.2). |
-| Rendu 2D simple | Canvas 2D | Chaîne masses-ressorts, courbes, schémas de tube. |
-| Champs d'onde | **WebGL2** | WebGPU reporté : WebGL2 couvre tous les navigateurs mobiles visés ; on garde l'abstraction `lib/gl` pour un backend WebGPU ultérieur. Repli Canvas 2D basse résolution si pas de WebGL2. |
-| Audio | Web Audio API | `AudioWorklet` seulement si nécessaire (pas en phase 1). |
-| Tests | **Vitest** (physique, couleurs, logique de scène) ; **Playwright** (5 tailles, clair/sombre, captures, axe-core) ; **Lighthouse CI** (mobile ≥ 90 perf/a11y) | Les captures sont prises en mode déterministe (`?test=1` : temps figé, graine fixe) pour éviter les faux positifs des animations. |
-| Qualité | ESLint (flat config, typescript-eslint, plugins astro et svelte) + Prettier | Biome écarté : support Svelte/Astro encore partiel. |
-| Polices | **Source Serif 4** (texte) et **Atkinson Hyperlegible Next** (interface), via `@fontsource-variable`, auto-hébergées | Alternatives à comparer dans les maquettes : **Literata** et **Newsreader** pour la serif. Sous-ensembles latin + grec (symboles). |
-| PWA | `@vite-pwa/astro` (Workbox) | Précache des pages et des îlots ; installable. Peu coûteux, je propose de l'inclure dès la phase 1. |
-| CI/CD | **pnpm**, GitHub Actions, GitHub Pages | `base: '/cours-acoustique/'` sauf domaine personnalisé (cf. questions). |
-| Dépendances lourdes évitées | pas de D3, pas de Three.js, pas de framework CSS | Le volume de chaque îlot reste petit ; mise en page du graphe de prérequis calculée au build par un algorithme en couches maison (le graphe a ~20 nœuds). |
+| Brique                      | Choix                                                                                                                                                        | Justification / remarque                                                                                                                                                                         |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Site                        | **Astro 7** + **MDX**                                                                                                                                        | Statique, îlots ; MDX éditable par des non-développeurs. Collections de contenu typées (Zod) : un chapitre sans `prerequisites`/`level`/`duration` ne compile pas.                               |
+| Interactif                  | **Svelte 5** (runes), **TypeScript strict**                                                                                                                  | `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`. TypeScript 7 si `astro check`/`svelte-check` le supportent au moment de l'échafaudage, sinon la dernière 5.x/6.x compatible. |
+| Équations                   | **KaTeX** côté build (`remark-math` + `rehype-katex`)                                                                                                        | Les équations statiques ne chargent pas de JS. Les **équations vivantes** utilisent KaTeX côté client, chargé à la demande (cf. § 3.2).                                                          |
+| Rendu 2D simple             | Canvas 2D                                                                                                                                                    | Chaîne masses-ressorts, courbes, schémas de tube.                                                                                                                                                |
+| Champs d'onde               | **WebGL2**                                                                                                                                                   | WebGPU reporté : WebGL2 couvre tous les navigateurs mobiles visés ; on garde l'abstraction `lib/gl` pour un backend WebGPU ultérieur. Repli Canvas 2D basse résolution si pas de WebGL2.         |
+| Audio                       | Web Audio API                                                                                                                                                | `AudioWorklet` seulement si nécessaire (pas en phase 1).                                                                                                                                         |
+| Tests                       | **Vitest** (physique, couleurs, logique de scène) ; **Playwright** (5 tailles, clair/sombre, captures, axe-core) ; **Lighthouse CI** (mobile ≥ 90 perf/a11y) | Les captures sont prises en mode déterministe (`?test=1` : temps figé, graine fixe) pour éviter les faux positifs des animations.                                                                |
+| Qualité                     | ESLint (flat config, typescript-eslint, plugins astro et svelte) + Prettier                                                                                  | Biome écarté : support Svelte/Astro encore partiel.                                                                                                                                              |
+| Polices                     | **Source Serif 4** (texte) et **Atkinson Hyperlegible Next** (interface), via `@fontsource-variable`, auto-hébergées                                         | Alternatives à comparer dans les maquettes : **Literata** et **Newsreader** pour la serif. Sous-ensembles latin + grec (symboles).                                                               |
+| PWA                         | `@vite-pwa/astro` (Workbox)                                                                                                                                  | Précache des pages et des îlots ; installable. Peu coûteux, je propose de l'inclure dès la phase 1.                                                                                              |
+| CI/CD                       | **pnpm**, GitHub Actions, GitHub Pages                                                                                                                       | `base: '/cours-acoustique/'` sauf domaine personnalisé (cf. questions).                                                                                                                          |
+| Dépendances lourdes évitées | pas de D3, pas de Three.js, pas de framework CSS                                                                                                             | Le volume de chaque îlot reste petit ; mise en page du graphe de prérequis calculée au build par un algorithme en couches maison (le graphe a ~20 nœuds).                                        |
 
 ## 3. Quatre décisions d'architecture structurantes
 
 ### 3.1 Les « scènes » : un état partagé entre îlots
+
 Dans Astro, chaque composant interactif est un îlot isolé. Or le brief exige qu'une
 **équation dans le texte** pilote une **visualisation dans la paillasse**, et inversement.
 Je propose un registre de scènes (`lib/scene`) : chaque scène a un identifiant
@@ -109,6 +110,7 @@ ES dans la page). Conséquence : un curseur, une équation et une visualisation 
 placés n'importe où dans le MDX et restent synchronisés.
 
 ### 3.2 L'équation vivante
+
 - L'auteur écrit du LaTeX annoté : `\term{inertia}{\rho_0 \frac{\partial v}{\partial t}}`
   et `\val{c0}` pour une valeur numérique liée à un paramètre de scène.
 - Rendu initial au build (HTML statique, lisible sans JS) ; à l'hydratation, KaTeX
@@ -122,6 +124,7 @@ placés n'importe où dans le MDX et restent synchronisés.
   de coupure autorisés) et rendu par étapes ; jamais de défilement horizontal de la page.
 
 ### 3.3 Champ scalaire 2D (WebGL2) : deux modes, un seul composant
+
 - **Mode phaseur** : `P(x, y)` complexe calculé une fois (CPU), téléversé en texture
   RG32F ; le shader affiche `Re{P e^{−iωt}}` à chaque image avec la LUT de couleur.
   Coût par image quasi nul.
@@ -133,6 +136,7 @@ placés n'importe où dans le MDX et restent synchronisés.
   `devicePixelRatio` plafonné ; pause hors écran (`IntersectionObserver`) et onglet masqué.
 
 ### 3.4 La paillasse persistante
+
 - **Bureau** : grille en trois zones (marge, texte, paillasse). Dans une section
   `<Bench scene="…">`, la visualisation est ancrée (`position: sticky`) ; chaque
   `<BenchStep set={{…}}>` du texte applique un préréglage de scène quand il entre dans la
@@ -146,20 +150,22 @@ placés n'importe où dans le MDX et restent synchronisés.
 ## 4. Composants de la phase 1
 
 ### Visualisation (`components/viz/`)
-| Composant | Rôle | Utilisé par |
-|---|---|---|
-| `ScalarField2D` | champ animé WebGL2 (phaseur ou solveur), légende avec unités, infobulle valeur locale | accueil, chapitre (bonus 2D) |
-| `WaveFieldHero` | accueil : FDTD GPU, impulsion au clic/toucher, option audio | accueil |
-| `Line1D` | « tube » 1D : champ de pression coloré + particules lagrangiennes + sondes | chapitre (cœur) |
-| `MassSpringChain` | chaîne de masses-ressorts, N variable, morphing vers le continu | chapitre |
-| `Plot` | courbe(s) interactive(s) : fonction, réponse en fréquence, axes log, curseur de lecture | chapitre, prérequis |
-| `PolarPlot` | diagramme polaire de directivité (dB ou linéaire) | livré et testé, utilisé en ch. 4 |
-| `FluidParcel` | particule de fluide et forces de pression sur ses faces, vue eulérienne/lagrangienne | prérequis |
-| `PVDiagram` | diagramme p–V : isotherme contre adiabatique | chapitre (Newton/Laplace) |
-| `LevelRuler` | échelle de niveaux en dB, bascule linéaire/log, exemples réels | chapitre (décibels) |
-| `ColorLegend` | légende de palette avec unités | partout |
+
+| Composant         | Rôle                                                                                    | Utilisé par                      |
+| ----------------- | --------------------------------------------------------------------------------------- | -------------------------------- |
+| `ScalarField2D`   | champ animé WebGL2 (phaseur ou solveur), légende avec unités, infobulle valeur locale   | accueil, chapitre (bonus 2D)     |
+| `WaveFieldHero`   | accueil : FDTD GPU, impulsion au clic/toucher, option audio                             | accueil                          |
+| `Line1D`          | « tube » 1D : champ de pression coloré + particules lagrangiennes + sondes              | chapitre (cœur)                  |
+| `MassSpringChain` | chaîne de masses-ressorts, N variable, morphing vers le continu                         | chapitre                         |
+| `Plot`            | courbe(s) interactive(s) : fonction, réponse en fréquence, axes log, curseur de lecture | chapitre, prérequis              |
+| `PolarPlot`       | diagramme polaire de directivité (dB ou linéaire)                                       | livré et testé, utilisé en ch. 4 |
+| `FluidParcel`     | particule de fluide et forces de pression sur ses faces, vue eulérienne/lagrangienne    | prérequis                        |
+| `PVDiagram`       | diagramme p–V : isotherme contre adiabatique                                            | chapitre (Newton/Laplace)        |
+| `LevelRuler`      | échelle de niveaux en dB, bascule linéaire/log, exemples réels                          | chapitre (décibels)              |
+| `ColorLegend`     | légende de palette avec unités                                                          | partout                          |
 
 ### Interface (`components/ui/`)
+
 `SymbolSlider` (curseur lié à un symbole, valeur éditable, flèches et Maj+flèches),
 `LiveEquation`, `TermToggle`, `Quiz` (QCM, valeur numérique avec tolérance, curseur à placer,
 prédiction verrouillée avant de voir la simulation), `Prediction`, `Insight` (« Le déclic »),
@@ -168,10 +174,12 @@ prédiction verrouillée avant de voir la simulation), `Prediction`, `Insight` (
 `ListenButton`, `VizControls` (réinitialiser, lecture/pause, ralenti, agrandir, partager).
 
 ### Mise en page (`components/layout/`)
+
 `ChapterLayout` (métadonnées, prérequis, progression), `Bench`/`BenchStep`, `CourseMap`
 (graphe des prérequis, progression locale), `ThemeToggle`.
 
 ### Audio (`lib/audio/`)
+
 Moteur unique : `AudioContext` créé au premier geste, gain maître par défaut −30 dBFS
 environ, `DynamicsCompressorNode` en limiteur (seuil −6 dBFS, ratio 20, attaque 1 ms) puis
 écrêtage doux de sécurité ; arrêt quand l'onglet est masqué ; message iOS « vérifiez le
@@ -219,13 +227,14 @@ direction).
 
 ## 7. Chapitre pilote « L'équation des ondes » — déclics proposés
 
-Accroche proposée : *« L'eau est 800 fois plus dense que l'air. Le son devrait y être plus
-lent. Il y va 4 fois plus vite. »* Prédiction demandée avant toute explication.
+Accroche proposée : _« L'eau est 800 fois plus dense que l'air. Le son devrait y être plus
+lent. Il y va 4 fois plus vite. »_ Prédiction demandée avant toute explication.
 
 Je reprends les pistes du brief, j'en évalue chacune et j'en ajoute quatre (marquées ★).
 Ordre = ordre de lecture proposé.
 
 ### D1. Le milieu continu est une chaîne de masses et de ressorts
+
 - **Déclic** : ∂²u/∂x² n'est rien d'autre que la force nette des deux ressorts voisins
   sur une masse, K(u_{n+1} − 2u_n + u_{n−1}) ; l'équation des ondes, c'est Newton appliqué
   à chaque tranche.
@@ -239,6 +248,7 @@ Ordre = ordre de lecture proposé.
 - **Évaluation** : excellent, je le garde en ouverture.
 
 ### D2. La célérité est un compromis raideur/inertie : c₀ = √(K/ρ₀)
+
 - **Déclic** : en reliant ressorts ↔ compressibilité et masses ↔ masse volumique, la chaîne
   donne c = √(K/ρ₀) sans calcul. Air, eau, acier, hélium deviennent des points d'un plan
   (log ρ₀, log K) traversé d'isocélérités : l'eau est ~800 × plus dense mais ~15 000 × plus
@@ -252,6 +262,7 @@ Ordre = ordre de lecture proposé.
   dense, le son va plus vite (ou moins vite) » ; à température égale, ni l'un ni l'autre.
 
 ### D3. L'erreur de Newton : le son est un phénomène thermodynamique
+
 - **Déclic** : une compression acoustique est trop rapide pour que la chaleur ait le temps
   de diffuser sur une demi-longueur d'onde ; le gaz comprimé s'échauffe, donc il est plus
   raide (γ). Newton (isotherme) trouve ≈ 290 m/s, soit ≈ 15 % de moins que 343 m/s
@@ -267,6 +278,7 @@ Ordre = ordre de lecture proposé.
 - **Évaluation** : excellent déclic historique ; je le garde.
 
 ### D4. La dérivation pas à pas, chaque terme désactivable
+
 - **Système** : continuité, Euler, état → linéarisation → équation des ondes. Chaque étape
   dépliable, hypothèses et ordres négligés explicités.
 - **Termes désactivables** dans `Line1D` (simulation p–v 1D) :
@@ -279,6 +291,7 @@ Ordre = ordre de lecture proposé.
 - **Évaluation** : indispensable ; c'est le cœur de l'outil « équation vivante ».
 
 ### D5. Les particules oscillent sur place, la perturbation voyage
+
 - **Visualisation** : `Line1D`, vue eulérienne (champ de pression coloré) et vue
   lagrangienne (tranches qui oscillent) superposées ; on suit une tranche, on pose une
   sonde fixe ; bascule entre les deux. Amplification des déplacements affichée en clair
@@ -293,6 +306,7 @@ Ordre = ordre de lecture proposé.
   vous pensez que p est maximal.
 
 ### D6. d'Alembert : f(x − c₀t) + g(x + c₀t)
+
 - **Visualisation** : le lecteur **dessine** une impulsion au doigt ou à la souris ; elle
   se propage. Deux impulsions se croisent et se traversent sans se perturber ; bascule
   « somme » / « décomposition f et g ».
@@ -303,9 +317,10 @@ Ordre = ordre de lecture proposé.
   propagation est la relation entre p et v. Transition directe vers D7.
 
 ### D7. L'impédance caractéristique ρ₀c₀
+
 - **Déclic (dérivation sans calcul)** : un piston poussé brusquement à la vitesse v ; le
   front avance à c₀ ; en dt, une masse ρ₀c₀ dt par unité de surface est mise en mouvement
-  à v. Quantité de mouvement fournie = p dt, donc **p = ρ₀c₀ v**. On *voit* la zone mise
+  à v. Quantité de mouvement fournie = p dt, donc **p = ρ₀c₀ v**. On _voit_ la zone mise
   en mouvement grandir.
 - **Pourquoi en phase** : dans une onde vers +x, pour que la compression avance, le fluide
   doit entrer par son front ; donc v > 0 là où p > 0. `Line1D` affiche p (carmin) et v
@@ -315,6 +330,7 @@ Ordre = ordre de lecture proposé.
   chapitre 3) ; ρ₀c₀ se comporte comme une résistance : l'énergie part et ne revient pas.
 
 ### D8. Énergie : équipartition et intensité comme flux
+
 - **Visualisation** : `Line1D` avec densités d'énergie cinétique et potentielle (ambre,
   deux nuances) et flèches d'intensité. Curseur **R** (0 → 1) : amplitude d'une onde
   réfléchie qu'on ajoute. R = 0 : onde progressive, e_c = e_p partout à chaque instant,
@@ -324,6 +340,7 @@ Ordre = ordre de lecture proposé.
 - **Évaluation** : très bon ; il prépare aussi le champ proche réactif du chapitre 4.
 
 ### D9. Les décibels
+
 - **Visualisation** : `LevelRuler` de 0 à ~194 dB avec exemples réels sourcés ; bascule
   échelle linéaire → tout s'écrase sur zéro sauf l'extrémité : on comprend pourquoi le log.
 - **Déclics** : (a) 194 dB : p_eff = p₀ ; au-delà, la raréfaction d'une sinusoïde
@@ -338,6 +355,7 @@ Ordre = ordre de lecture proposé.
   la nuance.
 
 ### ★ D10. La linéarité n'est pas qu'une affaire de niveau, c'est aussi de distance
+
 - **Déclic** : le critère p/(ρ₀c₀²) ≪ 1 est local. Mais la crête d'une onde va un peu plus
   vite que le creux (c₀ + βv), et ce petit écart **se cumule** : distance de formation du
   choc x̄ = 1/(β ε k). Pour une onde plane à 1 kHz et 140 dB, sans pertes : x̄ ≈ 20 m
@@ -350,6 +368,7 @@ Ordre = ordre de lecture proposé.
 - Ce déclic sert d'encadré « Limites du modèle » du chapitre et prépare le chapitre 11.
 
 ### Intuitions pièges du chapitre (une principale, deux secondaires)
+
 1. **Principale** : « le son transporte de l'air » (D5).
 2. « La pression est maximale là où le déplacement est maximal » (D5).
 3. « Dans une cloche à vide, le son ralentit puis s'arrête » : la célérité ne change pas
@@ -357,6 +376,7 @@ Ordre = ordre de lecture proposé.
    (Je propose de la traiter dans « Monde réel », cf. § 8.)
 
 ### Questions de vérification envisagées
+
 - « On double la température absolue : que devient c₀ ? Et ρ₀c₀ ? » (calcul, tolérance 1 %)
 - « Placez le curseur là où la pression est maximale » (prédiction spatiale, D5)
 - « Quel terme supprimer pour que le tube bouge en bloc ? » (D4)
@@ -366,18 +386,18 @@ Ordre = ordre de lecture proposé.
 
 ## 8. Exemples « monde réel » — état des sources
 
-| Exemple | Valeur | Statut |
-|---|---|---|
-| Célérité dans l'air à 20 °C | ≈ 343 m/s | **calculée** (γ, R, M de l'air : CODATA/NIST) |
-| Hélium à 20 °C | ≈ 1 007 m/s | **calculée** (γ = 5/3, M = 4,0026 g/mol) |
-| Eau douce à 20 °C | ≈ 1 482 m/s | `TODO-VERIFY` (formule de Del Grosso ou Marczak, à citer) |
-| Acier | ≈ 5 900 m/s (onde P), ≈ 5 100 m/s (barre) | `TODO-VERIFY` (Kaye & Laby / NPL) + Q2 |
-| Influence de la température | c(T) = √(γRT/M) | calculée ; approximation linéaire comparée |
-| Distance d'un orage | ≈ 3 s/km | calculée ; mise en garde sur le gradient thermique (pont ch. 10) |
-| Voix à l'hélium | f₀ inchangée, formants × c_mél/c_air | principe sûr ; fraction réelle d'hélium dans le conduit vocal `TODO-VERIFY` |
-| Cloche à vide (Boyle, 1660) | — | historique `TODO-VERIFY` |
-| Décollage de fusée | ordre de 170–200 dB en champ proche | **à sourcer**, aucune valeur avant vérification |
-| Seuil d'audition, déplacement à 0 dB | ≈ 10⁻¹¹ m | calculée |
+| Exemple                              | Valeur                                    | Statut                                                                      |
+| ------------------------------------ | ----------------------------------------- | --------------------------------------------------------------------------- |
+| Célérité dans l'air à 20 °C          | ≈ 343 m/s                                 | **calculée** (γ, R, M de l'air : CODATA/NIST)                               |
+| Hélium à 20 °C                       | ≈ 1 007 m/s                               | **calculée** (γ = 5/3, M = 4,0026 g/mol)                                    |
+| Eau douce à 20 °C                    | ≈ 1 482 m/s                               | `TODO-VERIFY` (formule de Del Grosso ou Marczak, à citer)                   |
+| Acier                                | ≈ 5 900 m/s (onde P), ≈ 5 100 m/s (barre) | `TODO-VERIFY` (Kaye & Laby / NPL) + Q2                                      |
+| Influence de la température          | c(T) = √(γRT/M)                           | calculée ; approximation linéaire comparée                                  |
+| Distance d'un orage                  | ≈ 3 s/km                                  | calculée ; mise en garde sur le gradient thermique (pont ch. 10)            |
+| Voix à l'hélium                      | f₀ inchangée, formants × c_mél/c_air      | principe sûr ; fraction réelle d'hélium dans le conduit vocal `TODO-VERIFY` |
+| Cloche à vide (Boyle, 1660)          | —                                         | historique `TODO-VERIFY`                                                    |
+| Décollage de fusée                   | ordre de 170–200 dB en champ proche       | **à sourcer**, aucune valeur avant vérification                             |
+| Seuil d'audition, déplacement à 0 dB | ≈ 10⁻¹¹ m                                 | calculée                                                                    |
 
 **Voix à l'hélium** (écoute) : synthèse source-filtre (train d'impulsions glottiques +
 3 à 4 formants en filtres passe-bande). Curseur « fraction d'hélium » → célérité du mélange
@@ -399,22 +419,23 @@ hauteur ne change pas mais le timbre si.
    élément superflu. **Bilan et arrêt.**
 
 ### 9 bis. Tests physiques de référence (tolérances indicatives)
-| Test | Référence | Tolérance |
-|---|---|---|
-| c adiabatique vs isotherme | ratio = √γ exactement | 1e−12 (relatif) |
-| c(20 °C) air | 343,2 m/s (calcul indépendant dans le test) | 1e−3 |
-| Chaîne discrète → continu | c_groupe(k→0) = a√(K/m) ; écart en O((ka)²) vérifié sur 3 N | 1e−3 |
-| Dispersion de la chaîne simulée | ω = 2√(K/m)·|sin(ka/2)| (FFT de la simulation) | 0,5 % |
-| Forme d'une impulsion (FDTD 1D, Courant = 1) | translation exacte | 1e−10 |
-| Forme d'une impulsion (Courant < 1) | erreur de dispersion conforme à la relation numérique | documentée |
-| Équipartition (onde progressive) | e_c = e_p en chaque point | 1e−12 (analytique), 1 % (FDTD) |
-| Relation p = ρ₀c₀ v | onde progressive analytique et simulée | 1e−12 / 1 % |
-| Intensité moyenne | P²/(2ρ₀c₀) | 1e−12 |
-| Onde stationnaire | intensité active nulle | 1e−12 |
-| Distance de choc | x̄ = 1/(βεk) vs instant où la pente de la solution de Poisson diverge | 1 % |
-| FDTD 2D (référence CPU) | fréquences propres d'une cavité rectangulaire rigide | 0,5 % |
-| GPU vs CPU (Playwright) | même schéma, même grille | 1e−3 (float32) |
-| Palette | ΔE_OK monotone, extrémités distinguables en deutéranopie/protanopie simulées | seuils documentés |
+
+| Test                                         | Référence                                                                    | Tolérance                      |
+| -------------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------ |
+| c adiabatique vs isotherme                   | ratio = √γ exactement                                                        | 1e−12 (relatif)                |
+| c(20 °C) air                                 | 343,2 m/s (calcul indépendant dans le test)                                  | 1e−3                           |
+| Chaîne discrète → continu                    | c_groupe(k→0) = a√(K/m) ; écart en O((ka)²) vérifié sur 3 N                  | 1e−3                           |
+| Dispersion de la chaîne simulée              | ω = 2√(K/m)·                                                                 | sin(ka/2)                      | (FFT de la simulation) | 0,5 % |
+| Forme d'une impulsion (FDTD 1D, Courant = 1) | translation exacte                                                           | 1e−10                          |
+| Forme d'une impulsion (Courant < 1)          | erreur de dispersion conforme à la relation numérique                        | documentée                     |
+| Équipartition (onde progressive)             | e_c = e_p en chaque point                                                    | 1e−12 (analytique), 1 % (FDTD) |
+| Relation p = ρ₀c₀ v                          | onde progressive analytique et simulée                                       | 1e−12 / 1 %                    |
+| Intensité moyenne                            | P²/(2ρ₀c₀)                                                                   | 1e−12                          |
+| Onde stationnaire                            | intensité active nulle                                                       | 1e−12                          |
+| Distance de choc                             | x̄ = 1/(βεk) vs instant où la pente de la solution de Poisson diverge         | 1 %                            |
+| FDTD 2D (référence CPU)                      | fréquences propres d'une cavité rectangulaire rigide                         | 0,5 %                          |
+| GPU vs CPU (Playwright)                      | même schéma, même grille                                                     | 1e−3 (float32)                 |
+| Palette                                      | ΔE_OK monotone, extrémités distinguables en deutéranopie/protanopie simulées | seuils documentés              |
 
 ## 10. Décisions (déléguées par l'auteur, à revoir au bilan)
 
