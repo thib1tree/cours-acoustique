@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CourseMap from '../../components/layout/CourseMap.astro';
+---
+
+<BaseLayout title="Carte du cours" current="map">
+  <main id="main" class="page">
+    <h1>Carte du cours</h1>
+    <p class="sub">
+      Chaque lien est un prérequis. Choisissez un chapitre pour voir le chemin qui y mène, et
+      seulement ce qui vous manque.
+    </p>
+    <CourseMap />
+  </main>
+</BaseLayout>
+
+<style>
+  .page {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: var(--space-6) var(--space-5) var(--space-9);
+  }
+  .sub {
+    color: var(--color-ink-muted);
+    margin: var(--space-2) 0 var(--space-6);
+  }
+  @media (max-width: 760px) {
+    .page {
+      padding: var(--space-5) var(--gutter) var(--space-8);
+    }
+  }
+</style>

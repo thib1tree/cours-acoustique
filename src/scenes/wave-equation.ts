@@ -1,4 +1,20 @@
 import type { SceneSpec } from '../lib/scene/types';
+import {
+  AIR,
+  TABULATED_MEDIA,
+  celsiusToKelvin,
+  celerityFromModulus,
+  gasDensity,
+  gasSoundSpeed,
+} from '../lib/physics/media';
+import { pressureFromSpl } from '../lib/physics/levels';
+
+const T20 = celsiusToKelvin(20);
+const RHO_AIR = gasDensity(AIR, T20);
+const C_AIR = gasSoundSpeed(AIR, T20);
+const WATER = TABULATED_MEDIA[0]!;
+const C_WATER = celerityFromModulus(WATER.modulus, WATER.rho);
+const peak = (L: number) => Math.SQRT2 * pressureFromSpl(L);
 
 const freq = (def: number, min = 100, max = 2000) =>
   ({
@@ -67,6 +83,7 @@ export const waveEquationScenes: SceneSpec[] = [
   },
   {
     id: '1a-stiffness',
+    derived: [{ key: 'c', digits: 0, unit: 'm/s', fn: (p) => Math.sqrt(p.K! / p.rho!) }],
     params: [
       {
         key: 'K',
@@ -113,6 +130,17 @@ export const waveEquationScenes: SceneSpec[] = [
   {
     id: '1a-tube',
     params: [freq(500), level(94)],
+    derived: [
+      { key: 'P', digits: 2, unit: 'Pa', fn: (p) => peak(p.L!) },
+      { key: 'V', digits: 2, unit: 'mm/s', fn: (p) => (1000 * peak(p.L!)) / (RHO_AIR * C_AIR) },
+      {
+        key: 'Xi',
+        digits: 2,
+        unit: 'µm',
+        fn: (p) => (1e6 * peak(p.L!)) / (RHO_AIR * C_AIR * 2 * Math.PI * p.f!),
+      },
+      { key: 'c', digits: 1, unit: 'm/s', fn: () => C_AIR },
+    ],
     terms: [
       { key: 'inertia', label: 'inertie', toggleable: true },
       { key: 'compressibility', label: 'compressibilité', toggleable: true },
@@ -183,6 +211,19 @@ export const waveEquationScenes: SceneSpec[] = [
   },
   {
     id: '1b-piston',
+    derived: [
+      {
+        key: 'Z',
+        digits: 0,
+        fn: (_p, _t, v) => (v.medium === 'water' ? WATER.rho * C_WATER : RHO_AIR * C_AIR),
+      },
+      {
+        key: 'p',
+        digits: 2,
+        fn: (p, _t, v) =>
+          ((v.medium === 'water' ? WATER.rho * C_WATER : RHO_AIR * C_AIR) * p.v!) / 1000,
+      },
+    ],
     params: [
       {
         key: 'v',
@@ -212,6 +253,7 @@ export const waveEquationScenes: SceneSpec[] = [
   },
   {
     id: '1b-energy',
+    derived: [{ key: 'ratio', digits: 2, fn: (p) => 1 - p.R! * p.R! }],
     params: [
       freq(300),
       {

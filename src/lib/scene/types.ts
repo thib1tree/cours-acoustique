@@ -45,6 +45,7 @@ export interface DerivedSpec {
   readonly fn: (
     params: Readonly<Record<string, number>>,
     terms: Readonly<Record<string, boolean>>,
+    views: Readonly<Record<string, string>>,
   ) => number;
 }
 

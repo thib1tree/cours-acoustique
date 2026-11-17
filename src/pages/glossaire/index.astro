@@ -1,0 +1,50 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const entries = (await getCollection('glossaire')).sort((a, b) =>
+  a.data.term.localeCompare(b.data.term, 'fr'),
+);
+---
+
+<BaseLayout title="Glossaire" current="glossary">
+  <main id="main" class="page">
+    <h1>Glossaire</h1>
+    <dl>
+      {entries.map((e) => (
+        <div id={e.id}>
+          <dt>{e.data.term}</dt>
+          <dd>{e.data.short}</dd>
+        </div>
+      ))}
+    </dl>
+  </main>
+</BaseLayout>
+
+<style>
+  .page {
+    max-width: calc(var(--measure) + 2 * var(--space-5));
+    margin: 0 auto;
+    padding: var(--space-6) var(--space-5) var(--space-9);
+  }
+  dl div {
+    padding: var(--space-3) 0;
+    border-top: 1px solid var(--color-rule);
+    scroll-margin-top: calc(var(--header-h) + var(--space-4));
+  }
+  dl div:target {
+    border-top: 2px solid var(--color-ink);
+  }
+  dt {
+    font-family: var(--font-sans);
+    font-weight: 650;
+  }
+  dd {
+    margin: var(--space-1) 0 0;
+  }
+  @media (max-width: 760px) {
+    .page {
+      padding: var(--space-5) var(--gutter) var(--space-8);
+    }
+  }
+</style>

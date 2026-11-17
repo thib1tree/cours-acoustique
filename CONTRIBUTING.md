@@ -25,7 +25,7 @@ loin) est décrite dans `CLAUDE.md` § 3.
 - Notations : [`src/content/notations.md`](src/content/notations.md) fait foi.
 - Chaque dérivation énonce ses hypothèses ; aucune étape magique.
 - **Aucune valeur réelle sans source.** En cas de doute, laissez un marqueur
-  `<!-- TODO-VERIFY: … -->` : il sera relu avant publication. Ne citez jamais un numéro de
+  `{/* TODO-VERIFY: … */}` (commentaire JSX, seul permis en MDX) : il sera relu avant publication. Ne citez jamais un numéro de
   page ou d'équation que vous n'avez pas sous les yeux.
 
 ## Conventions de code

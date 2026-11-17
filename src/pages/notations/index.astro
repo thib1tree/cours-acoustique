@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { Content, frontmatter } from '../../content/notations.md';
+import '../../styles/content.css';
+---
+
+<BaseLayout title={frontmatter.title} current="notations">
+  <main id="main" class="page prose">
+    <h1>{frontmatter.title}</h1>
+    <Content />
+  </main>
+</BaseLayout>
+
+<style>
+  .page {
+    max-width: calc(var(--measure) + 2 * var(--space-5));
+    margin: 0 auto;
+    padding: var(--space-6) var(--space-5) var(--space-9);
+  }
+  .page :global(table) {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 1rem;
+    margin: var(--space-4) 0 var(--space-6);
+  }
+  .page :global(th),
+  .page :global(td) {
+    text-align: left;
+    padding: var(--space-2) var(--space-3) var(--space-2) 0;
+    border-bottom: 1px solid var(--color-rule);
+    vertical-align: top;
+  }
+  .page :global(th) {
+    font-family: var(--font-sans);
+    font-size: var(--text-small);
+    border-bottom-color: var(--color-ink);
+  }
+  @media (max-width: 760px) {
+    .page {
+      padding: var(--space-5) var(--gutter) var(--space-8);
+      overflow-x: auto;
+    }
+  }
+</style>

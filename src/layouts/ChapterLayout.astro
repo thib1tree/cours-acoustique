@@ -1,0 +1,273 @@
+---
+import type { MarkdownHeading } from 'astro';
+import BaseLayout from './BaseLayout.astro';
+import References from '../components/content/References.astro';
+import { CURRICULUM, byId } from '../content/curriculum';
+import { t } from '../i18n';
+import '../styles/content.css';
+
+interface Props {
+  data: {
+    curriculumId: string;
+    title: string;
+    summary: string;
+    number: string;
+    level: 'L3' | 'M1' | 'M2' | 'beyond';
+    duration: number;
+    prerequisites: string[];
+    references: string[];
+  };
+  headings: MarkdownHeading[];
+  kind: 'chapitre' | 'prerequis';
+}
+const { data, headings, kind } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const sections = headings.filter((h) => h.depth === 2);
+const prereqs = data.prerequisites.map((id) => byId(id)!).filter(Boolean);
+const levelLabel = { L3: 'L3', M1: 'M1', M2: 'M2', beyond: 'au-delà du M2' }[data.level];
+const written = CURRICULUM.filter((n) => n.href);
+const i = written.findIndex((n) => n.id === data.curriculumId);
+const prev = i > 0 ? written[i - 1] : undefined;
+const next = i >= 0 && i < written.length - 1 ? written[i + 1] : undefined;
+---
+
+<BaseLayout title={data.title} description={data.summary} ruler>
+  <div class="chapter" data-curriculum-id={data.curriculumId}>
+    <nav class="rail" aria-label={t('chapter.sections')}>
+      <ol>
+        {sections.map((h) => (
+          <li>
+            <a href={`#${h.slug}`} data-rail={h.slug}>
+              {h.text}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+    <main id="main" class="chapter-main">
+      <header class="chapter-head">
+        <div class="kicker">
+          {kind === 'chapitre' ? 'Chapitre' : 'Prérequis'} <span class="num">{data.number}</span>
+        </div>
+        <h1>{data.title}</h1>
+        <dl class="meta">
+          <div>
+            <dt>{t('chapter.level')}</dt>
+            <dd>{levelLabel}</dd>
+          </div>
+          <div>
+            <dt>{t('chapter.duration')}</dt>
+            <dd class="num">{data.duration} min</dd>
+          </div>
+          {prereqs.length > 0 && (
+            <div>
+              <dt>{t('chapter.prerequisites')}</dt>
+              <dd>
+                {prereqs.map((p, k) => (
+                  <>
+                    {k > 0 && ', '}
+                    {p.href ? (
+                      <a href={`${base}${p.href}`}>{p.title}</a>
+                    ) : (
+                      <span title="à venir">{p.title}</span>
+                    )}
+                  </>
+                ))}
+              </dd>
+            </div>
+          )}
+        </dl>
+      </header>
+      <div class="prose">
+        <slot />
+      </div>
+      {data.references.length > 0 && (
+        <section class="refs" aria-labelledby="refs-title">
+          <h2 id="refs-title">Références</h2>
+          <References keys={data.references} />
+        </section>
+      )}
+      <nav class="pager" aria-label="Pages voisines">
+        {prev && (
+          <a href={`${base}${prev.href}`} rel="prev">
+            <span class="muted">Précédent</span>
+            {prev.num} {prev.title}
+          </a>
+        )}
+        <a href={`${base}carte/`} class="to-map">
+          Carte du cours
+        </a>
+        {next && (
+          <a href={`${base}${next.href}`} rel="next">
+            <span class="muted">Suivant</span>
+            {next.num} {next.title}
+          </a>
+        )}
+      </nav>
+    </main>
+  </div>
+</BaseLayout>
+
+<script>
+  import { markDone, setLastVisited } from '../lib/progress/progress';
+  const root = document.querySelector<HTMLElement>('[data-curriculum-id]');
+  const id = root?.dataset.curriculumId;
+  if (id) {
+    setLastVisited(id);
+    const end = document.querySelector('.pager');
+    if (end) new IntersectionObserver(([e]) => e?.isIntersecting && markDone(id)).observe(end);
+  }
+  // Rail: highlight the section being read.
+  const links = new Map(
+    [...document.querySelectorAll<HTMLAnchorElement>('[data-rail]')].map((a) => [
+      a.dataset.rail!,
+      a,
+    ]),
+  );
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+        for (const a of links.values()) a.removeAttribute('aria-current');
+        links.get(e.target.id)?.setAttribute('aria-current', 'true');
+      }
+    },
+    { rootMargin: '-20% 0px -70% 0px' },
+  );
+  for (const h of document.querySelectorAll('.prose h2[id]')) io.observe(h);
+</script>
+
+<style>
+  .chapter {
+    display: grid;
+    grid-template-columns: var(--rail) minmax(0, var(--measure)) var(--margin);
+    column-gap: var(--space-7);
+    max-width: calc(
+      var(--rail) + var(--measure) + var(--margin) + 2 * var(--space-7) + 2 * var(--space-5)
+    );
+    margin: 0 auto;
+    padding: var(--space-7) var(--space-5) var(--space-9);
+  }
+  .chapter-main {
+    grid-column: 2;
+    min-width: 0;
+  }
+  .rail {
+    grid-column: 1;
+    position: sticky;
+    top: calc(var(--header-h) + var(--space-6));
+    align-self: start;
+    max-height: calc(100vh - var(--header-h) - var(--space-7));
+    overflow: auto;
+    font-family: var(--font-sans);
+    font-size: var(--text-small);
+    padding-top: 6.2rem;
+  }
+  .rail ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-left: 1px solid var(--color-rule);
+  }
+  .rail a {
+    position: relative;
+    display: block;
+    padding: 6px 0 6px 14px;
+    color: var(--color-ink-muted);
+    text-decoration: none;
+    line-height: 1.35;
+  }
+  .rail a:hover {
+    color: var(--color-ink);
+  }
+  .rail a[aria-current] {
+    color: var(--color-ink);
+    font-weight: 700;
+  }
+  .rail a[aria-current]::before {
+    content: '';
+    position: absolute;
+    left: -2px;
+    top: 4px;
+    bottom: 4px;
+    width: 3px;
+    background: var(--color-ink);
+  }
+  .kicker {
+    font-family: var(--font-sans);
+    font-size: var(--text-ui);
+    color: var(--color-ink-muted);
+    margin-bottom: var(--space-1);
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-6);
+    margin: var(--space-4) 0 var(--space-7);
+    font-family: var(--font-sans);
+    font-size: var(--text-small);
+    color: var(--color-ink-muted);
+  }
+  .meta dt {
+    display: inline;
+  }
+  .meta dd {
+    display: inline;
+    margin: 0 0 0 6px;
+    color: var(--color-ink);
+  }
+  .refs {
+    clear: both;
+  }
+  .pager {
+    clear: both;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: var(--space-4);
+    margin-top: var(--space-8);
+    padding-top: var(--space-4);
+    border-top: 2px solid var(--color-ink);
+    font-family: var(--font-sans);
+  }
+  .pager a {
+    display: grid;
+    gap: 2px;
+    text-decoration: none;
+    min-height: var(--touch);
+  }
+  .pager a[rel='next'] {
+    text-align: right;
+    grid-column: 3;
+  }
+  .pager .to-map {
+    grid-column: 2;
+    align-self: center;
+    text-decoration: underline;
+  }
+  @media (max-width: 1180px) {
+    .chapter {
+      grid-template-columns: minmax(0, var(--measure)) var(--margin);
+      max-width: calc(var(--measure) + var(--margin) + var(--space-7) + 2 * var(--space-5));
+    }
+    .chapter-main {
+      grid-column: 1;
+    }
+    .rail {
+      display: none;
+    }
+  }
+  @media (max-width: 760px) {
+    .chapter {
+      display: block;
+      padding: var(--space-5) var(--gutter) var(--space-8);
+    }
+    .pager {
+      grid-template-columns: 1fr;
+    }
+    .pager a[rel='next'],
+    .pager .to-map {
+      grid-column: 1;
+      text-align: left;
+    }
+  }
+</style>

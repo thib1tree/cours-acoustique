@@ -27,7 +27,7 @@
     const vals: Record<string, string> = {};
     for (const p of scene.spec.params) vals[p.key] = texNumber(scene.params[p.key]!, p.digits ?? 0);
     for (const d of scene.spec.derived ?? [])
-      vals[d.key] = texNumber(d.fn(scene.params, scene.terms), d.digits ?? 0);
+      vals[d.key] = texNumber(d.fn(scene.params, scene.terms, scene.views), d.digits ?? 0);
     const off: Record<string, boolean> = {};
     for (const [k, on] of Object.entries(scene.terms)) off[k] = !on;
     return renderTex(expandLiveTex(tex, { values: vals, hovered: scene.hovered, off }), true);

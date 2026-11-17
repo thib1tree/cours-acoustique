@@ -82,7 +82,7 @@ Le son est une troisième dimension : l'entendre dès que c'est pertinent.
 ## 5. Garde-fous non négociables
 
 - **Aucune donnée « monde réel » inventée.** Toute valeur réelle est sourcée. En cas de
-  doute : `<!-- TODO-VERIFY: ce qu'il faut vérifier -->` (dans le MDX) ou
+  doute : `{/* TODO-VERIFY: ce qu'il faut vérifier */}` (dans le MDX, où les commentaires HTML sont interdits ; `<!-- … -->` dans les fichiers `.md`) ou
   `// TODO-VERIFY: …` (dans le code). Ces marqueurs sont listés à chaque bilan.
 - Une valeur **calculable** à partir de constantes sourcées (CODATA, NIST) est calculée
   dans `src/lib/physics/`, pas recopiée.

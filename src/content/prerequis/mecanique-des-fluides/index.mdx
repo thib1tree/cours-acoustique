@@ -1,0 +1,185 @@
+---
+curriculumId: fluides
+title: Rappels de mécanique des fluides
+summary: Particule de fluide, descriptions eulérienne et lagrangienne, conservation de la masse, équation d’Euler, équation d’état et compressibilité.
+number: '0.4'
+level: L3
+duration: 35
+keyConcepts: [particule de fluide, dérivée particulaire, équation d’Euler, conservation de la masse, compressibilité]
+prerequisites: []
+references: [pierce, bruneau, kinsler]
+---
+
+import FluidParcel from '../../../components/viz/FluidParcel.svelte';
+import CompressDemo from '../../../components/viz/CompressDemo.svelte';
+import MarginNote from '../../../components/content/MarginNote.astro';
+import Insight from '../../../components/content/Insight.astro';
+import Misconception from '../../../components/content/Misconception.astro';
+import ModelLimits from '../../../components/content/ModelLimits.astro';
+import Derivation from '../../../components/content/Derivation.astro';
+import Step from '../../../components/content/Step.astro';
+import Quiz from '../../../components/content/Quiz.astro';
+import G from '../../../components/content/G.astro';
+import Cite from '../../../components/content/Cite.astro';
+
+<p class="lede">Toute l'acoustique linéaire tient en trois équations : une pour la masse, une pour la quantité de mouvement, une pour la thermodynamique. Cette page les rappelle en insistant sur ce que chaque terme fait à une particule de fluide, parce que c'est ce regard qui rend l'équation des ondes évidente au chapitre suivant.</p>
+
+## La particule de fluide
+
+On ne suit pas les molécules : on raisonne sur une <G id="particule-fluide">particule de fluide</G>, un petit volume assez grand pour contenir un très grand nombre de molécules et assez petit pour que pression, masse volumique et vitesse y soient uniformes.<MarginNote n="1">Dans l'air aux conditions normales, un cube de 1 µm de côté contient encore environ 2,5 × 10⁷ molécules (calcul : $p_0/(k_B T)$ × volume). L'hypothèse du milieu continu est donc très confortable aux fréquences audibles.</MarginNote> C'est l'hypothèse du **milieu continu**.
+
+## Deux façons de regarder le même écoulement
+
+Il y a deux manières de décrire un fluide en mouvement.
+
+- La description <G id="eulerien">eulérienne</G> pose des sondes fixes et enregistre les champs $p(\mathbf{x}, t)$, $\mathbf{v}(\mathbf{x}, t)$ en chaque point.
+- La description <G id="lagrangien">lagrangienne</G> suit chaque particule et note son histoire.
+
+La figure ci-dessous montre un écoulement **permanent** qui accélère dans un conduit qui se rétrécit. Basculez entre les deux descriptions.
+
+<FluidParcel client:visible number="0.4.1" title="Une particule de fluide, deux regards" alt="À gauche, un cube de fluide et les forces de pression sur ses deux faces, avec leur résultante agrandie. À droite, un conduit convergent : la vitesse lue par une sonde fixe ne change pas, alors que la particule suivie accélère." />
+
+La sonde fixe lit toujours la même vitesse : en description eulérienne, $\partial v/\partial t = 0$. Pourtant la particule accélère. La différence entre les deux est la <G id="derivee-particulaire">dérivée particulaire</G> :
+
+$$
+\frac{\mathrm{D}\mathbf{v}}{\mathrm{D}t} = \underbrace{\frac{\partial \mathbf{v}}{\partial t}}_{\text{en un point fixe}} + \underbrace{(\mathbf{v}\cdot\nabla)\,\mathbf{v}}_{\text{terme convectif}}.
+$$
+
+Désactivez le terme convectif dans la figure : la particule garde sa vitesse initiale et se laisse distancer par l'écoulement. C'est ce terme, et lui seul, qui accélère la particule dans un écoulement permanent.
+
+<Insight>
+
+La dérivée particulaire n'est pas une subtilité de notation : c'est la loi de Newton appliquée à une particule qui se déplace dans un champ non uniforme. Sa partie convective est quadratique en vitesse. C'est elle qu'on négligera en acoustique linéaire, et elle reviendra au chapitre 1b quand l'amplitude devient grande.
+
+</Insight>
+
+## C'est le gradient de pression qui pousse
+
+Sur la face gauche de la particule, le fluide voisin pousse vers la droite avec la force $p(x)\,S$. Sur la face droite, il pousse vers la gauche avec $p(x+\mathrm{d}x)\,S$. Seule la **différence** compte.
+
+<Misconception>
+
+« Une forte pression pousse le fluide. » Dans la figure, multipliez la pression moyenne $p_0$ par dix : chaque face supporte alors environ 10 kN, mais la résultante ne bouge pas. Une pression uniforme, si grande soit-elle, n'accélère rien. Ce qui pousse, c'est la variation de pression d'une face à l'autre, $-\partial p/\partial x$. La pression est un scalaire ; c'est son gradient qui a une direction.
+
+</Misconception>
+
+<Derivation title="Équation d'Euler" hypotheses="fluide parfait (sans viscosité), pesanteur négligée.">
+<Step title="Forces sur une particule" open>
+
+Pour un cube de côté $\mathrm{d}x$ et de section $S = \mathrm{d}y\,\mathrm{d}z$, la résultante des forces de pression selon $x$ vaut
+
+$$
+\begin{aligned}
+F_x &= p(x)\,S - p(x+\mathrm{d}x)\,S \\
+&= -\frac{\partial p}{\partial x}\,\mathrm{d}x\,S = -\frac{\partial p}{\partial x}\,\mathrm{d}V,
+\end{aligned}
+$$
+
+au premier ordre en $\mathrm{d}x$ (développement de Taylor de $p$).
+
+</Step>
+<Step title="Principe fondamental de la dynamique">
+
+La masse de la particule est $\rho\,\mathrm{d}V$ et son accélération est la dérivée particulaire de sa vitesse. Dans les trois directions :
+
+$$
+\rho\,\frac{\mathrm{D}\mathbf{v}}{\mathrm{D}t} = -\nabla p
+\qquad\Longleftrightarrow\qquad
+\rho\left(\frac{\partial \mathbf{v}}{\partial t} + (\mathbf{v}\cdot\nabla)\mathbf{v}\right) = -\nabla p.
+$$
+
+</Step>
+</Derivation>
+
+## Conservation de la masse
+
+Une boîte fixe se remplit si plus de fluide y entre qu'il n'en sort. Le flux de masse à travers une surface vaut $\rho\,\mathbf{v}\cdot\mathbf{n}\,\mathrm{d}S$ : c'est une simple comptabilité.
+
+<Derivation title="Équation de continuité" hypotheses="aucune source ni puits de masse.">
+<Step title="Bilan sur une tranche" open>
+
+Pour une tranche fixe entre $x$ et $x+\mathrm{d}x$, de section $S$, la masse contenue varie de
+
+$$
+\begin{aligned}
+\frac{\partial \rho}{\partial t}\,S\,\mathrm{d}x &= \rho v(x)\,S - \rho v(x+\mathrm{d}x)\,S \\
+&= -\frac{\partial (\rho v)}{\partial x}\,S\,\mathrm{d}x.
+\end{aligned}
+$$
+
+</Step>
+<Step title="Forme générale">
+
+En trois dimensions, le même bilan donne
+
+$$
+\frac{\partial \rho}{\partial t} + \nabla\cdot(\rho\,\mathbf{v}) = 0.
+$$
+
+Le produit $\rho\,\mathbf{v}$ est non linéaire : il couple les fluctuations de masse volumique et de vitesse.
+
+</Step>
+</Derivation>
+
+## Équation d'état et compressibilité
+
+Continuité et Euler font quatre équations scalaires pour cinq inconnues ($\rho$, $p$ et les trois composantes de $\mathbf{v}$). La thermodynamique ferme le système : une **équation d'état** relie $p$ à $\rho$. Si la transformation est réversible et sans échange de chaleur (adiabatique), $p$ ne dépend que de $\rho$ et l'on définit le <G id="compressibilite">module de compressibilité</G> :
+
+$$
+K = \rho\left(\frac{\partial p}{\partial \rho}\right)_s = -V\left(\frac{\partial p}{\partial V}\right)_s .
+$$
+
+Pour un gaz parfait comprimé adiabatiquement, $pV^\gamma$ reste constant et $K = \gamma p_0$.<MarginNote n="2">$\gamma = c_p/c_v$ vaut 7/5 pour un gaz diatomique parfait comme l'air, 5/3 pour un gaz monoatomique comme l'hélium. Le chapitre 1a explique pourquoi c'est la transformation adiabatique, et non isotherme, qui compte pour le son.</MarginNote> Pour l'air à la pression atmosphérique, $K \approx 1{,}42 \times 10^5$ Pa.
+
+<CompressDemo client:visible number="0.4.2" title="Comprimer l'air, comprimer l'eau" alt="Un piston réduit le volume d'un fluide d'un même pourcentage ; la barre indique la surpression nécessaire, sur une échelle logarithmique, pour l'air et pour l'eau." />
+
+Pour réduire un volume de 0,1 %, il suffit d'environ 140 Pa dans l'air, mais il faut plus de 2 MPa dans l'eau : le rapport des modules de compressibilité est d'environ 15 000.<MarginNote n="3">Module de l'eau déduit de $K = \rho_0 c_0^2$ avec $\rho_0 = 998{,}2$ kg/m³ et $c_0 = 1482{,}3$ m/s à 20 °C <Cite k="marczak" />. {/* TODO-VERIFY: valeurs de l'eau à 20 °C. */}</MarginNote> Ce chiffre reviendra au chapitre 1a pour expliquer pourquoi le son va plus vite dans l'eau.
+
+<ModelLimits>
+
+- **Milieu continu** : il faut que les longueurs d'onde restent très grandes devant le libre parcours moyen des molécules (de l'ordre de 70 nm dans l'air aux conditions normales). {/* TODO-VERIFY: libre parcours moyen de l'air à 20 °C, 1 atm (≈ 68 nm). */} C'est le cas jusqu'à des fréquences très supérieures au domaine audible.
+- **Fluide parfait** : la viscosité et la conduction thermique sont négligées. Elles atténuent les ondes, d'autant plus que la fréquence est élevée (chapitre 10).
+- **Équation d'état $p = p(\rho)$** : elle suppose une transformation adiabatique réversible. Le chapitre 1a montre quand cette hypothèse tient.
+
+</ModelLimits>
+
+## Le système fermé
+
+Trois équations suffisent désormais pour décrire un fluide parfait :
+
+$$
+\frac{\partial \rho}{\partial t} + \nabla\cdot(\rho\,\mathbf{v}) = 0,
+\qquad
+\rho\,\frac{\mathrm{D}\mathbf{v}}{\mathrm{D}t} = -\nabla p,
+\qquad
+p = p(\rho).
+$$
+
+Le chapitre 1a les linéarise autour d'un état de repos et en tire l'équation des ondes.
+
+## Vérification
+
+<Quiz kind="choice" answer="b">
+<Fragment slot="question">Un ballon de baudruche est plongé à 10 m de profondeur, où la pression vaut environ 2 atm. Quelle force de pression nette subit l'air qu'il contient, en régime établi ?</Fragment>
+<Fragment slot="a">Une force deux fois plus grande qu'en surface, dirigée vers le centre.</Fragment>
+<Fragment slot="b">Aucune : la pression est la même tout autour, seul un gradient produirait une force nette.</Fragment>
+<Fragment slot="c">Une force vers le haut égale au poids de l'eau au-dessus.</Fragment>
+<Fragment slot="explanation">La pression comprime le ballon (son volume diminue) mais ne le met pas en mouvement : seule la différence de pression entre ses faces peut l'accélérer. Ici la pesanteur crée en réalité un petit gradient vertical, d'où la poussée d'Archimède, mais elle ne dépend pas de la valeur moyenne de la pression.</Fragment>
+</Quiz>
+
+<Quiz kind="choice" answer="c">
+<Fragment slot="question">Dans un écoulement **permanent**, une sonde fixe mesure une vitesse constante. Que vaut l'accélération d'une particule qui passe devant elle ?</Fragment>
+<Fragment slot="a">Zéro, puisque la vitesse ne varie pas.</Fragment>
+<Fragment slot="b">$\partial v/\partial t$, qui est nul.</Fragment>
+<Fragment slot="c">$v\,\partial v/\partial x$, non nul si la vitesse varie le long du trajet.</Fragment>
+<Fragment slot="explanation">Le terme $\partial v/\partial t$ est nul en un point fixe, mais la particule se déplace vers des régions où la vitesse est différente. Son accélération est la dérivée particulaire, réduite ici au terme convectif $v\,\partial v/\partial x$.</Fragment>
+</Quiz>
+
+<Quiz kind="numeric" answer={1418} tolerance={0.02} unit="Pa">
+<Fragment slot="question">Quelle surpression faut-il, au départ de la pression atmosphérique, pour réduire de 1 % le volume d'une tranche d'air comprimée adiabatiquement ($\gamma = 1{,}4$, $p_0 = 101\,325$ Pa) ?</Fragment>
+<Fragment slot="explanation">$\Delta p \approx K\,\Delta V/V = \gamma p_0 \times 0{,}01 = 1{,}4 \times 101\,325 \times 0{,}01 \approx 1\,420$ Pa. C'est une petite compression : la relation linéaire est une bonne approximation.</Fragment>
+</Quiz>
+
+## Pour aller plus loin
+
+Les équations de Navier-Stokes ajoutent la viscosité ; l'équation de l'énergie ajoute la conduction thermique. Ce sont elles qui expliquent l'absorption du son et la couche limite visqueuse et thermique le long des parois. Les ouvrages de Pierce <Cite k="pierce" /> et de Bruneau <Cite k="bruneau" /> donnent ces équations complètes et leur linéarisation.

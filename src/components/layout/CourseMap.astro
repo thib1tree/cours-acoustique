@@ -1,0 +1,465 @@
+---
+/**
+ * Course map: prerequisite graph. Desktop: layered graph left → right with
+ * "metro" edges that run between rows; phones: vertical arc diagram. Status (read,
+ * in progress, open, missing prerequisites) comes from local progress; choosing a
+ * node shows the exact path still to read.
+ */
+import { CURRICULUM } from '../../content/curriculum';
+import { layers } from '../../lib/map/layout';
+
+const L = layers(CURRICULUM);
+const byId = new Map(CURRICULUM.map((n) => [n.id, n]));
+const depth = new Map<string, number>();
+L.forEach((layer, d) => layer.forEach((id) => depth.set(id, d)));
+
+// ---- Layered layout (desktop) ----
+const colW = 214;
+const rowH = 84;
+const maxRows = Math.max(...L.map((l) => l.length));
+const pos = new Map<string, { x: number; y: number }>();
+L.forEach((layer, d) =>
+  layer.forEach((id, i) =>
+    pos.set(id, {
+      x: 16 + d * colW,
+      y: 30 + (i + Math.floor((maxRows - layer.length) / 2)) * rowH,
+    }),
+  ),
+);
+const W = 16 * 2 + colW * L.length;
+const H = 30 + rowH * (maxRows - 1) + 60;
+// Rough label width: ~7.2 px per character at 14 px, two lines of ≤ 19 chars.
+const wrap = (s: string) => {
+  const out: string[] = [];
+  let line = '';
+  for (const w of s.split(' ')) {
+    if ((line + ' ' + w).trim().length > 19) {
+      out.push(line);
+      line = w;
+    } else line = (line + ' ' + w).trim();
+  }
+  out.push(line);
+  return out;
+};
+const labelW = (id: string) => Math.max(...wrap(byId.get(id)!.title).map((l) => l.length)) * 7.2;
+const edges: { from: string; to: string; d: string }[] = [];
+for (const n of CURRICULUM)
+  for (const r of n.requires) {
+    const a = pos.get(r)!;
+    const b = pos.get(n.id)!;
+    const x0 = a.x + 18 + labelW(r) + 8;
+    const x1 = b.x - 11;
+    const mx = (x0 + x1) / 2;
+    let d = `M${a.x + 9},${a.y} H${x0} C${mx},${a.y} ${mx},${b.y} ${x1},${b.y}`;
+    if (depth.get(n.id)! - depth.get(r)! > 1) {
+      const yc = b.y + (a.y <= b.y ? -36 : 48);
+      const xa = Math.min(x0 + 34, a.x + colW - 12);
+      const xb = b.x - 44;
+      d = `M${a.x + 9},${a.y} H${x0} C${x0 + 20},${a.y} ${xa - 14},${yc} ${xa},${yc} H${xb} C${xb + 18},${yc} ${x1 - 16},${b.y} ${x1},${b.y}`;
+    }
+    edges.push({ from: r, to: n.id, d });
+  }
+
+// ---- Arc diagram (phones) ----
+const order = L.flat();
+const arcRow = 46;
+const arcLeft = 74;
+const arcY = new Map(order.map((id, i) => [id, 18 + i * arcRow]));
+const arcs = CURRICULUM.flatMap((n) =>
+  n.requires.map((r) => {
+    const y0 = arcY.get(r)!;
+    const y1 = arcY.get(n.id)!;
+    const bulge = Math.min(arcLeft - 10, 8 + (y1 - y0) * 0.16);
+    return {
+      from: r,
+      to: n.id,
+      d: `M${arcLeft - 9},${y0} C${arcLeft - bulge},${y0} ${arcLeft - bulge},${y1} ${arcLeft - 9},${y1}`,
+    };
+  }),
+);
+const data = JSON.stringify(
+  CURRICULUM.map((n) => ({
+    id: n.id,
+    num: n.num,
+    title: n.title,
+    summary: n.summary,
+    requires: n.requires,
+    href: n.href ?? null,
+  })),
+);
+const base = import.meta.env.BASE_URL;
+---
+
+<div class="course-map" data-map={data} data-base={base}>
+  <div class="graph">
+    <svg
+      class="layered"
+      viewBox={`0 0 ${W} ${H}`}
+      width={W}
+      height={H}
+      role="group"
+      aria-label="Graphe des prérequis : chaque lien relie un chapitre à un de ses prérequis."
+    >
+      <g class="edges">
+        {edges.map((e) => (
+          <path d={e.d} data-from={e.from} data-to={e.to} />
+        ))}
+      </g>
+      {CURRICULUM.map((n) => {
+        const p = pos.get(n.id)!;
+        return (
+          <g
+            class="node"
+            data-id={n.id}
+            tabindex="0"
+            role="button"
+            aria-label={`${n.num} ${n.title}`}
+          >
+            <circle cx={p.x} cy={p.y} r="7" />
+            <circle class="dot" cx={p.x} cy={p.y} r="3.5" />
+            <text x={p.x + 18} y={p.y - 4} class="num-l">
+              {n.num}
+            </text>
+            {wrap(n.title).map((l, k) => (
+              <text x={p.x + 18} y={p.y + 14 + k * 17}>
+                {l}
+              </text>
+            ))}
+          </g>
+        );
+      })}
+    </svg>
+    <svg
+      class="arcs"
+      viewBox={`0 0 360 ${order.length * arcRow + 10}`}
+      role="group"
+      aria-label="Graphe des prérequis, vue verticale."
+    >
+      <g class="edges">
+        {arcs.map((e) => (
+          <path d={e.d} data-from={e.from} data-to={e.to} />
+        ))}
+      </g>
+      {order.map((id) => {
+        const n = byId.get(id)!;
+        const y = arcY.get(id)!;
+        return (
+          <g
+            class="node"
+            data-id={id}
+            tabindex="0"
+            role="button"
+            aria-label={`${n.num} ${n.title}`}
+          >
+            <rect x="0" y={y - arcRow / 2} width="360" height={arcRow} class="hit" />
+            <circle cx={arcLeft} cy={y} r="6" />
+            <circle class="dot" cx={arcLeft} cy={y} r="3" />
+            <text x={arcLeft + 16} y={y + 5}>
+              <tspan class="num-l">{n.num} </tspan>
+              {n.title.length > 30 ? n.title.slice(0, 29) + '…' : n.title}
+            </text>
+          </g>
+        );
+      })}
+    </svg>
+  </div>
+  <aside class="detail" aria-live="polite">
+    <div class="d-num muted"></div>
+    <h2 class="d-title"></h2>
+    <p class="d-summary"></p>
+    <div class="d-path"></div>
+    <div class="d-cta"></div>
+    <div class="legend">
+      <span>
+        <svg width="16" height="16">
+          <circle cx="8" cy="8" r="6" class="s-done"></circle>
+        </svg>
+        vu
+      </span>
+      <span>
+        <svg width="16" height="16">
+          <circle cx="8" cy="8" r="7" class="s-current"></circle>
+          <circle cx="8" cy="8" r="3.5" class="s-current-dot"></circle>
+        </svg>
+        en cours
+      </span>
+      <span>
+        <svg width="16" height="16">
+          <circle cx="8" cy="8" r="6" class="s-open"></circle>
+        </svg>
+        accessible
+      </span>
+      <span>
+        <svg width="16" height="16">
+          <circle cx="8" cy="8" r="6" class="s-locked"></circle>
+        </svg>
+        prérequis manquants
+      </span>
+      <span>
+        <svg width="16" height="16">
+          <circle cx="8" cy="8" r="6" class="s-planned"></circle>
+        </svg>
+        à venir
+      </span>
+      <span class="muted">Progression enregistrée sur cet appareil uniquement.</span>
+    </div>
+  </aside>
+</div>
+
+<script>
+  import { missingPath } from '../../lib/map/layout';
+  import { lastVisited, readDone } from '../../lib/progress/progress';
+
+  interface N {
+    id: string;
+    num: string;
+    title: string;
+    summary: string;
+    requires: string[];
+    href: string | null;
+  }
+  const root = document.querySelector<HTMLElement>('[data-map]')!;
+  const nodes: N[] = JSON.parse(root.dataset.map!);
+  const base = root.dataset.base!;
+  const byId = new Map(nodes.map((n) => [n.id, n]));
+  const done = readDone();
+  const current = lastVisited();
+
+  const status = (n: N) => {
+    if (done.has(n.id)) return 'done';
+    if (n.id === current) return 'current';
+    if (!n.href) return 'planned';
+    return n.requires.every((r) => done.has(r) || !byId.get(r)?.href) ? 'open' : 'locked';
+  };
+  for (const g of root.querySelectorAll<SVGGElement>('.node'))
+    g.dataset.status = status(byId.get(g.dataset.id!)!);
+
+  const detail = root.querySelector<HTMLElement>('.detail')!;
+  function select(id: string, user = false) {
+    const n = byId.get(id)!;
+    const path = missingPath(nodes, id, done);
+    const anc = new Set(path);
+    for (const g of root.querySelectorAll<SVGGElement>('.node')) {
+      g.classList.toggle('selected', g.dataset.id === id);
+      g.classList.toggle('dim', !anc.has(g.dataset.id!) && g.dataset.id !== id);
+    }
+    for (const e of root.querySelectorAll<SVGPathElement>('.edges path'))
+      e.classList.toggle('hot', anc.has(e.dataset.from!) && anc.has(e.dataset.to!));
+    detail.querySelector('.d-num')!.textContent =
+      /^\d+$/.test(n.num) || /^\d+[ab]$/.test(n.num) ? `Chapitre ${n.num}` : `Prérequis ${n.num}`;
+    detail.querySelector('.d-title')!.textContent = n.title;
+    detail.querySelector('.d-summary')!.textContent = n.summary;
+    const before = path.filter((p) => p !== id);
+    const list = before
+      .map((p) => {
+        const m = byId.get(p)!;
+        const label = m.href
+          ? `<a href="${base}${m.href}">${m.title}</a>`
+          : `${m.title} <span class="muted">(à venir)</span>`;
+        return `<li><span class="n">${m.num}</span><span>${label}</span></li>`;
+      })
+      .join('');
+    detail.querySelector('.d-path')!.innerHTML = before.length
+      ? `<p><b>Il vous reste ${before.length} étape${before.length > 1 ? 's' : ''}</b> avant ce chapitre, dans cet ordre&nbsp;:</p><ol>${list}</ol>`
+      : `<p>Tous les prérequis sont lus.</p>`;
+    detail.querySelector('.d-cta')!.innerHTML = n.href
+      ? `<a class="btn" href="${base}${n.href}">${done.has(id) ? 'Relire' : 'Lire'} ce ${/^\d/.test(n.num) && !n.num.startsWith('0') ? 'chapitre' : 'prérequis'}</a>`
+      : `<p class="muted">Ce chapitre n'est pas encore écrit.</p>`;
+    if (user && matchMedia('(max-width: 1100px)').matches)
+      detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  for (const g of root.querySelectorAll<SVGGElement>('.node')) {
+    g.addEventListener('click', () => select(g.dataset.id!, true));
+    g.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        select(g.dataset.id!, true);
+      }
+    });
+  }
+  const initial = new URLSearchParams(location.search).get('n') ?? current ?? 'ondes';
+  select(byId.has(initial) ? initial : 'ondes');
+</script>
+
+<style>
+  .course-map {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: var(--space-6);
+  }
+  .graph {
+    overflow-x: auto;
+    min-width: 0;
+  }
+  svg {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 14px;
+  }
+  .arcs {
+    display: none;
+    width: 100%;
+    height: auto;
+  }
+  .edges path {
+    fill: none;
+    stroke: var(--color-rule);
+    stroke-width: 1;
+  }
+  .edges path.hot {
+    stroke: var(--color-ink);
+    stroke-width: 1.75;
+  }
+  .node {
+    cursor: pointer;
+    outline: none;
+  }
+  .node text {
+    fill: var(--color-ink);
+  }
+  .node .num-l {
+    font-family: var(--font-num);
+    fill: var(--color-ink-muted);
+  }
+  .node.dim text {
+    fill: var(--color-ink-muted);
+  }
+  .node.selected text {
+    font-weight: 700;
+  }
+  .node:focus-visible circle:first-of-type {
+    stroke-width: 3;
+  }
+  .hit {
+    fill: transparent;
+  }
+  .node circle {
+    fill: var(--color-bg);
+    stroke: var(--color-ink);
+    stroke-width: 1.5;
+  }
+  .node .dot {
+    fill: none;
+    stroke: none;
+  }
+  .node[data-status='done'] circle {
+    fill: var(--color-ink);
+  }
+  .node[data-status='current'] .dot {
+    fill: var(--color-ink);
+  }
+  .node[data-status='locked'] circle:first-of-type {
+    stroke: var(--color-ink-muted);
+    stroke-dasharray: 2 2.5;
+  }
+  .node[data-status='planned'] circle:first-of-type {
+    stroke: var(--color-rule);
+    stroke-dasharray: 2 2.5;
+  }
+  .node[data-status='planned'] text:not(.num-l),
+  .node[data-status='planned'] tspan {
+    fill: var(--color-ink-muted);
+  }
+  .node.selected circle:first-of-type {
+    stroke-width: 3;
+  }
+  .detail {
+    border-left: 1px solid var(--color-rule);
+    padding-left: var(--space-5);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui);
+    align-self: start;
+    position: sticky;
+    top: calc(var(--header-h) + var(--space-5));
+  }
+  .detail h2 {
+    margin: var(--space-1) 0 var(--space-2);
+  }
+  .d-summary {
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+  }
+  .detail :global(ol) {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-3) 0 var(--space-5);
+  }
+  .detail :global(li) {
+    display: grid;
+    grid-template-columns: 2.6rem 1fr;
+    padding: 8px 0;
+    border-top: 1px solid var(--color-rule);
+  }
+  .detail :global(.n) {
+    font-family: var(--font-num);
+    color: var(--color-ink-muted);
+  }
+  .detail :global(.btn) {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--touch);
+    padding: 0 var(--space-5);
+    background: var(--color-ink);
+    color: var(--color-bg);
+    border-radius: var(--radius);
+    font-weight: 650;
+    text-decoration: none;
+  }
+  .legend {
+    display: grid;
+    gap: 6px;
+    margin-top: var(--space-6);
+    font-size: var(--text-small);
+    color: var(--color-ink-muted);
+  }
+  .legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .legend circle {
+    stroke-width: 1.5;
+  }
+  .s-done {
+    fill: var(--color-ink);
+  }
+  .s-current {
+    fill: none;
+    stroke: var(--color-ink);
+  }
+  .s-current-dot {
+    fill: var(--color-ink);
+  }
+  .s-open {
+    fill: none;
+    stroke: var(--color-ink);
+  }
+  .s-locked {
+    fill: none;
+    stroke: var(--color-ink-muted);
+    stroke-dasharray: 2 2.5;
+  }
+  .s-planned {
+    fill: none;
+    stroke: var(--color-rule);
+    stroke-dasharray: 2 2.5;
+  }
+  @media (max-width: 1100px) {
+    .course-map {
+      grid-template-columns: 1fr;
+    }
+    .layered {
+      display: none;
+    }
+    .arcs {
+      display: block;
+      max-width: 520px;
+    }
+    .detail {
+      position: static;
+      border-left: 0;
+      border-top: 1px solid var(--color-rule);
+      padding: var(--space-5) 0 0;
+    }
+  }
+</style>

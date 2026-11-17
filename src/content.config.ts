@@ -4,6 +4,8 @@ import { z } from 'astro/zod';
 
 /** Metadata required on every chapter and prerequisite page (see CLAUDE.md § 3). */
 const lessonSchema = z.object({
+  /** Id of this page in src/content/curriculum.ts. */
+  curriculumId: z.string(),
   title: z.string(),
   /** Short hook shown on the course map. */
   summary: z.string(),
@@ -13,7 +15,10 @@ const lessonSchema = z.object({
   /** Estimated duration of active reading, in minutes. */
   duration: z.number().int().positive(),
   keyConcepts: z.array(z.string()).min(1),
+  /** Curriculum ids (see src/content/curriculum.ts). */
   prerequisites: z.array(z.string()).default([]),
+  /** Bibliography keys (src/content/references.ts) listed at the end of the page. */
+  references: z.array(z.string()).default([]),
   draft: z.boolean().default(false),
 });
 
