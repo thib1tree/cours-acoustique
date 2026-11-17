@@ -14,7 +14,7 @@ const depth = new Map<string, number>();
 L.forEach((layer, d) => layer.forEach((id) => depth.set(id, d)));
 
 // ---- Layered layout (desktop) ----
-const colW = 214;
+const colW = 172;
 const rowH = 84;
 const maxRows = Math.max(...L.map((l) => l.length));
 const pos = new Map<string, { x: number; y: number }>();
@@ -33,7 +33,7 @@ const wrap = (s: string) => {
   const out: string[] = [];
   let line = '';
   for (const w of s.split(' ')) {
-    if ((line + ' ' + w).trim().length > 19) {
+    if ((line + ' ' + w).trim().length > 17) {
       out.push(line);
       line = w;
     } else line = (line + ' ' + w).trim();
@@ -41,7 +41,7 @@ const wrap = (s: string) => {
   out.push(line);
   return out;
 };
-const labelW = (id: string) => Math.max(...wrap(byId.get(id)!.title).map((l) => l.length)) * 7.2;
+const labelW = (id: string) => Math.max(...wrap(byId.get(id)!.title).map((l) => l.length)) * 6.7;
 const edges: { from: string; to: string; d: string }[] = [];
 for (const n of CURRICULUM)
   for (const r of n.requires) {
@@ -121,7 +121,7 @@ const base = import.meta.env.BASE_URL;
               {n.num}
             </text>
             {wrap(n.title).map((l, k) => (
-              <text x={p.x + 18} y={p.y + 14 + k * 17}>
+              <text x={p.x + 18} y={p.y + 13 + k * 16}>
                 {l}
               </text>
             ))}
@@ -284,7 +284,7 @@ const base = import.meta.env.BASE_URL;
 <style>
   .course-map {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 340px;
+    grid-template-columns: minmax(0, 1fr) 300px;
     gap: var(--space-6);
   }
   .graph {
@@ -294,7 +294,10 @@ const base = import.meta.env.BASE_URL;
   svg {
     display: block;
     font-family: var(--font-sans);
-    font-size: 14px;
+    font-size: 13px;
+  }
+  .layered {
+    max-width: none;
   }
   .arcs {
     display: none;

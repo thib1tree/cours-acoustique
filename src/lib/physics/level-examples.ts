@@ -36,5 +36,5 @@ export const LEVEL_EXAMPLES: readonly LevelExample[] = [
     source: 'à préciser',
     verified: false,
   },
-  { L: 194, label: 'p_eff = 1 atm : fin du régime sinusoïdal', kind: 'calculated', verified: true },
+  { L: 194, label: 'pression efficace = 1 atm', kind: 'calculated', verified: true },
 ];

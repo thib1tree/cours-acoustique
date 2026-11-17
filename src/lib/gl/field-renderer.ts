@@ -15,9 +15,28 @@ uniform float u_phase;  // ωt
 uniform float u_scale;  // field value mapped to the ends of the colormap
 in vec2 v_uv;
 out vec4 o;
+// Manual bilinear interpolation: float32 textures are not filterable everywhere
+// (OES_texture_float_linear is optional), so the solver texture is read with texelFetch.
+float fieldR(vec2 uv) {
+  ivec2 size = textureSize(u_field, 0);
+  vec2 p = uv * vec2(size) - 0.5;
+  ivec2 i0 = clamp(ivec2(floor(p)), ivec2(0), size - 1);
+  ivec2 i1 = min(i0 + 1, size - 1);
+  vec2 t = clamp(p - floor(p), 0.0, 1.0);
+  float a = texelFetch(u_field, i0, 0).r;
+  float b = texelFetch(u_field, ivec2(i1.x, i0.y), 0).r;
+  float c = texelFetch(u_field, ivec2(i0.x, i1.y), 0).r;
+  float d = texelFetch(u_field, i1, 0).r;
+  return mix(mix(a, b, t.x), mix(c, d, t.x), t.y);
+}
 void main() {
-  vec2 f = texture(u_field, v_uv).rg;
-  float v = u_mode == 0 ? f.r : f.r * cos(u_phase) + f.g * sin(u_phase);
+  float v;
+  if (u_mode == 0) {
+    v = fieldR(v_uv);
+  } else {
+    vec2 f = texture(u_field, v_uv).rg;
+    v = f.r * cos(u_phase) + f.g * sin(u_phase);
+  }
   float x = clamp(0.5 + 0.5 * v / u_scale, 0.0, 1.0);
   // Sample texel centres of the LUT.
   float n = float(textureSize(u_lut, 0).x);
@@ -70,11 +89,6 @@ export function createFieldRenderer(gl: WebGL2RenderingContext): FieldRenderer {
       gl.bindVertexArray(vao);
       gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(gl.TEXTURE_2D, field);
-      // Solver textures are NEAREST (exact for the scheme); smooth them for display.
-      if (source === 'texture') {
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-      }
       gl.uniform1i(u.field, 0);
       gl.activeTexture(gl.TEXTURE1);
       gl.bindTexture(gl.TEXTURE_2D, lut);
@@ -83,11 +97,6 @@ export function createFieldRenderer(gl: WebGL2RenderingContext): FieldRenderer {
       gl.uniform1f(u.phase, phase);
       gl.uniform1f(u.scale, scale);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
-      if (source === 'texture') {
-        gl.bindTexture(gl.TEXTURE_2D, field);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-      }
       gl.bindVertexArray(null);
     },
     dispose() {

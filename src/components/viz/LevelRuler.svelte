@@ -78,6 +78,14 @@
     {/each}
     <div class="cursor" style:left="{pos(Ltot) * 100}%"></div>
   </div>
+  <ol class="ex-list">
+    {#each LEVEL_EXAMPLES as ex (ex.L)}
+      <li class:unverified={!ex.verified}>
+        <span class="num">{formatNumber(ex.L)} dB</span>
+        {ex.label}
+      </li>
+    {/each}
+  </ol>
   <div class="readout num" aria-live="polite">
     <span
       >niveau total <b>{formatNumber(Ltot, 1)} dB</b>{#if N > 1}&nbsp;(+{formatNumber(Ltot - L, 1)} dB){/if}</span
@@ -174,6 +182,45 @@
   }
   .ex.unverified .t {
     color: var(--color-ink-muted);
+  }
+  .ex-list {
+    display: none;
+  }
+  @media (max-width: 600px) {
+    .ruler {
+      height: 120px;
+    }
+    .ex .lab {
+      display: none;
+    }
+    .ex,
+    .ex.low {
+      top: 64px;
+    }
+    .ex.low .dot {
+      top: -36px;
+    }
+    .ex.low .t {
+      top: 18px;
+    }
+    .ex-list {
+      display: block;
+      list-style: none;
+      padding: 0;
+      margin: 0 0 var(--space-3);
+      font-size: 0.875rem;
+    }
+    .ex-list li {
+      padding: 4px 0;
+      border-top: 1px solid var(--color-rule);
+    }
+    .ex-list .num {
+      display: inline-block;
+      min-width: 4.5em;
+    }
+    .ex-list .unverified {
+      color: var(--color-ink-muted);
+    }
   }
   .cursor {
     position: absolute;

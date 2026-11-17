@@ -38,7 +38,7 @@
 </script>
 
 <div class="listen">
-  <button type="button" class="btn" aria-pressed={on} onclick={toggle}>
+  <button type="button" class="listen-btn" aria-pressed={on} onclick={toggle}>
     <!-- eslint-disable-next-line svelte/no-at-html-tags -- static icon -->
     {@html on ? ICONS.mute : ICONS.sound}
     {on ? t('audio.stop') : label}
@@ -59,7 +59,7 @@
     font-family: var(--font-sans);
     font-size: var(--text-small);
   }
-  .btn {
+  .listen-btn {
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
@@ -68,10 +68,11 @@
     border: 1px solid var(--color-ink);
     border-radius: var(--radius);
     background: none;
+    color: var(--color-ink);
     cursor: pointer;
     font-weight: 650;
   }
-  .btn[aria-pressed='true'] {
+  .listen-btn[aria-pressed='true'] {
     background: var(--color-ink);
     color: var(--color-bg);
   }
