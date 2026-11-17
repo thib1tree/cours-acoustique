@@ -65,3 +65,23 @@ describe('gas mixtures', () => {
     }
   });
 });
+
+import { TABULATED_MEDIA, barSpeed, solidLongitudinalSpeed } from './media';
+
+describe('tabulated media and solids', () => {
+  it('water: c = √(K/ρ) ≈ 1482 m/s, ~4.3× air, K ~ 15 000× air', () => {
+    const w = TABULATED_MEDIA[0]!;
+    expect(celerityFromModulus(w.modulus, w.rho)).toBeCloseTo(1482.3, 6);
+    const Kair = adiabaticBulkModulus(AIR);
+    expect(w.modulus / Kair).toBeGreaterThan(14_000);
+    expect(w.modulus / Kair).toBeLessThan(17_000);
+  });
+  it('steel: longitudinal speed √(M/ρ) ≈ 5.9 km/s > bar speed √(E/ρ) ≈ 5.0 km/s', () => {
+    const cP = solidLongitudinalSpeed(200e9, 0.3, 7850);
+    expect(cP).toBeCloseTo(5856, -1);
+    expect(barSpeed(200e9, 7850)).toBeCloseTo(5048, -1);
+    // Using K alone would be ~25 % low.
+    const K = 200e9 / (3 * (1 - 2 * 0.3));
+    expect(1 - celerityFromModulus(K, 7850) / cP).toBeGreaterThan(0.2);
+  });
+});

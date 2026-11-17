@@ -85,3 +85,49 @@ export function mixGases(a: IdealGas, b: IdealGas, x: number): IdealGas {
     gamma: (cv + 1) / cv,
   };
 }
+
+/** A medium described by tabulated (not derived) properties, with its source. */
+export interface TabulatedMedium {
+  readonly name: string;
+  /** Density, kg/m³. */
+  readonly rho: number;
+  /** Modulus governing longitudinal waves, Pa (K for fluids, M = K + 4G/3 for solids). */
+  readonly modulus: number;
+  readonly modulusKind: 'bulk K' | 'P-wave M';
+  readonly source: string;
+  /** False until the author has checked the source. */
+  readonly verified: boolean;
+}
+
+/**
+ * Reference media for the stiffness/inertia chart (chapter 1a, D2).
+ * Water: c₀ ≈ 1482 m/s at 20 °C. Steel: generic structural steel E ≈ 200 GPa, ν ≈ 0.30.
+ */
+export const TABULATED_MEDIA: readonly TabulatedMedium[] = [
+  {
+    name: 'eau (20 °C)',
+    rho: 998.2,
+    modulus: 998.2 * 1482.3 ** 2,
+    modulusKind: 'bulk K',
+    // TODO-VERIFY: ρ = 998.2 kg/m³ and c = 1482.3 m/s (e.g. Marczak 1997 / Del Grosso & Mader 1972).
+    source: 'Marczak (1997), J. Acoust. Soc. Am. 102(5)',
+    verified: false,
+  },
+  {
+    name: 'acier',
+    rho: 7850,
+    modulus: (200e9 * (1 - 0.3)) / ((1 + 0.3) * (1 - 2 * 0.3)),
+    modulusKind: 'P-wave M',
+    // TODO-VERIFY: generic structural steel, E = 200 GPa, ν = 0.30, ρ = 7850 kg/m³.
+    source: 'valeurs génériques d’un acier de construction',
+    verified: false,
+  },
+];
+
+/** Longitudinal wave speed in an isotropic solid, √(M/ρ) with M = E(1−ν)/((1+ν)(1−2ν)). */
+export function solidLongitudinalSpeed(E: number, nu: number, rho: number): number {
+  return Math.sqrt((E * (1 - nu)) / ((1 + nu) * (1 - 2 * nu) * rho));
+}
+
+/** Bar (thin rod) speed √(E/ρ), slower than the bulk longitudinal speed. */
+export const barSpeed = (E: number, rho: number): number => Math.sqrt(E / rho);

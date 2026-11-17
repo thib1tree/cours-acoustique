@@ -256,7 +256,7 @@ Ordre = ordre de lecture proposé.
 - **Visualisation** : `Plot` log-log interactif + deux curseurs K et ρ₀ sur la chaîne.
 - **Point scientifique à trancher (question Q2)** : pour un solide, le module pertinent
   pour l'onde longitudinale n'est pas K mais le module d'onde P, M = K + 4G/3 (et E pour une
-  barre mince). « Expliquer l'acier d'un coup » avec K seul serait faux de ~25 %.
+  barre mince). « Expliquer l'acier d'un coup » avec K seul serait faux de ~20 %.
 - ★ **Déclic supplémentaire** : pour un gaz parfait K = γp₀, donc c₀ = √(γp₀/ρ₀) =
   √(γRT/M) **ne dépend pas de la pression**. Intuition piège : « en altitude, l'air est moins
   dense, le son va plus vite (ou moins vite) » ; à température égale, ni l'un ni l'autre.
