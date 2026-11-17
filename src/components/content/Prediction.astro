@@ -1,0 +1,67 @@
+---
+/**
+ * Prediction: the reader commits to an answer before exploring. The choice is kept in
+ * this browser only (per-viewer convenience); no right/wrong is shown here, the
+ * simulation and the next section deliver the verdict.
+ */
+import { t } from '../../i18n';
+interface Props {
+  id: string;
+  options: string[];
+}
+const { id, options } = Astro.props;
+---
+
+<form class="predict" data-predict={id}>
+  <fieldset>
+    <legend class="predict-q">
+      <slot />
+    </legend>
+    {options.map((o, i) => (
+      <label class="choice">
+        <input type="radio" name={`p-${id}`} value={i} />
+        <span class="k">{String.fromCharCode(65 + i)}</span>
+        <span>{o}</span>
+      </label>
+    ))}
+  </fieldset>
+  <button type="submit" class="btn">
+    {t('predict.commit')}
+  </button>
+  <p class="predict-locked" role="status" hidden>
+    {t('predict.locked')}
+  </p>
+</form>
+
+<script>
+  for (const form of document.querySelectorAll<HTMLFormElement>('form[data-predict]')) {
+    const key = `predict:${location.pathname}:${form.dataset.predict}`;
+    const status = form.querySelector<HTMLElement>('.predict-locked')!;
+    const lock = (value: string) => {
+      const input = form.querySelector<HTMLInputElement>(`input[value="${value}"]`);
+      if (!input) return;
+      input.checked = true;
+      for (const i of form.querySelectorAll<HTMLInputElement>('input')) i.disabled = true;
+      form.querySelector('button')!.hidden = true;
+      status.hidden = false;
+      form.classList.add('locked');
+    };
+    try {
+      const saved = localStorage.getItem(key);
+      if (saved !== null) lock(saved);
+    } catch {
+      /* storage unavailable */
+    }
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const v = new FormData(form).get(`p-${form.dataset.predict}`);
+      if (v === null) return;
+      lock(String(v));
+      try {
+        localStorage.setItem(key, String(v));
+      } catch {
+        /* storage unavailable */
+      }
+    });
+  }
+</script>

@@ -1,0 +1,17 @@
+---
+/** Author–year citation linking to the reference list at the end of the page. */
+import { REFERENCES } from '../../content/references';
+interface Props {
+  k: string;
+  /** Location in the work (page, section). Must be checked: mark TODO-VERIFY if unsure. */
+  loc?: string;
+}
+const { k, loc } = Astro.props;
+const r = REFERENCES[k];
+if (!r) throw new Error(`unknown reference "${k}"`);
+---
+
+<a class="cite" href={`#ref-${k}`}>
+  ({r.short}
+  {loc ? `, ${loc}` : ''})
+</a>

@@ -1,0 +1,23 @@
+---
+/**
+ * Step-by-step derivation. Each <Step> folds; heavy algebra is folded by default but
+ * never omitted. Hypotheses are stated on top.
+ */
+interface Props {
+  title: string;
+  hypotheses?: string;
+}
+const { title, hypotheses } = Astro.props;
+---
+
+<section class="derivation">
+  <h3 class="deriv-title">{title}</h3>
+  {hypotheses && (
+    <p class="deriv-hyp">
+      <span>Hypothèses :</span> {hypotheses}
+    </p>
+  )}
+  <ol class="steps">
+    <slot />
+  </ol>
+</section>

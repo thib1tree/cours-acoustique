@@ -1,0 +1,67 @@
+---
+/**
+ * Persistent bench ("paillasse"). Large screens: the visualization (slot "viz") stays
+ * pinned beside the derivation and follows the step being read. Phones: it docks as a
+ * mini-player at the bottom of the screen, unfolded with a tap.
+ */
+interface Props {
+  label: string;
+}
+const { label } = Astro.props;
+---
+
+<section class="bench" data-bench>
+  <div class="bench-text">
+    <slot />
+  </div>
+  <div class="bench-viz" data-bench-viz>
+    <button type="button" class="bench-handle" aria-expanded="false" data-bench-toggle>
+      <span>{label}</span>
+      <span class="bench-hint">Déployer</span>
+    </button>
+    <div class="bench-inner">
+      <slot name="viz" />
+    </div>
+  </div>
+</section>
+
+<script>
+  import { useScene } from '../../lib/scene/scene.svelte';
+
+  for (const bench of document.querySelectorAll<HTMLElement>('[data-bench]')) {
+    const viz = bench.querySelector<HTMLElement>('[data-bench-viz]')!;
+    const toggle = bench.querySelector<HTMLButtonElement>('[data-bench-toggle]')!;
+    toggle.addEventListener('click', () => {
+      const open = viz.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.querySelector('.bench-hint')!.textContent = open ? 'Réduire' : 'Déployer';
+      dispatchEvent(new Event('resize'));
+    });
+    // The mini-player only shows while the bench section is being read.
+    new IntersectionObserver(([e]) => bench.classList.toggle('in-view', !!e?.isIntersecting), {
+      threshold: 0,
+    }).observe(bench);
+    // Step presets: applied when a step reaches the reading line.
+    const steps = bench.querySelectorAll<HTMLElement>('[data-bench-step]');
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          const el = e.target as HTMLElement;
+          for (const s of steps) s.classList.toggle('active', s === el);
+          const id = el.dataset.scene;
+          const set = el.dataset.set;
+          if (id && set) {
+            try {
+              useScene(id).apply(JSON.parse(set));
+            } catch (err) {
+              console.error('bench preset', err);
+            }
+          }
+        }
+      },
+      { rootMargin: '-40% 0px -55% 0px' },
+    );
+    for (const s of steps) io.observe(s);
+  }
+</script>

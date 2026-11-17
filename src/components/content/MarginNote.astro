@@ -1,0 +1,21 @@
+---
+/**
+ * Margin note (Tufte style). Write it inside a paragraph, right after the word it
+ * annotates. Large screens: in the right margin. Phones and tablets: a numbered toggle
+ * that unfolds the note in place (works without JavaScript).
+ */
+interface Props {
+  n?: string | number;
+}
+const { n } = Astro.props;
+const id = `mn-${Math.random().toString(36).slice(2, 9)}`;
+---
+
+<label for={id} class="mn-toggle" aria-label={n ? `Note ${n}` : 'Note'}>
+  {n ?? '⊕'}
+</label>
+<input type="checkbox" id={id} class="mn-check" />
+<span class="margin-note">
+  {n && <span class="mn-num">{n}</span>}
+  <slot />
+</span>

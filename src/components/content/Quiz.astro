@@ -1,0 +1,82 @@
+---
+/**
+ * Comprehension question with explained correction.
+ *  kind="choice": options in slots a, b, c… ; `answer` is the correct slot name.
+ *  kind="numeric": `answer` (number), relative `tolerance`, optional `unit`.
+ * Slots: question, explanation (shown after a check), and a…f for choices.
+ */
+import { t } from '../../i18n';
+interface Props {
+  kind: 'choice' | 'numeric';
+  answer: string | number;
+  tolerance?: number;
+  unit?: string;
+}
+const { kind, answer, tolerance = 0.02, unit } = Astro.props;
+const letters = ['a', 'b', 'c', 'd', 'e', 'f'].filter((l) => Astro.slots.has(l));
+const id = `q-${Math.random().toString(36).slice(2, 9)}`;
+const rendered: Record<string, string> = {};
+for (const l of letters) rendered[l] = await Astro.slots.render(l);
+---
+
+<form class="quiz" data-quiz data-kind={kind} data-answer={String(answer)} data-tol={tolerance}>
+  <fieldset>
+    <legend class="quiz-q">
+      <slot name="question" />
+    </legend>
+    {kind === 'choice' ? (
+      letters.map((l, i) => (
+        <label class="choice">
+          <input type="radio" name={id} value={l} />
+          <span class="k">{String.fromCharCode(65 + i)}</span>
+          <span set:html={rendered[l]} />
+        </label>
+      ))
+    ) : (
+      <label class="numeric">
+        <span class="visually-hidden">Votre réponse</span>
+        <input type="text" inputmode="decimal" name={id} autocomplete="off" />
+        {unit && <span class="unit">{unit}</span>}
+      </label>
+    )}
+  </fieldset>
+  <button type="submit" class="btn">
+    {t('quiz.check')}
+  </button>
+  <div class="quiz-feedback" role="status" aria-live="polite"></div>
+  <div class="quiz-explanation" hidden>
+    <slot name="explanation" />
+  </div>
+</form>
+
+<script>
+  import { t } from '../../i18n';
+  const parse = (s: string) => Number(s.replace(/\s/g, '').replace('−', '-').replace(',', '.'));
+  for (const form of document.querySelectorAll<HTMLFormElement>('form[data-quiz]')) {
+    const fb = form.querySelector<HTMLElement>('.quiz-feedback')!;
+    const ex = form.querySelector<HTMLElement>('.quiz-explanation')!;
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const answer = form.dataset.answer!;
+      let ok: boolean;
+      if (form.dataset.kind === 'choice') {
+        const sel = form.querySelector<HTMLInputElement>('input:checked');
+        if (!sel) return;
+        ok = sel.value === answer;
+        for (const l of form.querySelectorAll('label.choice')) {
+          const v = l.querySelector('input')!.value;
+          l.classList.toggle('is-correct', v === answer);
+          l.classList.toggle('is-wrong', v === sel.value && !ok);
+        }
+      } else {
+        const v = parse(form.querySelector<HTMLInputElement>('input')!.value);
+        if (!Number.isFinite(v)) return;
+        const a = Number(answer);
+        ok = Math.abs(v - a) <= Math.abs(a) * Number(form.dataset.tol);
+      }
+      fb.textContent = ok ? t('quiz.correct') : t('quiz.incorrect');
+      fb.dataset.ok = String(ok);
+      ex.hidden = false;
+    });
+  }
+</script>

@@ -1,0 +1,114 @@
+---
+/**
+ * Internal component lab: every visualization in isolation, for development and
+ * end-to-end tests. Not linked from the course and excluded from the sitemap.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TubeWave from '../../components/viz/TubeWave.svelte';
+import LiveEquation from '../../components/ui/LiveEquation.svelte';
+import MassSpringChain from '../../components/viz/MassSpringChain.svelte';
+import StiffnessChart from '../../components/viz/StiffnessChart.svelte';
+import NewtonLaplace from '../../components/viz/NewtonLaplace.svelte';
+import PulseLab from '../../components/viz/PulseLab.svelte';
+import HeliumVoice from '../../components/viz/HeliumVoice.svelte';
+import PistonColumn from '../../components/viz/PistonColumn.svelte';
+import LevelRuler from '../../components/viz/LevelRuler.svelte';
+import ShockSteepening from '../../components/viz/ShockSteepening.svelte';
+import FluidParcel from '../../components/viz/FluidParcel.svelte';
+import CompressDemo from '../../components/viz/CompressDemo.svelte';
+import ScalarField2D from '../../components/viz/ScalarField2D.svelte';
+import PolarPlot from '../../components/viz/PolarPlot.svelte';
+import GpuCpuCheck from '../../components/viz/GpuCpuCheck.svelte';
+---
+
+<BaseLayout title="Laboratoire des composants">
+  <main id="main" class="lab">
+    <h1>Laboratoire des composants</h1>
+    <p>Page interne : chaque brique de visualisation, isolée. Non liée depuis le cours.</p>
+    <GpuCpuCheck client:load />
+    <section id="tube">
+      <TubeWave
+        client:visible
+        scene="1a-tube"
+        number="L.1"
+        title="Champ et particules"
+        sliders={['f', 'L']}
+        views={['view']}
+        toggles
+        alt="Tube d'air excité par un piston."
+      />
+    </section>
+    <LiveEquation
+      client:visible
+      scene="1a-tube"
+      tex={String.raw`\term{inertia}{\rho_0 \frac{\partial v}{\partial t}} = -\term{p}{\frac{\partial p}{\partial x}}`}
+      toggles
+      number="L.1"
+    />
+    <section id="energy">
+      <TubeWave
+        client:visible
+        scene="1b-energy"
+        number="L.2"
+        title="Énergie"
+        sliders={['f', 'R']}
+        views={['curves']}
+        alt="Ondes progressive et stationnaire."
+      />
+    </section>
+    <section id="chain">
+      <MassSpringChain
+        client:visible
+        number="L.3"
+        title="Chaîne de masses"
+        alt="Chaîne de masses et ressorts."
+      />
+    </section>
+    <section id="stiffness">
+      <StiffnessChart
+        client:visible
+        number="L.4"
+        title="Raideur contre inertie"
+        alt="Diagramme K contre ρ."
+      />
+    </section>
+    <section id="newton">
+      <NewtonLaplace client:visible number="L.5" title="Newton et Laplace" alt="Diagramme p-V." />
+    </section>
+    <section id="pulse">
+      <PulseLab client:visible number="L.6" title="d'Alembert" alt="Impulsions." />
+    </section>
+    <section id="helium">
+      <HeliumVoice client:visible number="L.7" title="Voix à l'hélium" alt="Enveloppe spectrale." />
+    </section>
+    <section id="piston">
+      <PistonColumn client:visible number="L.8" title="Piston" alt="Piston." />
+    </section>
+    <section id="levels">
+      <LevelRuler client:visible number="L.9" title="Niveaux" alt="Règle des niveaux." />
+    </section>
+    <section id="shock">
+      <ShockSteepening client:visible number="L.10" title="Choc" alt="Raidissement." />
+    </section>
+    <section id="parcel">
+      <FluidParcel client:visible number="L.11" title="Particule de fluide" alt="Particule." />
+    </section>
+    <section id="compress">
+      <CompressDemo client:visible number="L.12" title="Compressibilité" alt="Compression." />
+    </section>
+    <section id="field">
+      <ScalarField2D client:visible number="L.13" title="Champ phaseur" alt="Dipôle." />
+    </section>
+    <section id="polar">
+      <PolarPlot client:visible number="L.14" title="Piston bafflé" alt="Directivité." />
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .lab {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: var(--space-6) var(--space-5);
+  }
+</style>

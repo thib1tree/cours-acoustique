@@ -1,0 +1,25 @@
+---
+import { REFERENCES } from '../../content/references';
+interface Props {
+  keys: string[];
+}
+const { keys } = Astro.props;
+---
+
+<ol class="references">
+  {keys.map((k) => {
+    const r = REFERENCES[k]!;
+    return (
+      <li id={`ref-${k}`}>
+        <span set:html={r.full} />
+        {r.url && (
+          <>
+            {' '}
+            <a href={r.url}>lien</a>
+          </>
+        )}
+        {r.note && <span class="ref-note"> {r.note}</span>}
+      </li>
+    );
+  })}
+</ol>

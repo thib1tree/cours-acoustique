@@ -1,0 +1,26 @@
+---
+/** Pedagogical box: « Le déclic », « Intuition piège », « Limites du modèle », etc. */
+import { t } from '../../i18n';
+
+interface Props {
+  kind: 'insight' | 'misconception' | 'limits' | 'advanced';
+  title?: string;
+}
+const { kind, title } = Astro.props;
+const label =
+  title ??
+  {
+    insight: t('box.insight'),
+    misconception: t('box.misconception'),
+    limits: t('box.limits'),
+    advanced: t('box.advanced'),
+  }[kind];
+const id = `box-${Math.random().toString(36).slice(2, 9)}`;
+---
+
+<section class={`box box-${kind}`} aria-labelledby={id}>
+  <span class="box-label" id={id}>
+    {label}
+  </span>
+  <slot />
+</section>

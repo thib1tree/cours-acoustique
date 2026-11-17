@@ -1,0 +1,21 @@
+---
+/** One derivation step. `open` unfolds it by default. Optional bench preset (JSON). */
+interface Props {
+  title: string;
+  open?: boolean;
+  scene?: string;
+  set?: string;
+}
+const { title, open = false, scene, set } = Astro.props;
+---
+
+<li class="step" data-bench-step={scene ? '' : undefined} data-scene={scene} data-set={set}>
+  <details open={open}>
+    <summary>
+      <span class="step-title">{title}</span>
+    </summary>
+    <div class="step-body">
+      <slot />
+    </div>
+  </details>
+</li>

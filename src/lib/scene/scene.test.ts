@@ -79,3 +79,12 @@ describe('scene helpers', () => {
     });
   });
 });
+
+import { formatSci } from './format';
+describe('formatSci', () => {
+  it('uses plain numbers in the readable range and powers of ten outside', () => {
+    expect(formatSci(343.2, 3)).toBe('343');
+    expect(formatSci(2e-7)).toBe('2,0 × 10⁻⁷');
+    expect(formatSci(0.05)).toBe('0,050');
+  });
+});

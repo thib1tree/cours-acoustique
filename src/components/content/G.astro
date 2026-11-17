@@ -1,0 +1,50 @@
+---
+/** Glossary term: hover (desktop) or tap (touch) shows the definition. */
+import { getEntry } from 'astro:content';
+interface Props {
+  id: string;
+}
+const { id } = Astro.props;
+const entry = await getEntry('glossaire', id);
+if (!entry) throw new Error(`glossary entry "${id}" not found`);
+const pid = `g-${id}-${Math.random().toString(36).slice(2, 7)}`;
+const base = import.meta.env.BASE_URL;
+---
+
+<span class="g-wrap">
+  <button type="button" class="g-term" popovertarget={pid} aria-describedby={pid}>
+    <slot />
+  </button>
+  <span id={pid} popover="auto" class="g-pop" role="tooltip">
+    <b>{entry.data.term}</b> : {entry.data.short} <a href={`${base}glossaire/#${id}`}>Glossaire</a>
+  </span>
+</span>
+
+<script>
+  // Desktop hover: show on pointer hover too (touch keeps tap-to-toggle).
+  for (const b of document.querySelectorAll<HTMLButtonElement>('.g-term')) {
+    const pop = document.getElementById(b.getAttribute('popovertarget')!) as HTMLElement & {
+      showPopover?: () => void;
+      hidePopover?: () => void;
+    };
+    if (!pop?.showPopover) continue;
+    const place = () => {
+      const r = b.getBoundingClientRect();
+      pop.style.left = `${Math.max(8, Math.min(innerWidth - 328, r.left))}px`;
+      pop.style.top = `${r.bottom + 6}px`;
+    };
+    b.addEventListener('pointerenter', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      place();
+      try {
+        pop.showPopover!();
+      } catch {
+        /* already open */
+      }
+    });
+    b.addEventListener('pointerleave', (e) => {
+      if (e.pointerType === 'mouse') pop.hidePopover!();
+    });
+    b.addEventListener('click', place);
+  }
+</script>

@@ -42,3 +42,14 @@ export function fromUnit(p: ParamSpec, u: number): number {
   const x = Math.min(1, Math.max(0, u));
   return p.scale === 'log' ? p.min * (p.max / p.min) ** x : p.min + x * (p.max - p.min);
 }
+
+const SUP = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+/** Scientific notation with superscript exponent: 2,0 × 10⁻⁷. Plain format for 0.01 ≤ |x| < 10⁴. */
+export function formatSci(x: number, sig = 2): string {
+  if (x === 0) return '0';
+  const e = Math.floor(Math.log10(Math.abs(x)));
+  if (e >= -2 && e < 4) return formatNumber(x, Math.max(0, sig - 1 - e));
+  const m = x / 10 ** e;
+  const exp = (e < 0 ? '⁻' : '') + String(Math.abs(e)).replace(/\d/g, (d) => SUP[Number(d)]!);
+  return `${formatNumber(m, sig - 1)} × 10${exp}`;
+}

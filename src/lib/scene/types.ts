@@ -37,9 +37,21 @@ export interface ViewSpec {
   readonly default: string;
 }
 
+/** A quantity computed from the parameters, displayable with \val{key}. */
+export interface DerivedSpec {
+  readonly key: string;
+  readonly digits?: number;
+  readonly unit?: string;
+  readonly fn: (
+    params: Readonly<Record<string, number>>,
+    terms: Readonly<Record<string, boolean>>,
+  ) => number;
+}
+
 export interface SceneSpec {
   readonly id: string;
   readonly params: readonly ParamSpec[];
+  readonly derived?: readonly DerivedSpec[];
   readonly terms?: readonly TermSpec[];
   readonly views?: readonly ViewSpec[];
 }

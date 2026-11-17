@@ -1,0 +1,10 @@
+---
+import Box from './Box.astro';
+interface Props {
+  title?: string;
+}
+---
+
+<Box kind="advanced" {...Astro.props}>
+  <slot />
+</Box>
