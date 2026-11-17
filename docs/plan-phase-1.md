@@ -416,25 +416,21 @@ hauteur ne change pas mais le timbre si.
 | GPU vs CPU (Playwright) | même schéma, même grille | 1e−3 (float32) |
 | Palette | ΔE_OK monotone, extrémités distinguables en deutéranopie/protanopie simulées | seuils documentés |
 
-## 10. Questions ouvertes (vos décisions)
+## 10. Décisions (déléguées par l'auteur, à revoir au bilan)
 
-- **Q1. Déploiement.** GitHub Pages sous `…github.io/cours-acoustique/` ou un domaine
-  personnalisé ? Il faudra activer Pages avec la source « GitHub Actions » dans les réglages
-  du dépôt. Par ailleurs, je ne peux pousser que sur la branche
-  `claude/new-session-w88xy2` : le dépôt étant vide, elle deviendra probablement la branche par
-  défaut. Je propose que vous créiez `main` à partir d'elle (ou que vous m'autorisiez à le
-  faire) ; le déploiement se déclenchera sur `main`.
-- **Q2. Acier.** Présenter c = √(M/ρ₀) avec M = K + 4G/3 (onde longitudinale en milieu
-  infini) et mentionner √(E/ρ) pour la barre, ou rester sur les fluides dans D2 et renvoyer
-  les solides au chapitre 8 ?
-- **Q3. Périmètre du chapitre 1.** Avec D1 à D10, la page dépasse sans doute 2 h de lecture
-  active. Je propose (sans l'appliquer) de la scinder en **1a « Équation des ondes et
-  célérité »** (D1–D6) et **1b « Impédance, énergie, niveaux »** (D7–D10), deux pages liées
-  dans le graphe. Ou une seule page longue avec sommaire ?
-- **Q4. D10 en phase 1.** L'onde simple exacte (jusqu'au choc) est faisable et forte ; elle
-  allonge un peu la phase. La garder, ou la réduire à un encart chiffré (sans simulation) ?
-- **Q5. Conventions des ouvrages.** Je crois que Pierce utilise e^{−iωt} et que Bruneau
-  utilise e^{+jωt}, mais je ne peux pas le vérifier : je le marquerai `TODO-VERIFY` dans
-  `notations.md`. Pouvez-vous confirmer ?
-- **Q6. Langue de `CLAUDE.md`.** Je l'ai rédigé en français (contributeurs francophones,
-  comme le contenu). Préférez-vous l'anglais, comme le code ?
+- **D-Q1. Déploiement** : GitHub Pages sous `https://thib1tree.github.io/cours-acoustique/`
+  (`base: '/cours-acoustique/'`). La branche `main` est créée à partir de la branche de
+  travail une fois le socle en place ; le déploiement se déclenche sur `main`. Il reste
+  à activer Pages avec la source « GitHub Actions » dans les réglages du dépôt (action
+  de l'auteur, impossible depuis la session).
+- **D-Q2. Acier** : D2 reste centré sur les fluides (c₀ = √(K/ρ₀)) ; une note en marge
+  donne la forme correcte pour un solide, c = √(M/ρ) avec M = K + 4G/3, et √(E/ρ) pour
+  une barre mince. Les solides sont développés au chapitre 8.
+- **D-Q3. Périmètre** : le chapitre 1 est scindé en deux pages liées dans le graphe :
+  **1a « Équation des ondes et célérité »** (D1–D6) et **1b « Impédance, énergie,
+  niveaux »** (D7–D10). Numérotation du curriculum inchangée.
+- **D-Q4. Non-linéarité** : D10 est gardé avec la solution exacte de l'onde simple
+  (Poisson) jusqu'au choc ; aucun solveur de choc en phase 1.
+- **D-Q5. Conventions des ouvrages** : convention e^{−iωt} maintenue ; la correspondance
+  avec Pierce et Bruneau est notée dans `notations.md` avec `TODO-VERIFY`.
+- **D-Q6. Langue** : `CLAUDE.md` et la documentation restent en français.

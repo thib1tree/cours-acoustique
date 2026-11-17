@@ -4,7 +4,7 @@ Guide opérationnel pour toute session de travail sur ce dépôt (humaine ou IA)
 Il résume le cahier des charges de l'auteur. En cas de doute : **demander à l'auteur
 plutôt que trancher seul** sur toute question pédagogique ou scientifique.
 
-> État : phase 1 (preuve de concept) en cours de planification.
+> État : phase 1 (preuve de concept), plan validé (décisions : `docs/plan-phase-1.md` § 10).
 > Plan détaillé : [`docs/plan-phase-1.md`](docs/plan-phase-1.md).
 > Les sections marquées *(à compléter)* le seront quand la direction visuelle sera choisie.
 
