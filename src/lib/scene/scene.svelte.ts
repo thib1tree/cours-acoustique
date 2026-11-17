@@ -27,6 +27,7 @@ export class Scene {
     this.spec = spec;
     this.applyDefaults();
     if (typeof window !== 'undefined') {
+      // eslint-disable-next-line svelte/prefer-svelte-reactivity -- read once, not reactive state
       const fromUrl = decodeState(spec, new URLSearchParams(location.search).get(spec.id));
       Object.assign(this.params, fromUrl.params);
       Object.assign(this.terms, fromUrl.terms);
@@ -70,6 +71,7 @@ export class Scene {
 
   /** Shareable URL reproducing this exact configuration. */
   shareUrl(): string {
+    // eslint-disable-next-line svelte/prefer-svelte-reactivity -- local value, not reactive state
     const url = new URL(location.href);
     const encoded = encodeState(this.spec, {
       params: this.params,
@@ -82,6 +84,7 @@ export class Scene {
   }
 }
 
+// eslint-disable-next-line svelte/prefer-svelte-reactivity -- registry of reactive objects, itself static
 const registry = new Map<string, Scene>();
 
 /** Get (or create) the shared scene with this id. */

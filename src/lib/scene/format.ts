@@ -20,7 +20,7 @@ export const formatParam = (p: ParamSpec, v: number): string => formatNumber(v, 
 /** Parse a number typed by a reader ("1,5", "1.5", "−3"). Returns NaN if invalid. */
 export function parseNumber(s: string): number {
   const clean = s
-    .replace(/\s| | /g, '')
+    .replace(/\s/g, '') // \s covers no-break and narrow no-break spaces
     .replace('−', '-')
     .replace(',', '.');
   return clean === '' ? NaN : Number(clean);
