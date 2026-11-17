@@ -9,3 +9,4 @@ docs/design
 src/styles/palette.css
 dist-lhci
 lhci-report
+.lighthouseci
