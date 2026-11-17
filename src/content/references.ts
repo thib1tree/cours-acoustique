@@ -79,4 +79,26 @@ export const REFERENCES: Record<string, Reference> = {
     short: 'Kinsler et al., 2000',
     full: 'L. E. Kinsler, A. R. Frey, A. B. Coppens, J. V. Sanders, <i>Fundamentals of Acoustics</i>, 4<sup>e</sup> éd., Wiley, 2000.',
   },
+  fletcher: {
+    short: 'Fletcher et Rossing, 1998',
+    full: 'N. H. Fletcher, T. D. Rossing, <i>The Physics of Musical Instruments</i>, 2<sup>e</sup> éd., Springer, 1998.',
+    url: 'https://doi.org/10.1007/978-0-387-21603-4',
+    note: 'TODO-VERIFY : édition et DOI.',
+  },
+  rayleigh: {
+    short: 'Rayleigh, 1896',
+    full: 'J. W. Strutt, Lord Rayleigh, <i>The Theory of Sound</i>, 2<sup>e</sup> éd., Macmillan, 1896 (2 vol.).',
+    note: 'TODO-VERIFY : volume où figurent le résonateur et la correction de bout bafflée.',
+  },
+  levine: {
+    short: 'Levine et Schwinger, 1948',
+    full: 'H. Levine, J. Schwinger, « On the radiation of sound from an unflanged circular pipe », <i>Physical Review</i> 73(4), 383–406, 1948.',
+    url: 'https://doi.org/10.1103/PhysRev.73.383',
+    note: 'TODO-VERIFY : référence complète et valeur 0,6133 a.',
+  },
+  abramowitz: {
+    short: 'Abramowitz et Stegun, 1964',
+    full: 'M. Abramowitz, I. A. Stegun (dir.), <i>Handbook of Mathematical Functions</i>, National Bureau of Standards, 1964.',
+    note: 'TODO-VERIFY : table des zéros de J′ₙ (chapitre 9).',
+  },
 };

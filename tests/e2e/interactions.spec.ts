@@ -95,3 +95,16 @@ test('chapter 2: interface presets change the reflection coefficient', async ({ 
   await eq.scrollIntoViewIfNeeded();
   await expect(eq).toContainText(/[−-]1,000/);
 });
+
+test('chapter 3: doubling the bottle volume lowers the note by √2', async ({ page }) => {
+  await page.goto('chapitres/03-guides-cavites/');
+  const eq = page.locator('figure.eq[aria-label^="Fréquence propre du résonateur"]');
+  await hydrated(page, eq);
+  await expect(eq).toContainText('104');
+  const field = page.getByLabel('volume de la cavité, valeur en L').first();
+  await hydrated(page, field);
+  await field.fill('1,5');
+  await field.press('Enter');
+  await eq.scrollIntoViewIfNeeded();
+  await expect(eq).toContainText('74 Hz');
+});

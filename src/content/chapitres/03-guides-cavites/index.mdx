@@ -1,0 +1,303 @@
+---
+curriculumId: guides
+title: Guides et cavités
+summary: Ce qu'un tube fait d'une onde qu'on y envoie, pourquoi la clarinette et la flûte ne jouent pas les mêmes notes, ce que vaut vraiment un bout ouvert, le résonateur de Helmholtz, et les modes qui apparaissent au-delà de la coupure.
+number: '3'
+level: M1
+duration: 60
+keyConcepts: [impédance d'entrée, résonance, correction de bout, impédance de rayonnement, résonateur de Helmholtz, élément localisé, mode transverse, fréquence de coupure, vitesse de groupe]
+prerequisites: [planes]
+references: [pierce, kinsler, bruneau, fletcher, rayleigh, levine, abramowitz]
+---
+
+import TubeResonances from '../../../components/viz/TubeResonances.svelte';
+import HelmholtzResonator from '../../../components/viz/HelmholtzResonator.svelte';
+import DuctModes from '../../../components/viz/DuctModes.svelte';
+import LiveEquation from '../../../components/ui/LiveEquation.svelte';
+import MarginNote from '../../../components/content/MarginNote.astro';
+import Insight from '../../../components/content/Insight.astro';
+import Misconception from '../../../components/content/Misconception.astro';
+import ModelLimits from '../../../components/content/ModelLimits.astro';
+import Advanced from '../../../components/content/Advanced.astro';
+import RealWorld from '../../../components/content/RealWorld.astro';
+import Derivation from '../../../components/content/Derivation.astro';
+import Step from '../../../components/content/Step.astro';
+import Prediction from '../../../components/content/Prediction.astro';
+import Quiz from '../../../components/content/Quiz.astro';
+import G from '../../../components/content/G.astro';
+import Cite from '../../../components/content/Cite.astro';
+
+<p class="lede">Soufflez en travers du goulot d'une bouteille vide : elle rend une note grave et stable. Versez de l'eau jusqu'à la moitié du volume et soufflez de nouveau. La note monte, mais de combien ? Pour répondre, il faut comprendre ce qu'un volume d'air enfermé fait d'une onde. C'est l'objet de ce chapitre : tubes, cavités et conduits, trois façons de confiner le son.</p>
+
+<Prediction id="bottle" options={['Elle monte d’une octave : la fréquence double, comme le volume est divisé par deux.', 'Elle monte d’un peu moins d’une demi-octave : la fréquence est multipliée par environ 1,4.', 'Elle ne change pas : c’est le goulot qui fixe la note.']}>
+Une bouteille de 0,75 L, à moitié remplie d'eau, a un volume d'air deux fois plus petit. Quand on souffle sur le goulot, la note&nbsp;:
+</Prediction>
+
+## Un tube, deux réflexions
+
+Envoyez une onde dans un tube. Elle file jusqu'au bout, s'y réfléchit (chapitre 2), revient, se réfléchit de nouveau à l'entrée, et ainsi de suite. À chaque fréquence, l'entrée du tube voit donc la somme de l'onde qu'on y envoie et de tous ses échos. Ce que le tube « répond » à l'entrée se résume par son <G id="impedance-entree">impédance d'entrée</G> $Z_\text{e} = P/V$ : la pression qu'il faut fournir pour y faire entrer une vitesse donnée.
+
+<Derivation title="Impédance d'entrée d'un tube" hypotheses="tube cylindrique à parois rigides, onde plane (fréquence sous la coupure, voir plus bas), fluide parfait, acoustique linéaire, convention e^{−iωt}.">
+<Step title="Deux ondes dans le tube" open>
+
+Entre $x = 0$ (l'entrée) et $x = L$ (le bout), le champ est la somme d'une onde aller et d'une onde retour (chapitre 1b) :
+
+$$
+\begin{aligned}
+P(x) &= A\,e^{ikx} + B\,e^{-ikx}, \\
+V(x) &= \frac{A\,e^{ikx} - B\,e^{-ikx}}{\rho_0 c_0}.
+\end{aligned}
+$$
+
+</Step>
+<Step title="Ce qu'impose le bout">
+
+Au bout, le rapport $P/V$ est l'impédance de ce qui ferme le tube, $Z_L$. On note $\zeta_L = Z_L/\rho_0c_0$. Cette condition fixe le rapport $B/A$, c'est-à-dire le coefficient de réflexion du bout : $B\,e^{-ikL}/(A\,e^{ikL}) = (\zeta_L - 1)/(\zeta_L + 1)$.
+
+</Step>
+<Step title="Ce qu'on voit depuis l'entrée">
+
+En reportant $B/A$ dans $P(0)/V(0)$ et en regroupant les exponentielles en cosinus et sinus :
+
+$$
+\frac{Z_\text{e}}{\rho_0 c_0} = \frac{\zeta_L \cos kL - i \sin kL}{\cos kL - i\,\zeta_L \sin kL}.
+$$
+
+Le tube **transforme** l'impédance du bout en une autre impédance, qui dépend de $kL$, donc de la fréquence.
+
+</Step>
+<Step title="Trois cas à connaître">
+
+- **Bout idéalement ouvert** ($\zeta_L = 0$) : $Z_\text{e}/\rho_0c_0 = -i \tan kL$. Nulle quand $kL = n\pi$, infinie quand $kL = (2n - 1)\pi/2$.
+- **Bout fermé** ($\zeta_L \to \infty$) : $Z_\text{e}/\rho_0c_0 = i \cot kL$.
+- **Tube court** ($kL \ll 1$) : ouvert, $Z_\text{e} \approx -i\omega\,(\rho_0 L)$, la masse de l'air du tube par unité de surface ; fermé, $Z_\text{e} \approx i\rho_0c_0^2/(\omega L)$, un ressort (chapitre 1b, mêmes signes qu'une masse et un ressort en convention $e^{-i\omega t}$).
+
+</Step>
+</Derivation>
+
+La figure trace $|Z_\text{e}|$ pour un tube ouvert au bout. Les pics et les creux alternent. Ce sont les deux sortes de résonances du même tube.
+
+<TubeResonances client:visible number="3.1" title="Résonances d'un tube ouvert" alt="En haut, module de l'impédance d'entrée d'un tube en décibels en fonction de la fréquence : des pics et des creux alternent régulièrement, les pics s'abaissent quand la fréquence augmente ; des lignes pointillées marquent les résonances du tube idéal. En bas, pression et vitesse le long du tube pour la résonance choisie." />
+
+<Insight>
+
+Un tube ne vibre pas tout seul : il **répond**, et sa réponse est un rendez-vous avec son propre écho. Au bout ouvert, l'onde revient inversée ($R \approx -1$, chapitre 2). Si l'aller-retour $2L$ ajoute encore une demi-période ($2kL = \pi$), l'écho revient à l'entrée **en phase** avec la pression qu'on y impose. Il suffit alors d'un débit minuscule pour obtenir une grande pression : c'est un **pic** d'impédance, au quart d'onde. Si l'aller-retour vaut une période entière ($2kL = 2\pi$), l'écho inversé annule la pression d'entrée : on fait entrer beaucoup d'air sans aucune pression, c'est un **creux**, à la demi-onde.
+
+</Insight>
+
+## Pourquoi la clarinette quintoie
+
+Un instrument à vent couple le tube à un excitateur qui entretient l'oscillation. Ce que l'excitateur exige du tube décide de quelles résonances il se sert.
+
+- **L'anche de la clarinette** est une soupape commandée par la pression : elle s'ouvre et se ferme selon la différence de pression entre la bouche et le bec. Elle a besoin de grandes variations de pression pour de petits débits, donc des **pics** d'impédance. Le bec se comporte comme un bout fermé.
+- **Le biseau de la flûte** est attaqué par un jet d'air, à une embouchure ouverte sur la pièce où la pression reste presque nulle. Le jet fournit du débit sans pression : il se sert des **creux** d'impédance, et le tube se comporte comme ouvert aux deux bouts.
+
+Basculez l'excitation dans la figure 3.1 et comparez les rapports de fréquences. Pour l'anche, les pics tombent à $f_1, 3f_1, 5f_1\ldots$ : seuls les harmoniques impairs sont soutenus par le tube. En soufflant plus fort, la clarinette saute à la résonance suivante, une douzième au-dessus (rapport 3) : elle « quintoie » au lieu d'octavier. La flûte, elle, utilise tous les multiples de $f_1$ et octavie (rapport 2)<MarginNote n="1">Un tube **conique** fermé au sommet a, lui, des résonances à tous les multiples de $f_1$, comme un tube ouvert aux deux bouts : c'est pourquoi le saxophone et le hautbois octavient malgré leur anche <Cite k="fletcher" />.</MarginNote>. Écoutez les deux : le timbre creux de l'anche vient de ce spectre impair.
+
+{/* TODO-VERIFY: « harmoniques pairs faibles dans le registre grave de la clarinette » : confirmer la formulation dans Fletcher et Rossing. */}
+
+<Misconception>
+
+« Le tube fermé d'un côté donne la même note qu'un tube ouvert de même longueur. » Choisissez « Clarinette » puis basculez sur le biseau sans changer $L$ : la note fondamentale double. Un tube de 60 cm joué par une anche sonne vers 142 Hz, joué au biseau vers 282 Hz. Le tube n'a pas changé : c'est la condition imposée à l'entrée (pression maximale ou pression nulle) qui sélectionne le quart d'onde ou la demi-onde.
+
+</Misconception>
+
+## Le bout ouvert n'est pas tout à fait ouvert
+
+Dire que la pression est nulle au bout ouvert, c'est supposer que l'air extérieur n'oppose aucune résistance au mouvement de la colonne. Ce n'est pas tout à fait vrai. Pour sortir, l'air du tube doit pousser l'air extérieur, qui a une masse ; et une partie de l'énergie part au loin sous forme de son. L'impédance du bout, l'**impédance de rayonnement**, n'est donc pas nulle.
+
+<LiveEquation client:visible scene="3-tube" tex={String.raw`\frac{Z_L}{\rho_0 c_0} \approx \term{radres}{\frac{(ka)^2}{4}} \term{radmass}{\;-\; i\,0{,}61\,ka}, \qquad \delta = 0{,}61\,\term{a}{a} = \val{delta}\ \text{mm}`} toggles number="3.1" label="Impédance de rayonnement d'un tube non bafflé, pour ka ≪ 1" />
+
+Les deux termes ont un sens physique distinct, et vous pouvez les couper.
+
+- **La masse de rayonnement** $-i\,0{,}61\,ka$ a exactement la forme de l'impédance d'un petit tube ouvert de longueur $\delta = 0{,}61\,a$ (voir le cas « tube court » plus haut). L'air extérieur entraîné par la colonne se comporte comme un prolongement du tube : c'est la <G id="correction-bout">correction de bout</G>. Coupez ce terme : les résonances remontent sur les lignes pointillées du tube idéal. Pour un tube de 60 cm et de 7,5 mm de rayon, l'écart n'est que de 0,8 % ; pour le conduit auditif, court et relativement large, il atteint 8 %.
+- **La résistance de rayonnement** $(ka)^2/4$ représente l'énergie rayonnée au loin. Coupez-la : les pics deviennent infinis, car plus rien ne sort du tube. Laissez-la : les pics s'abaissent quand la fréquence monte, parce que $(ka)^2$ croît et que le tube perd davantage à chaque aller-retour.
+
+La valeur $0{,}6133\,a$ pour un tube sans baffle est due à Levine et Schwinger <Cite k="levine" />. Si le bout débouche sur un grand plan (un baffle), l'air extérieur ne peut s'écouler que vers l'avant et la correction devient $8a/3\pi \approx 0{,}85\,a$ <Cite k="rayleigh" />{/* TODO-VERIFY: 0,6133 a (Levine et Schwinger 1948) et 8/(3π) a (Rayleigh, piston bafflé) : vérifier les sources primaires. */}.
+
+<Insight>
+
+Même au bout « ouvert », l'air extérieur fait partie de l'instrument. La correction de bout n'est pas une rustine empirique : c'est la masse de l'air que la colonne doit déplacer pour sortir. On la retrouvera dans le col d'une bouteille, juste en dessous, et dans la masse ajoutée d'un haut-parleur (chapitre 9).
+
+</Insight>
+
+<ModelLimits>
+
+- **Pertes aux parois.** Le modèle ne contient que les pertes par rayonnement. Dans un vrai tube, les couches limites visqueuse et thermique (chapitre 1a) dissipent aussi de l'énergie ; dans les tubes étroits, elles dominent et abaissent encore les pics.
+- **$ka \ll 1$.** Les formules de rayonnement ci-dessus sont des développements à basse fréquence. Pour le tube de clarinette ($a = 7{,}5$ mm), $ka$ ne vaut que 0,02 à 142 Hz.
+- **Onde plane.** Tout ce qui précède suppose que l'onde reste plane dans le tube, ce qui n'est vrai que sous une fréquence de coupure (dernière section).
+
+</ModelLimits>
+
+## Le résonateur de Helmholtz : une masse et un ressort
+
+Revenons à la bouteille. Ses dimensions (une vingtaine de centimètres) sont petites devant la longueur d'onde de sa note (plus de trois mètres). Il n'y a donc pas de place pour une onde à l'intérieur : à chaque instant, la pression est la même partout dans la cavité. Le modèle d'ondes se réduit à deux <G id="element-localise">éléments localisés</G>.
+
+<HelmholtzResonator client:visible number="3.2" title="Une bouteille est une masse sur un ressort" alt="À gauche, schéma d'une bouteille : le bouchon d'air du col monte et descend, la cavité devient rouge quand elle est comprimée et bleue quand elle est détendue. À droite, une masse sur un ressort oscille au même rythme." />
+
+<Derivation title="Fréquence du résonateur de Helmholtz" hypotheses="cavité et col petits devant la longueur d'onde, compression adiabatique, pas de pertes, petites amplitudes.">
+<Step title="La masse : l'air du col" open>
+
+Le col est court devant $\lambda$ : l'air qu'il contient se déplace d'un bloc, sans se comprimer, comme dans le tube court ouvert. Avec les corrections de bout aux deux extrémités (le côté cavité est bafflé par la paroi, le côté extérieur ne l'est pas), sa longueur effective est $L' = L + (0{,}85 + 0{,}61)\,a$ et sa masse
+
+$$
+m = \rho_0 S L', \qquad S = \pi a^2.
+$$
+
+</Step>
+<Step title="Le ressort : l'air de la cavité">
+
+Si le bouchon d'air entre de $\xi$, le volume de la cavité diminue de $S\xi$. La compression est adiabatique (chapitre 1a) : $\delta p / p_0 = -\gamma\,\delta V/V$, avec $\gamma p_0 = \rho_0 c_0^2$. La surpression vaut donc $p = \rho_0c_0^2\,S\xi/V$, et elle repousse le bouchon avec la force $pS$ :
+
+$$
+K = \frac{\rho_0 c_0^2 S^2}{V}.
+$$
+
+</Step>
+<Step title="La fréquence propre">
+
+$$
+\omega_0 = \sqrt{\frac{K}{m}} = c_0 \sqrt{\frac{S}{V L'}}.
+$$
+
+La masse volumique $\rho_0$ disparaît : elle augmente la masse et la raideur dans la même proportion.
+
+</Step>
+</Derivation>
+
+<LiveEquation client:visible scene="3-helmholtz" tex={String.raw`f_0 = \frac{c_0}{2\pi}\sqrt{\frac{\pi \term{a}{a}^2}{\term{V}{V}\,\big(\term{Ln}{L} + \term{endcorr}{1{,}46\,a}\big)}} = \val{f0}\ \text{Hz}`} toggles number="3.2" label="Fréquence propre du résonateur de Helmholtz" />
+
+Voici la réponse à la prédiction : $f_0 \propto 1/\sqrt{V}$. Diviser le volume d'air par deux multiplie la fréquence par $\sqrt 2 \approx 1{,}41$, un peu moins d'une demi-octave : de 104 Hz à 147 Hz pour notre bouteille. Essayez avec le curseur $V$.
+
+<Insight>
+
+Le même air joue deux rôles selon l'endroit où il se trouve. Dans le col, il **bouge sans être comprimé** : c'est une masse. Dans la cavité, il **est comprimé sans presque bouger** : c'est un ressort. C'est la géométrie, pas l'air, qui sépare ces rôles. Une onde dans un tube est une chaîne infinie de telles masses et de tels ressorts (la chaîne du chapitre 1a) ; le résonateur de Helmholtz est cette chaîne réduite à un seul maillon. À la résonance, l'impédance de masse $-i\omega m$ et celle du ressort $iK/\omega$ s'annulent (chapitre 1b).
+
+</Insight>
+
+<Misconception>
+
+« Une bouteille est un tube fermé : sa note est $c_0/4H$. » Pour une bouteille de 28 cm de haut, cela donnerait environ 300 Hz, presque trois fois trop aigu. Le quart d'onde suppose une onde qui fait l'aller-retour dans un conduit de section constante. Ici, le col étroit concentre la masse et la cavité large concentre la raideur : la note dépend du rapport $S/(VL')$, pas de la hauteur. Allongez le col ou rétrécissez-le dans la figure : la note descend, sans que la bouteille grandisse.
+
+</Misconception>
+
+<ModelLimits>
+
+- **Éléments localisés.** Le modèle suppose la pression uniforme dans la cavité. La figure le compare à un modèle d'ondes où la cavité est un tube de section large (la bouteille est assimilée à un cylindre six fois plus haut que son rayon) : 104 Hz contre 101 Hz, soit 3 % d'écart, alors que $\lambda$ est seize fois plus grande que la cavité. Diminuez ce rapport en agrandissant $V$, en élargissant le col et en le raccourcissant : vers 5 L, un col de 3 cm de rayon et de 5 mm de long, l'écart dépasse 25 %, parce que la cavité commence à porter une onde.
+- **Corrections de bout.** Les valeurs 0,61 et 0,85 sont celles d'un tube débouchant à l'air libre ou sur un plan infini. Un col qui débouche dans une cavité étroite n'est ni l'un ni l'autre ; l'incertitude porte sur quelques pour cent de la fréquence.
+- **Amplitude.** À fort niveau, l'écoulement se décolle aux bords du col et forme des jets : le résonateur devient non linéaire et dissipe davantage.
+
+</ModelLimits>
+
+## Au-delà de la coupure : les modes transverses
+
+Jusqu'ici, l'onde dans le tube était plane. C'est une hypothèse, et elle a une limite. Prenons un conduit plan, entre deux parois rigides distantes de $b$. Une onde plane qui se réfléchit en zigzag entre les parois est aussi une solution, à condition que les réflexions successives s'accordent.
+
+<DuctModes client:visible number="3.3" title="Un mode guidé est deux ondes planes en zigzag" alt="Champ de pression dans un conduit horizontal à parois rigides : des cellules alternées rouges et bleues forment un damier qui avance vers la droite. Une ligne pointillée en zigzag montre la direction des ondes planes qui composent le mode." />
+
+<Derivation title="Modes d'un conduit à parois rigides" hypotheses="conduit plan infini de largeur b, parois rigides, fluide parfait, régime harmonique.">
+<Step title="Séparer les variables" open>
+
+On cherche $P(x, y) = Y(y)\,e^{ik_x x}$. L'équation de Helmholtz $\nabla^2 P + k^2 P = 0$ donne $Y'' + (k^2 - k_x^2)\,Y = 0$.
+
+</Step>
+<Step title="Les parois quantifient le profil">
+
+Paroi rigide : vitesse normale nulle, donc $Y'(0) = Y'(b) = 0$. Seuls les profils $Y_m = \cos(m\pi y/b)$ conviennent, avec $m = 0, 1, 2\ldots$ Le mode $m = 0$ est l'onde plane.
+
+</Step>
+<Step title="Relation de dispersion">
+
+$$
+k_x = \sqrt{k^2 - \left(\frac{m\pi}{b}\right)^2}.
+$$
+
+Si $f > f_m = m c_0/(2b)$, $k_x$ est réel et le mode se propage. Sinon $k_x = i\kappa$ et $e^{ik_x x} = e^{-\kappa x}$ : le mode est **évanescent**.
+
+</Step>
+<Step title="Deux ondes planes">
+
+$\cos(m\pi y/b) = \tfrac12\big(e^{i m\pi y/b} + e^{-i m\pi y/b}\big)$ : le mode est la somme de deux ondes planes de nombre d'onde $k$, inclinées de $\pm\theta$ sur l'axe, avec $\sin\theta = (m\pi/b)/k = f_m/f$.
+
+</Step>
+</Derivation>
+
+Approchez $f/f_c$ de 1 dans la figure. L'angle $\theta$ tend vers 90° : les ondes planes rebondissent d'une paroi à l'autre sans plus avancer. La crête du damier, elle, file de plus en plus vite. Passez sous la coupure : il ne reste qu'un champ qui décroît en s'éloignant de la source. C'est le même argument d'accord des traces qu'à l'angle critique du chapitre 2 : la paroi impose un profil transverse, et à trop basse fréquence aucune onde propagative ne peut le porter.
+
+<Insight>
+
+La <G id="frequence-coupure">fréquence de coupure</G> est celle où une demi-longueur d'onde tient tout juste dans la largeur du conduit. En dessous, le conduit n'accepte que l'onde plane, et un tube se comporte comme une ligne à une dimension. C'est ce qui justifie toute la première partie du chapitre : le tube de clarinette ne porte que l'onde plane jusqu'à plus de 13 kHz.
+
+</Insight>
+
+<Misconception>
+
+« La vitesse de phase dépasse $c_0$, donc quelque chose va plus vite que le son. » La crête avance à $v_\varphi = c_0/\cos\theta$, mais c'est un point d'intersection, comme le point où une vague frappe une digue en biais. L'énergie suit le zigzag à $c_0$ et ne progresse le long du conduit qu'à la <G id="vitesse-groupe">vitesse de groupe</G> $v_g = c_0\cos\theta$, toujours inférieure à $c_0$. On a $v_\varphi v_g = c_0^2$. Le mode guidé est **dispersif** : une impulsion s'y étale.
+
+</Misconception>
+
+<Advanced title="Pour le lecteur avancé : conduit circulaire">
+
+Dans un conduit circulaire de rayon $a$, les profils transverses sont des fonctions de Bessel $J_n(k_r r)\cos(n\varphi)$, et la condition de paroi rigide impose $J_n'(k_r a) = 0$. Le premier mode non plan est $n = 1$, au premier zéro de $J_1'$ : $k a \approx 1{,}841$ <Cite k="abramowitz" />, soit $f_c = 1{,}841\,c_0/(2\pi a)$. Pour un tube de clarinette ($a = 7{,}5$ mm), $f_c \approx 13{,}4$ kHz ; pour une gaine de ventilation de 20 cm de diamètre, environ 1 kHz. Le premier mode axisymétrique ($n = 0$) n'apparaît qu'à $ka \approx 3{,}83$.
+
+</Advanced>
+
+## Monde réel
+
+<RealWorld title="Le conduit auditif">
+
+Le conduit auditif externe est un tube d'environ 2,5 cm de long et 7 mm de diamètre, fermé par le tympan{/* TODO-VERIFY: dimensions moyennes du conduit auditif adulte (source anatomique). */}. Le préréglage « Conduit auditif » le traite comme un tube fermé au tympan et ouvert à l'entrée : première résonance vers 3,2 kHz (3,4 kHz sans correction de bout). L'oreille amplifie ainsi la pression au tympan dans une bande autour de 3 kHz, là où la sensibilité de l'audition est la meilleure{/* TODO-VERIFY: gain de résonance du conduit (environ 10 à 15 dB ?) et zone de sensibilité maximale (3 à 4 kHz), avec source psychoacoustique. */}. Le modèle est grossier : le tympan n'est pas rigide, il est incliné et le conduit est courbe.
+
+</RealWorld>
+
+<RealWorld title="Clarinette et flûte">
+
+Le tube simplifié de 60 cm donne 142 Hz joué par une anche, ce qui est de l'ordre de la note la plus grave d'une clarinette en si bémol (ré 3 réel, environ 147 Hz){/* TODO-VERIFY: note la plus grave de la clarinette en si bémol et longueur acoustique équivalente. */}. Les vrais instruments s'écartent du cylindre : pavillon, trous latéraux (dont chacun raccourcit le tube effectif), bec et embouchure qui ajoutent du volume. Ces écarts sont précisément ce que les facteurs ajustent pour accorder les registres entre eux <Cite k="fletcher" />.
+
+</RealWorld>
+
+<RealWorld title="Le haut-parleur bass-reflex">
+
+Une enceinte bass-reflex est un résonateur de Helmholtz : le volume de la boîte est le ressort, l'air de l'évent est la masse. Accordée sous la résonance du haut-parleur, elle prolonge la réponse dans le grave, et l'évent rayonne alors plus que la membrane. Les corrections de bout de l'évent comptent directement dans l'accord. Le chapitre 9 en fera le calcul.
+
+</RealWorld>
+
+## Vérification
+
+<Quiz kind="numeric" answer={252} tolerance={0.02} unit="Hz">
+<Fragment slot="question">Un tube de 34 cm, fermé à un bout et ouvert à l'autre, est excité à son bout fermé. En négligeant la correction de bout, quelle est sa première résonance (c₀ = 343 m/s)&nbsp;?</Fragment>
+<Fragment slot="explanation">Un pic d'impédance au bout fermé correspond au quart d'onde : $f_1 = c_0/4L = 343/(4 \times 0{,}34) \approx 252$ Hz. La correction de bout l'abaisserait légèrement, en allongeant le tube effectif de $0{,}61\,a$.</Fragment>
+</Quiz>
+
+<Quiz kind="choice" answer="b">
+<Fragment slot="question">Quand on souffle plus fort dans une clarinette, la note saute vers&nbsp;:</Fragment>
+<Fragment slot="a">l'octave (fréquence doublée), comme pour la flûte ;</Fragment>
+<Fragment slot="b">la douzième (fréquence triplée) ;</Fragment>
+<Fragment slot="c">rien : un tube fermé n'a qu'une seule résonance.</Fragment>
+<Fragment slot="explanation">L'anche se sert des pics d'impédance, situés aux multiples impairs du quart d'onde : $f_1, 3f_1, 5f_1\ldots$ Il n'existe pas de pic à $2f_1$ ; la résonance suivante est à $3f_1$, une douzième au-dessus.</Fragment>
+</Quiz>
+
+<Quiz kind="numeric" answer={147} tolerance={0.03} unit="Hz">
+<Fragment slot="question">Une bouteille sonne à 104 Hz. On la remplit d'eau à moitié de son volume (le col reste vide). Quelle est la nouvelle fréquence&nbsp;?</Fragment>
+<Fragment slot="explanation">$f_0 \propto 1/\sqrt V$ : $104 \times \sqrt 2 \approx 147$ Hz. La raideur du ressort d'air double parce qu'un même déplacement du bouchon comprime un volume deux fois plus petit ; la masse ne change pas.</Fragment>
+</Quiz>
+
+<Quiz kind="numeric" answer={858} tolerance={0.02} unit="Hz">
+<Fragment slot="question">Un conduit plan a des parois rigides distantes de 20 cm. Au-dessus de quelle fréquence le premier mode transverse se propage-t-il (c₀ = 343,2 m/s)&nbsp;?</Fragment>
+<Fragment slot="explanation">$f_1 = c_0/(2b) = 343{,}2/0{,}4 = 858$ Hz : une demi-longueur d'onde doit tenir dans la largeur. Au-dessous, ce mode est évanescent et seule l'onde plane transporte de l'énergie.</Fragment>
+</Quiz>
+
+<Quiz kind="choice" answer="b">
+<Fragment slot="question">Dans la figure 3.1, pourquoi les pics d'impédance s'abaissent-ils quand la fréquence augmente&nbsp;?</Fragment>
+<Fragment slot="a">À cause des pertes visqueuses sur les parois.</Fragment>
+<Fragment slot="b">Parce que la résistance de rayonnement croît comme $(ka)^2$ : le tube perd plus d'énergie à chaque aller-retour.</Fragment>
+<Fragment slot="c">Parce que la correction de bout augmente avec la fréquence.</Fragment>
+<Fragment slot="explanation">Le modèle de la figure ne contient pas de pertes aux parois (elles existent dans un vrai tube, mais pas ici), et la correction de bout ne déplace que la position des pics. Coupez la résistance de rayonnement : tous les pics deviennent infinis.</Fragment>
+</Quiz>
+
+## Pour aller plus loin
+
+- **Pavillons et tubes de section variable.** L'équation de Webster généralise le tube cylindrique ; le cône et le pavillon exponentiel ont des propriétés remarquables (coupure du pavillon, résonances harmoniques du cône) <Cite k="pierce" />.
+- **Pertes visco-thermiques.** Le nombre d'onde devient complexe dans un tube étroit ; le modèle de Kirchhoff et ses approximations sont détaillés par Pierce <Cite k="pierce" /> et Bruneau <Cite k="bruneau" />.
+- **Matrices de transfert.** Chaque tronçon de tube est un quadripôle ; on les enchaîne pour calculer un instrument, un silencieux ou un conduit de ventilation <Cite k="kinsler" />.
+- **Acoustique des instruments.** Couplage non linéaire entre anche ou jet et tube, rôle des trous latéraux, accord des registres : Fletcher et Rossing <Cite k="fletcher" />.

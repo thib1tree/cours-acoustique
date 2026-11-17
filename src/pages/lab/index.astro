@@ -23,6 +23,9 @@ import ObliqueField from '../../components/viz/ObliqueField.svelte';
 import StandingWave from '../../components/viz/StandingWave.svelte';
 import AbsorberCurve from '../../components/viz/AbsorberCurve.svelte';
 import GapTransmission from '../../components/viz/GapTransmission.svelte';
+import TubeResonances from '../../components/viz/TubeResonances.svelte';
+import HelmholtzResonator from '../../components/viz/HelmholtzResonator.svelte';
+import DuctModes from '../../components/viz/DuctModes.svelte';
 import GpuCpuCheck from '../../components/viz/GpuCpuCheck.svelte';
 ---
 
@@ -128,6 +131,25 @@ import GpuCpuCheck from '../../components/viz/GpuCpuCheck.svelte';
     </section>
     <section id="gap">
       <GapTransmission client:visible number="L.19" title="Lame d'air" alt="Lame d'air." />
+    </section>
+    <section id="tube3">
+      <TubeResonances
+        client:visible
+        number="L.20"
+        title="Résonances d'un tube"
+        alt="Impédance d'entrée."
+      />
+    </section>
+    <section id="helm">
+      <HelmholtzResonator
+        client:visible
+        number="L.21"
+        title="Résonateur de Helmholtz"
+        alt="Bouteille."
+      />
+    </section>
+    <section id="duct">
+      <DuctModes client:visible number="L.22" title="Modes d'un conduit" alt="Conduit." />
     </section>
     <section id="polar">
       <PolarPlot client:visible number="L.14" title="Piston bafflé" alt="Directivité." />

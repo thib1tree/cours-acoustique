@@ -88,6 +88,7 @@ export const CURRICULUM: readonly CurriculumNode[] = [
     title: 'Ondes planes',
     summary: 'Interfaces, réflexion, transmission, matériaux absorbants.',
     requires: ['impedance'],
+    href: 'chapitres/02-ondes-planes/',
   },
   {
     id: 'guides',
@@ -95,6 +96,7 @@ export const CURRICULUM: readonly CurriculumNode[] = [
     title: 'Guides et cavités',
     summary: 'Modes, tubes, correction de bout, résonateur de Helmholtz.',
     requires: ['planes', 'speciales'],
+    href: 'chapitres/03-guides-cavites/',
   },
   {
     id: 'rayonnement',

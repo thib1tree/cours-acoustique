@@ -7,7 +7,14 @@ import { fluidScenes } from './fluids';
 import { waveEquationScenes } from './wave-equation';
 import { labScenes } from './lab';
 import { planeWaveScenes } from './plane-waves';
+import { guideScenes } from './guides';
 
-const all: SceneSpec[] = [...fluidScenes, ...waveEquationScenes, ...planeWaveScenes, ...labScenes];
+const all: SceneSpec[] = [
+  ...fluidScenes,
+  ...waveEquationScenes,
+  ...planeWaveScenes,
+  ...guideScenes,
+  ...labScenes,
+];
 
 export const SCENES: Record<string, SceneSpec> = Object.fromEntries(all.map((s) => [s.id, s]));
