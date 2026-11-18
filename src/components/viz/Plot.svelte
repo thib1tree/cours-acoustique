@@ -52,6 +52,9 @@
 
   let width = $state(600);
   let el: HTMLDivElement;
+  // Hydration-safe unique id: several plots share a page.
+  const uid = $props.id();
+  const clipId = `clip-${uid}`;
   const m = { l: 56, r: 16, t: 14, b: 40 };
   const sx = $derived(scale(x, m.l, width - m.r));
   const sy = $derived(scale(y, height - m.b, m.t));
@@ -96,7 +99,7 @@
     onpointerup={() => (dragging = false)}
   >
     <defs
-      ><clipPath id="clip-{ariaLabel.length}"
+      ><clipPath id={clipId}
         ><rect x={m.l} y={m.t} width={width - m.l - m.r} height={height - m.t - m.b} /></clipPath
       ></defs
     >
@@ -120,7 +123,7 @@
     {#if x.label}<text x={width - m.r} y={height - 6} class="lbl" text-anchor="end">{x.label}</text
       >{/if}
     {#if y.label}<text x={m.l + 6} y={m.t + 12} class="lbl">{y.label}</text>{/if}
-    <g clip-path="url(#clip-{ariaLabel.length})">
+    <g clip-path="url(#{clipId})">
       {#each vlines as v (v.x)}
         <line
           x1={sx(v.x)}
