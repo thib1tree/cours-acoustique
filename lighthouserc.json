@@ -10,7 +10,8 @@
         "http://localhost/cours-acoustique/chapitres/03-guides-cavites/",
         "http://localhost/cours-acoustique/chapitres/04-rayonnement/",
         "http://localhost/cours-acoustique/chapitres/05-sources-en-mouvement/",
-        "http://localhost/cours-acoustique/chapitres/06-diffraction-diffusion/"
+        "http://localhost/cours-acoustique/chapitres/06-diffraction-diffusion/",
+        "http://localhost/cours-acoustique/chapitres/07-acoustique-des-salles/"
       ],
       "numberOfRuns": 3,
       "settings": {

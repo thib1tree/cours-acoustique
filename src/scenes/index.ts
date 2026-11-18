@@ -11,6 +11,7 @@ import { guideScenes } from './guides';
 import { radiationScenes } from './radiation';
 import { movingScenes } from './moving';
 import { diffractionScenes } from './diffraction';
+import { roomScenes } from './room';
 
 const all: SceneSpec[] = [
   ...fluidScenes,
@@ -20,6 +21,7 @@ const all: SceneSpec[] = [
   ...radiationScenes,
   ...movingScenes,
   ...diffractionScenes,
+  ...roomScenes,
   ...labScenes,
 ];
 

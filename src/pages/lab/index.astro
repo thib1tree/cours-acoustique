@@ -33,6 +33,9 @@ import MovingSource from '../../components/viz/MovingSource.svelte';
 import PassBy from '../../components/viz/PassBy.svelte';
 import EdgeDiffraction from '../../components/viz/EdgeDiffraction.svelte';
 import SphereScattering from '../../components/viz/SphereScattering.svelte';
+import RoomModes from '../../components/viz/RoomModes.svelte';
+import ImageSources from '../../components/viz/ImageSources.svelte';
+import Reverberation from '../../components/viz/Reverberation.svelte';
 import GpuCpuCheck from '../../components/viz/GpuCpuCheck.svelte';
 ---
 
@@ -183,6 +186,15 @@ import GpuCpuCheck from '../../components/viz/GpuCpuCheck.svelte';
         title="Diffusion par une sphère"
         alt="Sphère."
       />
+    </section>
+    <section id="modes7">
+      <RoomModes client:visible number="L.30" title="Modes d'une pièce" alt="Modes." />
+    </section>
+    <section id="images7">
+      <ImageSources client:visible number="L.31" title="Sources images" alt="Images." />
+    </section>
+    <section id="reverb7">
+      <Reverberation client:visible number="L.32" title="Réverbération" alt="Réverbération." />
     </section>
     <section id="polar">
       <PolarPlot client:visible number="L.14" title="Piston bafflé" alt="Directivité." />

@@ -15,6 +15,8 @@
     label?: string;
     /** Fill the area under the curve with this color (low opacity). */
     fill?: string;
+    /** Draw each point as a vertical stem from the bottom of the axis (impulse responses, spectra). */
+    stems?: boolean;
     /** Where to write the label: next to the last point (default) or the first one. */
     labelAt?: 'start' | 'end';
   }
@@ -140,7 +142,14 @@
             opacity="0.14"
           />{/if}
         <path
-          d={path(s.points)}
+          d={s.stems
+            ? s.points
+                .map(
+                  ([a, b]) =>
+                    `M${sx(a).toFixed(1)},${(height - m.b).toFixed(1)}V${sy(b).toFixed(1)}`,
+                )
+                .join('')
+            : path(s.points)}
           fill="none"
           stroke={s.color}
           stroke-width={s.width ?? 2}

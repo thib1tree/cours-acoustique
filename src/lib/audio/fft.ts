@@ -75,3 +75,28 @@ export function shapedNoise(
   for (let i = 0; i < n; i++) out[i] = re[i]!;
   return out;
 }
+
+const nextPow2 = (n: number) => 2 ** Math.ceil(Math.log2(Math.max(2, n)));
+
+/** Linear convolution of two real signals by FFT. */
+export function convolve(a: Float32Array, b: Float32Array): Float32Array {
+  const n = nextPow2(a.length + b.length - 1);
+  const ar = new Float64Array(n);
+  const ai = new Float64Array(n);
+  const br = new Float64Array(n);
+  const bi = new Float64Array(n);
+  ar.set(a);
+  br.set(b);
+  fft(ar, ai, -1);
+  fft(br, bi, -1);
+  for (let k = 0; k < n; k++) {
+    const re = ar[k]! * br[k]! - ai[k]! * bi[k]!;
+    const im = ar[k]! * bi[k]! + ai[k]! * br[k]!;
+    ar[k] = re;
+    ai[k] = im;
+  }
+  fft(ar, ai, 1);
+  const out = new Float32Array(a.length + b.length - 1);
+  for (let i = 0; i < out.length; i++) out[i] = ar[i]! / n;
+  return out;
+}

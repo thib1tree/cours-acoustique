@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fft, shapedNoise } from './fft';
+import { convolve, fft, shapedNoise } from './fft';
 
 describe('FFT', () => {
   it('matches a direct DFT and inverts exactly (tol. 1e-9)', () => {
@@ -39,5 +39,16 @@ describe('FFT', () => {
       else outBand += e;
     }
     expect(outBand / inBand).toBeLessThan(1e-12);
+  });
+  it('convolution by FFT equals the direct sum (tol. 1e-5)', () => {
+    const a = Float32Array.from({ length: 37 }, (_, i) => Math.sin(i));
+    const b = Float32Array.from({ length: 11 }, (_, i) => 1 / (i + 1));
+    const y = convolve(a, b);
+    expect(y.length).toBe(47);
+    for (let n = 0; n < y.length; n++) {
+      let s = 0;
+      for (let k = 0; k < b.length; k++) if (n - k >= 0 && n - k < a.length) s += a[n - k]! * b[k]!;
+      expect(Math.abs(y[n]! - s)).toBeLessThan(1e-5);
+    }
   });
 });

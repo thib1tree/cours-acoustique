@@ -128,6 +128,7 @@ export const CURRICULUM: readonly CurriculumNode[] = [
     title: 'Acoustique des salles',
     summary: 'Modes, Sabine, sources-images, réponse impulsionnelle.',
     requires: ['guides', 'signal'],
+    href: 'chapitres/07-acoustique-des-salles/',
   },
   {
     id: 'vibro',

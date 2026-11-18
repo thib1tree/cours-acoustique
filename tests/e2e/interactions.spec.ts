@@ -144,3 +144,18 @@ test('chapter 6: without the diffracted wave, the shadow is silent', async ({ pa
   await toggle.click();
   await expect(eq).toContainText('−100');
 });
+
+test('chapter 7: Eyring falls below Sabine when absorption grows', async ({ page }) => {
+  await page.goto('chapitres/07-acoustique-des-salles/');
+  const eq = page.locator('figure.eq[aria-label^="Durées de réverbération"]');
+  await hydrated(page, eq);
+  await expect(eq).toContainText('1,18');
+  await expect(eq).toContainText('1,09');
+  const field = page.getByLabel('coefficient d’absorption moyen, valeur').first();
+  await hydrated(page, field);
+  await field.fill('0,8');
+  await field.press('Enter');
+  await eq.scrollIntoViewIfNeeded();
+  await expect(eq).toContainText('0,22');
+  await expect(eq).toContainText('0,11');
+});

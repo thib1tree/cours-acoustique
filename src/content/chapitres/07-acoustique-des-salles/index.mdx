@@ -1,0 +1,219 @@
+---
+curriculumId: salles
+title: Acoustique des salles
+summary: Pourquoi une petite pièce fait « bourdonner » certaines notes graves, comment le son d'une grande salle devient une traîne continue, et ce que mesure vraiment la durée de réverbération de Sabine.
+number: '7'
+level: M1
+duration: 75
+keyConcepts: [modes propres d'une salle, densité modale, fréquence de Schroeder, sources images, échogramme, champ diffus, libre parcours moyen, durée de réverbération, Sabine, Eyring]
+prerequisites: [guides, diffraction]
+references: [kuttruff, sabine, beranek, iso3382, pierce]
+---
+
+import RoomModes from '../../../components/viz/RoomModes.svelte';
+import ImageSources from '../../../components/viz/ImageSources.svelte';
+import Reverberation from '../../../components/viz/Reverberation.svelte';
+import LiveEquation from '../../../components/ui/LiveEquation.svelte';
+import MarginNote from '../../../components/content/MarginNote.astro';
+import Insight from '../../../components/content/Insight.astro';
+import Misconception from '../../../components/content/Misconception.astro';
+import ModelLimits from '../../../components/content/ModelLimits.astro';
+import RealWorld from '../../../components/content/RealWorld.astro';
+import Derivation from '../../../components/content/Derivation.astro';
+import Step from '../../../components/content/Step.astro';
+import Prediction from '../../../components/content/Prediction.astro';
+import Quiz from '../../../components/content/Quiz.astro';
+import G from '../../../components/content/G.astro';
+import Cite from '../../../components/content/Cite.astro';
+
+<p class="lede">Frappez dans vos mains dans une église, puis dans une chambre. Dans l'église, le son traîne plusieurs secondes ; dans la chambre, il s'éteint presque aussitôt, mais certaines notes graves y « bourdonnent ». La même équation des ondes décrit les deux pièces. Ce chapitre montre qu'on peut regarder une salle de deux façons, comme une cavité qui résonne ou comme une boîte où rebondissent des rayons, et qu'aucune des deux n'est juste partout.</p>
+
+<Prediction id="room-scale" options={['Elle reste la même : les matériaux n’ont pas changé.', 'Elle double.', 'Elle est multipliée par huit, comme le volume.']}>
+On construit une salle deux fois plus grande dans les trois directions, avec exactement les mêmes matériaux. Sa durée de réverbération&nbsp;:
+</Prediction>
+
+## Une salle est une cavité : les modes
+
+Au chapitre 3, un tube fermé aux deux bouts n'acceptait que les fréquences pour lesquelles un nombre entier de demi-longueurs d'onde tenait dans sa longueur. Une pièce parallélépipédique à parois rigides est le même problème dans les trois directions à la fois.
+
+<Derivation title="Modes d'une pièce parallélépipédique" hypotheses="parois rigides, fluide parfait, régime harmonique ; pièce Lx × Ly × Lz.">
+<Step title="Séparation des variables" open>
+
+On cherche $P = X(x)\,Y(y)\,Z(z)$. L'équation de Helmholtz se sépare en trois équations du type $X'' + k_x^2 X = 0$, avec $k_x^2 + k_y^2 + k_z^2 = k^2$.
+
+</Step>
+<Step title="Les parois">
+
+Paroi rigide : vitesse normale nulle, donc $X'(0) = X'(L_x) = 0$, ce qui impose $X = \cos(n_x\pi x/L_x)$ et $k_x = n_x\pi/L_x$, et de même dans les deux autres directions.
+
+</Step>
+<Step title="Fréquences propres">
+
+$$
+f_{n_x n_y n_z} = \frac{c_0}{2}\sqrt{\left(\frac{n_x}{L_x}\right)^2 + \left(\frac{n_y}{L_y}\right)^2 + \left(\frac{n_z}{L_z}\right)^2}.
+$$
+
+Les modes à un seul indice non nul sont **axiaux** (une onde qui fait l'aller-retour entre deux murs face à face), à deux indices **tangentiels**, à trois **obliques**.
+
+</Step>
+<Step title="Combien de modes ?">
+
+Chaque mode est un point $(n_x/2L_x, n_y/2L_y, n_z/2L_z)$ d'un réseau ; ceux de fréquence inférieure à $f$ remplissent un huitième de sphère de rayon $f/c_0$. Leur nombre croît donc comme le volume de cette sphère <Cite k="kuttruff" /> :
+
+$$
+N(f) \approx \frac{4\pi V f^3}{3c_0^3} + \frac{\pi S f^2}{4c_0^2} + \frac{L' f}{8c_0}.
+$$
+
+{/* TODO-VERIFY: termes correctifs de surface et d'arêtes de la formule de Weyl (Kuttruff). */}
+
+</Step>
+</Derivation>
+
+<RoomModes client:visible number="7.1" title="Les modes d'une pièce" alt="En haut, vue en plan d'une pièce rectangulaire colorée par la pression d'un mode : des zones de signes opposés séparées par des lignes nodales. En bas, niveau chez un auditeur en fonction de la fréquence, de 20 à 300 Hz : des pics et des creux de plus de 20 dB aux basses fréquences, de plus en plus resserrés vers les aigus ; une ligne verticale marque la fréquence de Schroeder." />
+
+<LiveEquation client:visible scene="7-modes" tex={String.raw`f = \frac{c_0}{2}\sqrt{\left(\frac{\term{nx}{n_x}}{\term{Lx}{L_x}}\right)^2 + \left(\frac{\term{ny}{n_y}}{\term{Ly}{L_y}}\right)^2} = \val{fm}\ \text{Hz}`} number="7.1" label="Fréquence d'un mode horizontal de la pièce" />
+
+Dans une pièce de 5 × 4 × 2,7 m, il n'y a que 12 modes sous 100 Hz. Chacun est une résonance, et la réponse chez l'auditeur présente des pics et des creux de plus de 20 dB d'une fréquence à l'autre. Écoutez le bruit grave « dans la pièce », puis « en champ libre » : certaines notes ressortent, d'autres disparaissent. Montez en fréquence : le nombre de modes croît comme $f^3$, ils se chevauchent, et la réponse devient un fouillis statistique.
+
+<Insight>
+
+La <G id="frequence-schroeder">fréquence de Schroeder</G>, $f_S \approx 2000\sqrt{T/V}$ (en hertz, avec $T$ en secondes et $V$ en mètres cubes), sépare deux mondes <Cite k="kuttruff" />. Au-dessous, chaque mode est assez isolé pour qu'on l'entende : une salle se décrit comme un **instrument**, avec ses notes. Au-dessus, plusieurs modes se partagent chaque bande de fréquence : on ne peut plus les suivre un à un, et une description **statistique**, en énergie, devient à la fois possible et nécessaire. Une grande salle a une fréquence de Schroeder très basse, une petite pièce l'a en plein dans le grave de la musique.
+
+</Insight>
+
+{/* TODO-VERIFY: définition et constante de la fréquence de Schroeder (recouvrement d'environ trois modes par largeur de résonance). */}
+
+## Une salle est une boîte à rayons : les sources images
+
+Aux fréquences élevées, la longueur d'onde est petite devant les murs, et l'on peut suivre le son comme des rayons qui se réfléchissent (chapitre 2). Pour une paroi plane, la réflexion semble venir d'une **source image**, symétrique de la source par rapport à la paroi. Les images se réfléchissent à leur tour sur les autres parois : une pièce parallélépipédique engendre un réseau infini de pièces miroirs, chacune avec sa source.
+
+<ImageSources client:visible number="7.2" title="Les sources images d'une pièce" alt="Vue en plan d'une pièce entourée de ses images miroirs, chacune contenant une source image ; un cercle centré sur l'auditeur grandit à la vitesse du son et englobe les images dont la réflexion est déjà arrivée ; le trajet de la dernière réflexion est dessiné replié dans la pièce. En bas, l'échogramme : chaque réflexion est un trait dont la hauteur est son niveau, d'abord isolés, puis de plus en plus serrés." />
+
+Le cercle centré sur l'auditeur grandit à la vitesse du son : chaque image qu'il englobe est une réflexion déjà entendue. Le trajet replié dans la pièce montre que la ligne droite depuis l'image est exactement le chemin réfléchi. Dans l'échogramme, les premières réflexions sont isolées : ce sont elles qui donnent l'impression d'espace et la clarté. Puis leur nombre explose, car le volume de la sphère grandit comme $t^3$ : la densité des réflexions croît comme $4\pi c_0^3 t^2/V$.
+
+<Insight>
+
+Les modes et les sources images sont deux écritures **exactes** du même champ dans une pièce rectangulaire : une somme sur les fréquences propres, ou une somme sur les trajets réfléchis. La première converge vite aux basses fréquences et sur les temps longs ; la seconde, aux hautes fréquences et sur les temps courts. Le même compte, une sphère qui s'agrandit dans un réseau, explique à la fois que le nombre de modes croisse comme $f^3$ et que le nombre de réflexions croisse comme $t^3$.
+
+</Insight>
+
+## La durée de réverbération
+
+Après quelques dizaines de millisecondes, les réflexions arrivent de partout à la fois. Si l'énergie est répartie uniformément dans la salle et dans toutes les directions, ce qu'on appelle un <G id="champ-diffus">champ diffus</G>, un bilan d'énergie suffit à décrire sa décroissance.
+
+<Derivation title="Formules de Sabine et d'Eyring" hypotheses="champ diffus (densité d'énergie w uniforme, directions équiprobables), absorption moyenne ᾱ des parois, pas d'absorption par l'air.">
+<Step title="Ce qui frappe les parois" open>
+
+L'énergie qui voyage dans la direction $\theta$ par rapport à la normale d'une paroi la frappe avec un facteur $\cos\theta$. En moyennant sur un demi-espace de directions, l'intensité reçue par unité de surface vaut $I = wc_0/4$.
+
+</Step>
+<Step title="Bilan d'énergie (Sabine)">
+
+Une fois la source coupée, $V\,\mathrm{d}w/\mathrm{d}t = -\frac{c_0}{4}\,w\,S\bar\alpha$. La densité d'énergie décroît en $e^{-c_0 S\bar\alpha\,t/4V}$, et elle a perdu 60 dB au bout de
+
+$$
+T = \frac{24\ln 10}{c_0}\,\frac{V}{S\bar\alpha} \approx 0{,}161\,\frac{V}{S\bar\alpha}.
+$$
+
+Le produit $A = S\bar\alpha$ est l'aire d'absorption équivalente.
+
+</Step>
+<Step title="Réflexion par réflexion (Eyring)">
+
+Un rayon parcourt en moyenne le <G id="libre-parcours-moyen">libre parcours moyen</G> $4V/S$ entre deux réflexions, soit $c_0S/4V$ réflexions par seconde, et perd chaque fois la fraction $\bar\alpha$ de son énergie. Après le temps $t$, il en reste $(1 - \bar\alpha)^{c_0St/4V}$ :
+
+$$
+T = 0{,}161\,\frac{V}{-S\ln(1 - \bar\alpha)}.
+$$
+
+Pour $\bar\alpha$ petit, $-\ln(1 - \bar\alpha) \approx \bar\alpha$ et l'on retrouve Sabine.
+
+</Step>
+</Derivation>
+
+<Reverberation client:visible number="7.3" title="Durée de réverbération : Sabine, Eyring et sources images" alt="À gauche, durée de réverbération en fonction de l'absorption moyenne pour les formules de Sabine et d'Eyring, qui divergent quand l'absorption devient forte. À droite, décroissance de l'énergie calculée par les sources images, presque rectiligne en décibels, comparée aux droites de Sabine et d'Eyring." />
+
+<LiveEquation client:visible scene="7-reverb" tex={String.raw`\begin{aligned} T_{\text{Sabine}} &= \frac{0{,}161\,\term{V}{V}}{S\,\term{alpha}{\bar\alpha}} = \val{Ts}\ \text{s}, \\ T_{\text{Eyring}} &= \frac{0{,}161\,V}{-S\ln(1 - \bar\alpha)} = \val{Te}\ \text{s} \end{aligned}`} number="7.2" label="Durées de réverbération de Sabine et d'Eyring" />
+
+Voici la réponse à la prédiction : agrandir une salle d'un facteur 2 dans toutes les directions multiplie $V$ par 8 et $S$ par 4. La durée de réverbération **double**. Ce n'est pas le volume qui « contient » plus de son : c'est le libre parcours moyen qui double, si bien que le son touche les parois deux fois moins souvent et y perd son énergie deux fois moins vite. Écoutez les notes pincées sans salle, puis dans une salle de 300 m³, puis de 10 000 m³.
+
+<Insight>
+
+La durée de réverbération ne mesure pas une quantité de son mais une **cadence de pertes** : combien de fois par seconde le son rencontre une paroi ($c_0S/4V$), et ce qu'il y laisse à chaque fois ($\bar\alpha$). Elle ne dépend ni de la source, ni de sa puissance, ni de la position de l'auditeur, tant que le champ est diffus.
+
+</Insight>
+
+<Misconception>
+
+« Une salle entièrement absorbante a encore une réverbération. » C'est ce que prédit la formule de Sabine : avec $\bar\alpha = 1$, elle donne $T = 0{,}161\,V/S$, et non zéro. Le défaut vient du bilan continu, qui fait perdre l'énergie peu à peu, alors qu'en réalité elle disparaît d'un coup à la première paroi. La formule d'Eyring, qui compte les réflexions, donne bien $T \to 0$. Poussez $\bar\alpha$ vers 0,8 dans la figure : les deux courbes s'écartent. Pour les salles peu absorbantes, les deux formules coïncident.
+
+</Misconception>
+
+<ModelLimits>
+
+- **Champ diffus.** Sabine et Eyring supposent que l'énergie se répartit également dans toutes les directions. Une salle parallélépipédique aux parois lisses et spéculaires ne le fait pas : les rayons presque parallèles à un mur le touchent rarement et entretiennent la fin de la décroissance. Dans la figure, les sources images décroissent plus lentement qu'Eyring. Pour une salle allongée de 10 × 3 × 3 m avec $\bar\alpha = 0{,}2$, le calcul par images donne 0,88 s, contre 0,47 s pour Eyring. Ce sont les surfaces irrégulières, qui diffusent le son, qui rendent un champ réel proche du champ diffus.
+- **Absorption répartie.** Une salle dont toute l'absorption est concentrée au plafond se comporte encore moins bien : les modes horizontaux ne la voient presque pas.
+- **Fréquence.** Les coefficients d'absorption dépendent de la fréquence (chapitre 2) et l'air absorbe les aigus dans les grandes salles. Une durée de réverbération se donne donc par bande d'octave.
+- **Modes.** Sous la fréquence de Schroeder, l'approche statistique ne vaut plus : la décroissance dépend du mode et de la position.
+
+</ModelLimits>
+
+## Monde réel
+
+<RealWorld title="L'origine : Sabine à Harvard">
+
+À la fin du XIX<sup>e</sup> siècle, Wallace Clement Sabine est chargé de corriger une salle de conférences inaudible. En chronométrant à l'oreille l'extinction d'un tuyau d'orgue, et en apportant puis retirant des coussins de sièges, il établit que la durée de réverbération est proportionnelle au volume et inversement proportionnelle à l'absorption totale <Cite k="sabine" />{/* TODO-VERIFY: chronologie (salle du Fogg Art Museum, 1895-1898) et protocole des coussins. */}. La formule porte son nom, et l'unité d'aire d'absorption équivalente, le « sabin », aussi.
+
+</RealWorld>
+
+<RealWorld title="Parole et musique">
+
+Une salle de classe ou de réunion vise une réverbération courte, pour que les syllabes ne se chevauchent pas ; une salle de concert symphonique, une réverbération proche de 2 s aux fréquences moyennes, qui fond les notes entre elles <Cite k="beranek" />{/* TODO-VERIFY: valeurs typiques de durée de réverbération recommandées (salles de classe, salles de concert) et sources (Beranek, normes nationales). */}. La mesure suit une norme : on enregistre la décroissance après une excitation, et l'on extrapole la pente mesurée sur 20 ou 30 dB <Cite k="iso3382" />.
+
+</RealWorld>
+
+<RealWorld title="Le grave dans une petite pièce">
+
+Dans un salon ou un studio domestique, la fréquence de Schroeder tombe entre 150 et 250 Hz, en plein dans les basses. Des creux de 20 dB à certaines fréquences, et le fait que le grave change en déplaçant le fauteuil d'un mètre, sont des modes, et non des défauts de l'enceinte. Les remèdes sont modaux : choisir les positions, et poser des absorbeurs efficaces aux basses fréquences (chapitre 2) aux ventres de pression, c'est-à-dire dans les coins.
+
+</RealWorld>
+
+## Vérification
+
+<Quiz kind="numeric" answer={28.6} tolerance={0.02} unit="Hz">
+<Fragment slot="question">Une pièce a 6 m de long. Quelle est la fréquence de son premier mode axial dans cette direction ($c_0 = 343{,}2$ m/s)&nbsp;?</Fragment>
+<Fragment slot="explanation">$f_{100} = c_0/(2L_x) = 343{,}2/12 \approx 28{,}6$ Hz : une demi-longueur d'onde entre les deux murs, comme dans un tube fermé aux deux bouts.</Fragment>
+</Quiz>
+
+<Quiz kind="numeric" answer={0.805} tolerance={0.02} unit="s">
+<Fragment slot="question">Une salle de 1 000 m³ a une aire d'absorption équivalente $A = 200$ m². Que donne la formule de Sabine&nbsp;?</Fragment>
+<Fragment slot="explanation">$T = 0{,}161 \times 1000/200 \approx 0{,}805$ s.</Fragment>
+</Quiz>
+
+<Quiz kind="choice" answer="b">
+<Fragment slot="question">Pourquoi une cathédrale réverbère-t-elle plus longtemps qu'une chambre aux murs de même pierre&nbsp;?</Fragment>
+<Fragment slot="a">Parce qu'elle contient plus d'air, donc plus d'énergie sonore.</Fragment>
+<Fragment slot="b">Parce que le son y parcourt de plus longues distances entre deux parois : il les touche moins souvent par seconde.</Fragment>
+<Fragment slot="c">Parce que la pierre y est plus réfléchissante.</Fragment>
+<Fragment slot="explanation">La cadence des pertes est $c_0S/4V$ réflexions par seconde, qui décroît comme l'inverse de la taille. La durée de réverbération est proportionnelle au libre parcours moyen.</Fragment>
+</Quiz>
+
+<Quiz kind="numeric" answer={141} tolerance={0.02} unit="Hz">
+<Fragment slot="question">Quelle est la fréquence de Schroeder d'une salle de 200 m³ dont la durée de réverbération est de 1 s&nbsp;?</Fragment>
+<Fragment slot="explanation">$f_S = 2000\sqrt{T/V} = 2000\sqrt{1/200} \approx 141$ Hz. Au-dessous, les modes s'entendent un par un.</Fragment>
+</Quiz>
+
+<Quiz kind="choice" answer="c">
+<Fragment slot="question">On tapisse toutes les parois d'une salle d'un matériau d'absorption $\alpha = 0{,}95$. Quelle formule décrit le mieux la réverbération résiduelle&nbsp;?</Fragment>
+<Fragment slot="a">Sabine, car elle est la plus utilisée.</Fragment>
+<Fragment slot="b">Les deux donnent le même résultat.</Fragment>
+<Fragment slot="c">Eyring : Sabine surestime fortement la durée quand l'absorption est forte.</Fragment>
+<Fragment slot="explanation">Avec $\bar\alpha = 0{,}95$, $-\ln(1 - \bar\alpha) \approx 3$ au lieu de 0,95 : Sabine surestime $T$ d'un facteur 3. Le son disparaît presque à la première réflexion.</Fragment>
+</Quiz>
+
+## Pour aller plus loin
+
+- **Critères de qualité.** Au-delà de $T$ : temps de décroissance initiale, clarté, définition, part d'énergie latérale. Ils décrivent l'équilibre entre premières réflexions et réverbération, et sont mesurés selon la norme ISO 3382 <Cite k="iso3382" /> <Cite k="beranek" />.
+- **Simulation.** Lancer de rayons avec diffusion, faisceaux, méthodes hybrides et solveurs d'ondes aux basses fréquences : les logiciels d'auralisation mêlent les deux regards de ce chapitre <Cite k="kuttruff" />.
+- **Couplage de volumes.** Deux salles reliées par une ouverture (une nef et une chapelle, une salle et sa cage de scène) produisent une décroissance à double pente.
+- **Références.** Kuttruff <Cite k="kuttruff" /> pour l'ensemble du chapitre ; Pierce <Cite k="pierce" /> pour les modes et le champ diffus.

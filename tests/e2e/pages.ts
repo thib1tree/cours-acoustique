@@ -11,4 +11,5 @@ export const PAGES = [
   { path: 'chapitres/04-rayonnement/', name: 'chapitre-4' },
   { path: 'chapitres/05-sources-en-mouvement/', name: 'chapitre-5' },
   { path: 'chapitres/06-diffraction-diffusion/', name: 'chapitre-6' },
+  { path: 'chapitres/07-acoustique-des-salles/', name: 'chapitre-7' },
 ] as const;

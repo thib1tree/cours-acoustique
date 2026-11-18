@@ -126,4 +126,24 @@ export const REFERENCES: Record<string, Reference> = {
     full: 'Z. Maekawa, « Noise reduction by screens », <i>Applied Acoustics</i> 1(3), 157–173, 1968.',
     note: 'TODO-VERIFY : référence complète et forme de l’abaque.',
   },
+  kuttruff: {
+    short: 'Kuttruff, 2016',
+    full: 'H. Kuttruff, <i>Room Acoustics</i>, 6<sup>e</sup> éd., CRC Press, 2016.',
+    note: 'TODO-VERIFY : édition.',
+  },
+  sabine: {
+    short: 'Sabine, 1922',
+    full: 'W. C. Sabine, <i>Collected Papers on Acoustics</i>, Harvard University Press, 1922.',
+    note: 'TODO-VERIFY : référence et contexte historique.',
+  },
+  beranek: {
+    short: 'Beranek, 2004',
+    full: 'L. L. Beranek, <i>Concert Halls and Opera Houses: Music, Acoustics, and Architecture</i>, 2<sup>e</sup> éd., Springer, 2004.',
+    note: 'TODO-VERIFY : édition.',
+  },
+  iso3382: {
+    short: 'ISO 3382',
+    full: 'ISO 3382 (parties 1 et 2), <i>Acoustique — Mesurage des paramètres acoustiques des salles</i>.',
+    note: 'TODO-VERIFY : titres exacts et années des parties.',
+  },
 };
