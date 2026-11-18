@@ -120,6 +120,7 @@ export const CURRICULUM: readonly CurriculumNode[] = [
     title: 'Diffraction et diffusion',
     summary: 'Sphère, cylindre, écrans, Fresnel.',
     requires: ['rayonnement'],
+    href: 'chapitres/06-diffraction-diffusion/',
   },
   {
     id: 'salles',

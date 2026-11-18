@@ -31,6 +31,8 @@ import SourcePair from '../../components/viz/SourcePair.svelte';
 import PistonBeam from '../../components/viz/PistonBeam.svelte';
 import MovingSource from '../../components/viz/MovingSource.svelte';
 import PassBy from '../../components/viz/PassBy.svelte';
+import EdgeDiffraction from '../../components/viz/EdgeDiffraction.svelte';
+import SphereScattering from '../../components/viz/SphereScattering.svelte';
 import GpuCpuCheck from '../../components/viz/GpuCpuCheck.svelte';
 ---
 
@@ -170,6 +172,17 @@ import GpuCpuCheck from '../../components/viz/GpuCpuCheck.svelte';
     </section>
     <section id="passby5">
       <PassBy client:visible number="L.27" title="Passage d'un véhicule" alt="Passage." />
+    </section>
+    <section id="edge6">
+      <EdgeDiffraction client:visible number="L.28" title="Arête d'un écran" alt="Arête." />
+    </section>
+    <section id="sphere6">
+      <SphereScattering
+        client:visible
+        number="L.29"
+        title="Diffusion par une sphère"
+        alt="Sphère."
+      />
     </section>
     <section id="polar">
       <PolarPlot client:visible number="L.14" title="Piston bafflé" alt="Directivité." />

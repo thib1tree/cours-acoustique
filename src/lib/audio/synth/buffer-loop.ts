@@ -12,7 +12,7 @@ export interface BufferLoop {
 }
 
 /** Peak-normalize to 0.5 (the master gain and the limiter follow). */
-function normalize(x: Float32Array): Float32Array<ArrayBuffer> {
+function peakNormalize(x: Float32Array): Float32Array<ArrayBuffer> {
   let m = 1e-12;
   for (const v of x) m = Math.max(m, Math.abs(v));
   const out = new Float32Array(x.length);
@@ -20,13 +20,21 @@ function normalize(x: Float32Array): Float32Array<ArrayBuffer> {
   return out;
 }
 
-export async function startBufferLoop(render: (rate: number) => Float32Array): Promise<BufferLoop> {
+/**
+ * `normalize`: scale each signal to a 0.5 peak (default). Pass false when the caller
+ * scales the signals itself (e.g. to keep a level difference audible); they must then
+ * stay within ±1.
+ */
+export async function startBufferLoop(
+  render: (rate: number) => Float32Array,
+  normalize = true,
+): Promise<BufferLoop> {
   const ctx = await audio.start();
   const rate = ctx.sampleRate;
   let current: { src: AudioBufferSourceNode; g: GainNode } | null = null;
   const play = (samples: Float32Array) => {
     const buf = ctx.createBuffer(1, samples.length, rate);
-    buf.copyToChannel(normalize(samples), 0);
+    buf.copyToChannel(normalize ? peakNormalize(samples) : Float32Array.from(samples), 0);
     const src = ctx.createBufferSource();
     src.buffer = buf;
     src.loop = true;

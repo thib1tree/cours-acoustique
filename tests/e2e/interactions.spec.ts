@@ -134,3 +134,13 @@ test('chapter 5: a moving observer hears less than a moving source', async ({ pa
   await eq.scrollIntoViewIfNeeded();
   await expect(eq).toContainText('1,50');
 });
+
+test('chapter 6: without the diffracted wave, the shadow is silent', async ({ page }) => {
+  await page.goto('chapitres/06-diffraction-diffusion/');
+  const eq = page.locator('figure.eq[aria-label^="Champ autour de l"]');
+  await hydrated(page, eq);
+  await expect(eq).toContainText('−13');
+  const toggle = eq.getByRole('switch').first();
+  await toggle.click();
+  await expect(eq).toContainText('−100');
+});

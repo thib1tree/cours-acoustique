@@ -1,0 +1,219 @@
+---
+curriculumId: diffraction
+title: Diffraction et diffusion
+summary: Pourquoi on entend derrière un mur sans y voir, ce que vaut exactement le son à la limite de l'ombre, pourquoi un écran antibruit étouffe le son au lieu de l'arrêter, et pourquoi les petits obstacles sont invisibles aux graves.
+number: '6'
+level: M1
+duration: 60
+keyConcepts: [principe de Huygens-Fresnel, diffraction par une arête, nombre de Fresnel, ombre géométrique, diffusion de Rayleigh, section efficace, paradoxe d'extinction]
+prerequisites: [rayonnement]
+references: [pierce, morse, bornwolf, sommerfeld, maekawa, rayleigh]
+---
+
+import EdgeDiffraction from '../../../components/viz/EdgeDiffraction.svelte';
+import SphereScattering from '../../../components/viz/SphereScattering.svelte';
+import LiveEquation from '../../../components/ui/LiveEquation.svelte';
+import MarginNote from '../../../components/content/MarginNote.astro';
+import Insight from '../../../components/content/Insight.astro';
+import Misconception from '../../../components/content/Misconception.astro';
+import ModelLimits from '../../../components/content/ModelLimits.astro';
+import Advanced from '../../../components/content/Advanced.astro';
+import RealWorld from '../../../components/content/RealWorld.astro';
+import Derivation from '../../../components/content/Derivation.astro';
+import Step from '../../../components/content/Step.astro';
+import Prediction from '../../../components/content/Prediction.astro';
+import Quiz from '../../../components/content/Quiz.astro';
+import G from '../../../components/content/G.astro';
+import Cite from '../../../components/content/Cite.astro';
+
+<p class="lede">Quelqu'un vous parle depuis la pièce voisine, porte ouverte : vous l'entendez, mais vous ne le voyez pas. La lumière et le son sont pourtant tous deux des ondes. La différence tient à une seule grandeur, le rapport entre la longueur d'onde et la taille des obstacles : un demi-micromètre pour la lumière, de deux centimètres à vingt mètres pour la voix et la musique. Ce chapitre montre ce que fait une onde quand elle rencontre un bord, puis un objet, et pourquoi ce rapport décide de tout.</p>
+
+<Prediction id="shadow" options={['Le même qu’en champ libre : on est encore du côté éclairé.', 'Environ 6 dB plus bas qu’en champ libre.', 'Presque nul : on est déjà dans l’ombre.']}>
+Une onde plane rase l'arête d'un grand écran rigide. Loin derrière l'arête, exactement sur la ligne qui prolonge le rayon rasant (la limite de l'ombre géométrique), le niveau sonore est&nbsp;:
+</Prediction>
+
+## Chaque point d'une onde est une source
+
+Au chapitre 4, le champ d'un piston était la somme des ondes sphériques émises par chacun de ses éléments. Le même raisonnement vaut pour n'importe quel front d'onde : chacun de ses points se comporte comme une source secondaire, et le champ plus loin est la somme de leurs contributions, avec leurs retards. C'est le **principe de Huygens-Fresnel**, que l'intégrale de Rayleigh rend exact pour un plan.
+
+Quand rien ne gêne l'onde, ces contributions interfèrent pour redonner l'onde plane. Quand un écran en supprime une partie, la somme est incomplète, et ce qui manque se voit : c'est la <G id="diffraction">diffraction</G>. Pour savoir quelles contributions comptent, Fresnel découpe le front d'onde en zones dont la distance à l'auditeur augmente chacune d'une demi-longueur d'onde : deux zones voisines arrivent en opposition de phase<MarginNote n="1">Les zéros de la pression sur l'axe d'un piston (chapitre 4) sont exactement ceux où le piston contient un nombre pair de zones de Fresnel : elles s'annulent deux à deux.</MarginNote>. Le paramètre qui mesure combien de zones un obstacle masque est le <G id="nombre-fresnel">nombre de Fresnel</G> $N = 2\delta/\lambda$, où $\delta$ est l'allongement du chemin imposé par le bord.
+
+## L'arête d'un écran
+
+Le cas le plus simple est un écran rigide, mince et semi-infini, frappé par une onde plane. Sommerfeld en a donné la solution exacte en 1896 <Cite k="sommerfeld" /> ; c'est l'un des rares problèmes de diffraction résolus sans approximation.
+
+<EdgeDiffraction client:visible number="6.1" title="Une onde plane rase l'arête d'un écran" alt="Champ de pression autour d'un écran vertical dont l'arête est au centre : à gauche, l'onde plane incidente et sa réflexion sur l'écran ; à droite et au-dessus, l'onde passe librement ; à droite et en dessous, dans l'ombre, des ondes circulaires centrées sur l'arête. En bas, le niveau chez l'auditeur en fonction de la fréquence, et le niveau en fonction de l'angle autour de l'arête, qui vaut −6 dB sur la limite de l'ombre." />
+
+<Derivation title="La solution de Sommerfeld" hypotheses="onde plane harmonique d'amplitude 1, écran rigide d'épaisseur nulle, infini dans les deux directions qui le prolongent (problème à deux dimensions), fluide parfait au repos.">
+<Step title="Ce que donnerait l'acoustique géométrique" open>
+
+En coordonnées polaires $(r, \varphi)$ centrées sur l'arête, l'écran occupe $\varphi = 0$. L'onde incidente vaut $u_i = e^{-ikr\cos(\varphi - \varphi_0)}$ ; l'écran la réfléchit en $u_r = e^{-ikr\cos(\varphi + \varphi_0)}$. L'acoustique géométrique garde chacune dans sa zone et met zéro ailleurs : le champ **saute** sur la limite de l'ombre et sur celle de la réflexion.
+
+</Step>
+<Step title="La forme exacte">
+
+Sommerfeld montre que le champ total s'écrit
+
+$$
+\begin{aligned}
+u &= F\big(a_i\big)\,u_i + F\big(a_r\big)\,u_r, \\
+a_{i,r} &= -\sqrt{2kr}\,\cos\frac{\varphi \mp \varphi_0}{2},
+\end{aligned}
+$$
+
+avec la fonction de Fresnel
+
+$$
+F(a) = \frac{e^{-i\pi/4}}{\sqrt{\pi}} \int_a^{\infty} e^{i\mu^2}\,\mathrm{d}\mu .
+$$
+
+<Cite k="bornwolf" />{/* TODO-VERIFY: forme de la solution de Sommerfeld pour un écran rigide (condition de Neumann) dans Born et Wolf, et conventions de signe. */}
+
+</Step>
+<Step title="Ce que fait F">
+
+$F$ vaut 1 loin dans la zone éclairée ($a \to -\infty$), 0 loin dans l'ombre ($a \to +\infty$), et passe continûment de l'un à l'autre sur une bande de largeur $\sqrt{\lambda r}$ autour de la limite. Sur la limite exacte, $a = 0$ et $F(0) = 1/2$.
+
+</Step>
+<Step title="Loin de l'arête, dans l'ombre">
+
+Pour $a$ grand, $F(a) \approx \dfrac{e^{i\pi/4}}{2\sqrt{\pi}\,a}\,e^{ia^2}$ : le champ diffracté est une **onde cylindrique** issue de l'arête, d'amplitude en $1/\sqrt{kr}$. Son niveau perd donc 3 dB par doublement de la fréquence, et 3 dB par doublement de la distance.
+
+</Step>
+</Derivation>
+
+Le code de ce cours vérifie numériquement que cette solution satisfait l'équation de Helmholtz, la condition de paroi rigide sur les deux faces de l'écran, et les limites ci-dessus.
+
+<LiveEquation client:visible scene="6-edge" tex={String.raw`\begin{aligned} u &= u_{\text{géométrique}} + \term{diff}{u_{\text{diffractée}}}, \\ L &= \val{L}\ \text{dB}, \qquad N = \frac{2\delta}{\lambda} = \val{N} \end{aligned}`} toggles number="6.1" label="Champ autour de l'arête et niveau chez l'auditeur" />
+
+Coupez l'onde diffractée : l'ombre devient parfaite et silencieuse, et un mur de pression sépare brutalement la zone éclairée de la zone d'ombre. Remettez-la : elle comble l'ombre et adoucit la frontière. Voici la réponse à la prédiction : sur la limite de l'ombre, l'amplitude vaut exactement la moitié de l'onde incidente, soit −6 dB, quelle que soit la fréquence.
+
+<Insight>
+
+La diffraction est la façon dont le champ reste continu. L'acoustique géométrique fabrique des sauts de pression aux limites de l'ombre ; une onde ne peut pas en porter, puisque de tels sauts mettraient l'air en mouvement infiniment vite. L'arête émet donc une onde cylindrique qui raccorde les deux zones : elle vaut la moitié de l'onde incidente sur la limite, se retranche d'un côté et s'ajoute de l'autre. Plus la longueur d'onde est petite devant la distance, plus la bande de raccord $\sqrt{\lambda r}$ est étroite, et plus l'ombre ressemble à celle de la lumière.
+
+</Insight>
+
+<Misconception>
+
+« Un écran antibruit arrête le son qui est derrière lui. » Il l'atténue, et inégalement. Avec l'auditeur des réglages initiaux (10 m derrière l'arête, 20° sous la limite de l'ombre), l'écran retire 12 dB à 125 Hz mais 26 dB à 4 kHz : il agit comme un filtre passe-bas. Basculez l'écoute entre « sans écran » et « à la place de l'auditeur » : le bruit ne disparaît pas, il devient sourd. C'est ce qui rend les écrans efficaces contre le bruit de roulement aigu et décevants contre les basses fréquences.
+
+</Misconception>
+
+## Diffusion par un petit obstacle
+
+Un obstacle isolé, petit ou grand, renvoie une partie de l'onde dans toutes les directions : c'est la <G id="diffusion">diffusion</G>. Le cas de référence est une sphère rigide et immobile frappée par une onde plane.
+
+<SphereScattering client:visible number="6.2" title="Une onde plane rencontre une sphère rigide" alt="Champ de pression autour d'une sphère rigide éclairée par une onde plane venant de la gauche ; quand la sphère est petite, l'onde est à peine perturbée ; quand elle est grande, une ombre se forme derrière elle. À droite, le diagramme de diffusion ; en bas, la section efficace de diffusion en fonction de ka, en échelles logarithmiques." />
+
+<Derivation title="Diffusion par une sphère rigide" hypotheses="onde plane e^{ikz} d'amplitude 1, sphère rigide et immobile de rayon a, fluide parfait, régime harmonique.">
+<Step title="L'onde plane en ondes sphériques" open>
+
+Une onde plane se décompose en ondes sphériques stationnaires centrées sur la sphère : $e^{ikr\cos\theta} = \sum_n (2n+1)\,i^n j_n(kr)\,P_n(\cos\theta)$, où $j_n$ sont les fonctions de Bessel sphériques et $P_n$ les polynômes de Legendre.
+
+</Step>
+<Step title="Une onde diffusée par terme">
+
+On ajoute une onde sortante pour chaque ordre, $p_s = -\sum_n (2n+1)\,i^n A_n\,h_n(kr)\,P_n(\cos\theta)$, avec $h_n = j_n + i y_n$. La paroi rigide impose une vitesse radiale totale nulle en $r = a$, ordre par ordre :
+
+$$
+A_n = \frac{j_n'(ka)}{h_n'(ka)} .
+$$
+
+</Step>
+<Step title="Section efficace">
+
+La puissance diffusée, rapportée à l'intensité incidente, définit la <G id="section-efficace">section efficace</G> de diffusion :
+
+$$
+\frac{\sigma}{\pi a^2} = \frac{4}{(ka)^2}\sum_n (2n+1)\,|A_n|^2 .
+$$
+
+Seuls les ordres $n \lesssim ka$ comptent : une petite sphère n'excite que les premiers.
+
+</Step>
+<Step title="Petite sphère">
+
+Pour $ka \ll 1$, seuls $n = 0$ et $n = 1$ subsistent, avec $A_0 \approx i(ka)^3/3$ et $A_1 \approx -i(ka)^3/6$. On en tire $\sigma = \tfrac{7}{9}\pi a^2 (ka)^4$ et un diagramme en $\big|1 - \tfrac{3}{2}\cos\theta\big|$ <Cite k="morse" />{/* TODO-VERIFY: coefficients A₀, A₁ et la section efficace 7π k⁴a⁶/9 dans Morse et Ingard. */}.
+
+</Step>
+</Derivation>
+
+<LiveEquation client:visible scene="6-sphere" tex={String.raw`\frac{\sigma}{\pi a^2} = \frac{4}{(\term{ka}{ka})^2}\sum_n (2n+1)\left|\frac{j_n'(ka)}{h_n'(ka)}\right|^2 = \val{Q}`} number="6.2" label="Section efficace de diffusion d'une sphère rigide" />
+
+Partez de $ka = 0{,}1$ et affichez le champ diffusé seul. La sphère renvoie une onde très faible, plus forte vers l'arrière que vers l'avant (14 dB d'écart). Montez $ka$ : la section efficace croît comme $(ka)^4$, puis plafonne autour de $ka \approx 2$. Au-delà, une ombre se forme derrière la sphère et le diagramme se resserre vers l'avant.
+
+<Insight>
+
+Une petite sphère rigide perturbe l'onde de deux façons, et ce sont les deux sources du chapitre 4. Elle ne se laisse pas comprimer : là où l'air aurait dû se contracter et se dilater, rien ne bouge, ce qui revient à un **monopôle**. Elle ne suit pas le mouvement de l'air : il doit la contourner, ce qui revient à un **dipôle**. Les deux sont proportionnels au volume de la sphère et à la fréquence au carré ; la puissance diffusée varie donc comme $f^4 a^6$. Doubler la fréquence multiplie la puissance diffusée par 16. C'est la même loi que celle qui rend le ciel bleu, la lumière bleue étant bien plus diffusée par les molécules que la rouge.
+
+</Insight>
+
+<Misconception>
+
+« Un grand obstacle intercepte une puissance égale à sa section, $\pi a^2$. » Il en retire **deux fois** plus à l'onde incidente : $\sigma \to 2\pi a^2$ quand $ka \to \infty$, c'est le <G id="paradoxe-extinction">paradoxe d'extinction</G>. La moitié correspond à ce qui est réfléchi sur la face avant. L'autre moitié est l'onde diffractée vers l'avant qui, en interférant avec l'onde incidente, creuse l'ombre derrière l'objet : pour faire de l'ombre, il faut diffuser. Affichez le champ diffusé seul pour $ka = 15$ : le lobe le plus fort pointe vers l'avant, exactement là où l'ombre se forme. La convergence est lente, avec un écart à $2\pi a^2$ qui ne décroît que comme $(ka)^{-2/3}$.
+
+</Misconception>
+
+<ModelLimits>
+
+- **Obstacles idéaux.** L'écran est infiniment mince et rigide, la sphère rigide et immobile. Un écran épais, un sommet arrondi ou absorbant, un objet qui vibre ou laisse passer le son changent les résultats.
+- **Onde plane et deux dimensions.** La source est supposée infiniment loin et l'écran infiniment long. Pour une source proche (une route), les fronts sont courbes et la formule change ; c'est ce que décrivent les abaques empiriques.
+- **Pas de sol, pas d'atmosphère.** Les réflexions sur le sol, le vent et les gradients de température (chapitre 10) modifient fortement l'efficacité d'un écran réel à grande distance.
+- **Pas de diffusion multiple.** Un nuage d'obstacles diffuse aussi l'onde déjà diffusée ; c'est le domaine des milieux aléatoires et des métamatériaux.
+
+</ModelLimits>
+
+## Monde réel
+
+<RealWorld title="Écran antibruit : le modèle et l'abaque">
+
+Les ingénieurs utilisent l'abaque empirique de Maekawa, établi par des mesures avec une source ponctuelle, qui donne l'atténuation en fonction du seul nombre de Fresnel ; une approximation courante en est $10\log_{10}(3 + 20N)$ <Cite k="maekawa" />{/* TODO-VERIFY: formule approchée de l'abaque de Maekawa (10 log(3 + 20N)), domaine de validité et source primaire. */}. Pour l'auditeur des réglages initiaux, le modèle exact de ce chapitre donne 12 dB à 125 Hz ($N = 0{,}44$) et 26 dB à 4 kHz ($N = 14$) ; l'approximation de Maekawa, 11 et 25 dB. Les deux suivent la même pente, d'environ 3 dB par octave. L'écart, de 1 à 1,5 dB, vient des hypothèses différentes : onde plane et écran infini ici, source ponctuelle et mesures là.
+
+</RealWorld>
+
+<RealWorld title="L'ombre de la tête">
+
+Une tête est grossièrement une sphère d'environ 8,75 cm de rayon{/* TODO-VERIFY: rayon équivalent de la tête utilisé dans les modèles sphériques (8,75 cm ?) et sa source. */}. Pour ce rayon, $ka = 1$ vers 620 Hz. Au-dessous, le son contourne la tête presque sans perte, et les deux oreilles reçoivent le même niveau. Au-dessus, la tête fait de l'ombre à l'oreille opposée. Le cerveau exploite cette différence de niveau pour localiser les sons aigus, et la différence de temps d'arrivée pour les graves. C'est la « théorie duplex » de Rayleigh <Cite k="rayleigh" />, que le chapitre 13 reprendra.
+
+</RealWorld>
+
+## Vérification
+
+<Quiz kind="choice" answer="b">
+<Fragment slot="question">Loin derrière l'arête d'un écran, sur la limite de l'ombre géométrique, que vaut l'amplitude de la pression par rapport à l'onde incidente&nbsp;?</Fragment>
+<Fragment slot="a">Elle est égale à l'amplitude incidente.</Fragment>
+<Fragment slot="b">Elle vaut la moitié (−6 dB), à toutes les fréquences.</Fragment>
+<Fragment slot="c">Elle tend vers zéro quand la fréquence augmente.</Fragment>
+<Fragment slot="explanation">Sur la limite, l'argument de la fonction de Fresnel est nul et $F(0) = 1/2$. Quand la fréquence augmente, la zone de transition se resserre autour de la limite, mais la valeur sur la limite reste 1/2.</Fragment>
+</Quiz>
+
+<Quiz kind="numeric" answer={2.91} tolerance={0.02}>
+<Fragment slot="question">Un écran allonge le chemin du son de $\delta = 0{,}5$ m. Quel est le nombre de Fresnel à 1 kHz ($c_0 = 343{,}2$ m/s)&nbsp;?</Fragment>
+<Fragment slot="explanation">$N = 2\delta/\lambda = 2 \times 0{,}5 \times 1000/343{,}2 \approx 2{,}91$. L'écran masque environ trois zones de Fresnel.</Fragment>
+</Quiz>
+
+<Quiz kind="numeric" answer={12} tolerance={0.02} unit="dB">
+<Fragment slot="question">Une gouttelette diffuse un son dont la longueur d'onde est très grande devant sa taille. De combien augmente le niveau de la puissance diffusée quand on double la fréquence&nbsp;?</Fragment>
+<Fragment slot="explanation">Dans le régime de Rayleigh, $\sigma \propto (ka)^4$ : doubler $f$ multiplie la puissance par 16, soit $10\log_{10}16 \approx 12$ dB.</Fragment>
+</Quiz>
+
+<Quiz kind="choice" answer="c">
+<Fragment slot="question">Quelle puissance une très grande sphère rigide ($ka \gg 1$) retire-t-elle à une onde plane d'intensité $I$&nbsp;?</Fragment>
+<Fragment slot="a">$I\,\pi a^2$, ce qui frappe sa section.</Fragment>
+<Fragment slot="b">La moitié, $I\,\pi a^2/2$, le reste passant sur les côtés.</Fragment>
+<Fragment slot="c">$2\,I\,\pi a^2$ : la réflexion plus l'onde diffractée vers l'avant qui forme l'ombre.</Fragment>
+<Fragment slot="explanation">C'est le paradoxe d'extinction. L'ombre ne résulte pas d'une simple absence : c'est une interférence destructive entre l'onde incidente et une onde diffusée vers l'avant, qui emporte elle aussi $I\,\pi a^2$.</Fragment>
+</Quiz>
+
+<Quiz kind="numeric" answer={3} tolerance={0.05} unit="dB">
+<Fragment slot="question">Loin dans l'ombre d'une arête, de combien baisse le niveau du son diffracté quand la fréquence double (à position fixe)&nbsp;?</Fragment>
+<Fragment slot="explanation">L'onde diffractée est cylindrique, d'amplitude en $1/\sqrt{kr}$ : doubler $k$ divise l'intensité par deux, soit −3 dB.</Fragment>
+</Quiz>
+
+## Pour aller plus loin
+
+- **Théorie géométrique de la diffraction.** Keller a généralisé la solution de Sommerfeld en « rayons diffractés » issus des arêtes, ce qui permet de traiter des objets quelconques à haute fréquence <Cite k="pierce" />.
+- **Diffusion par des objets élastiques.** Une sphère élastique ou une bulle ajoute des résonances ; la bulle d'air dans l'eau, très compressible, diffuse de façon spectaculaire à sa fréquence de Minnaert.
+- **Diffusion multiple et métamatériaux.** Un réseau d'obstacles peut ouvrir des bandes interdites, un principe exploité par les « sculptures sonores » et les écrans à cristaux phononiques.
+- **Références.** Pierce <Cite k="pierce" /> et Morse et Ingard <Cite k="morse" /> pour la diffusion par des sphères et des cylindres ; Born et Wolf <Cite k="bornwolf" /> pour la diffraction de Fresnel et le demi-plan de Sommerfeld.

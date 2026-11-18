@@ -10,4 +10,5 @@ export const PAGES = [
   { path: 'chapitres/03-guides-cavites/', name: 'chapitre-3' },
   { path: 'chapitres/04-rayonnement/', name: 'chapitre-4' },
   { path: 'chapitres/05-sources-en-mouvement/', name: 'chapitre-5' },
+  { path: 'chapitres/06-diffraction-diffusion/', name: 'chapitre-6' },
 ] as const;

@@ -111,4 +111,19 @@ export const REFERENCES: Record<string, Reference> = {
     full: 'A. P. Dowling, J. E. Ffowcs Williams, <i>Sound and Sources of Sound</i>, Ellis Horwood, 1983.',
     note: 'TODO-VERIFY : édition, et forme du potentiel d’une source en mouvement.',
   },
+  bornwolf: {
+    short: 'Born et Wolf, 1999',
+    full: 'M. Born, E. Wolf, <i>Principles of Optics</i>, 7<sup>e</sup> éd., Cambridge University Press, 1999.',
+    note: 'TODO-VERIFY : édition ; chapitre sur la diffraction par un demi-plan (solution de Sommerfeld).',
+  },
+  sommerfeld: {
+    short: 'Sommerfeld, 1896',
+    full: 'A. Sommerfeld, « Mathematische Theorie der Diffraction », <i>Mathematische Annalen</i> 47, 317–374, 1896.',
+    note: 'TODO-VERIFY : référence complète.',
+  },
+  maekawa: {
+    short: 'Maekawa, 1968',
+    full: 'Z. Maekawa, « Noise reduction by screens », <i>Applied Acoustics</i> 1(3), 157–173, 1968.',
+    note: 'TODO-VERIFY : référence complète et forme de l’abaque.',
+  },
 };

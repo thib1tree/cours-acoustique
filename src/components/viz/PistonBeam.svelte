@@ -14,7 +14,8 @@
     lastAxialMaximum,
     pistonOnAxis,
   } from '../../lib/physics/radiation';
-  import { computePistonField, pistonDomain } from '../../lib/viz/piston-field';
+  import { pistonDomain } from '../../lib/viz/fields';
+  import { createFieldClient } from '../../lib/viz/field-client';
   import VizFrame from './VizFrame.svelte';
   import ColorLegend from './ColorLegend.svelte';
   import PhasorView from './PhasorView.svelte';
@@ -42,40 +43,18 @@
   let data = new Float32Array(NX * NY * 2);
   let version = $state(0);
   let scale = $state(1);
-  let worker: Worker | null = null;
-  let pending = 0;
-  let timer: ReturnType<typeof setTimeout> | undefined;
-
-  function accept(d: Float32Array) {
+  const client = createFieldClient((d) => {
     data = d;
     let m = 0;
     for (let i = 0; i < d.length; i += 2) m = Math.max(m, Math.hypot(d[i]!, d[i + 1]!));
     scale = Math.max(1e-6, 0.55 * m);
     version++;
-  }
-  function request() {
-    const msg = { ka, nx: NX, ny: NY, zMax, id: ++pending };
-    if (worker) worker.postMessage(msg);
-    else accept(computePistonField(msg));
-  }
-  onMount(() => {
-    try {
-      worker = new Worker(new URL('../../lib/viz/piston-field.worker.ts', import.meta.url), {
-        type: 'module',
-      });
-      worker.onmessage = (e: MessageEvent<{ id: number; data: Float32Array }>) => {
-        if (e.data.id === pending) accept(e.data.data);
-      };
-    } catch {
-      worker = null;
-    }
-    request();
-    return () => worker?.terminate();
   });
+  onMount(() => () => client.dispose());
+  let first = true; // not reactive: the first request is immediate
   $effect(() => {
-    void ka;
-    clearTimeout(timer);
-    timer = setTimeout(request, 60);
+    client.request({ kind: 'piston', ka, nx: NX, ny: NY, zMax }, first ? 0 : 60);
+    first = false;
   });
 
   const axis = $derived(
