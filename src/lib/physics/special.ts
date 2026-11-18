@@ -58,6 +58,23 @@ export function besselJ1(x: number): number {
 }
 
 /**
+ * Bessel Y₁ for x ≥ 8 only (large-argument form sharing the P, Q polynomials of J₁ above),
+ * used by the Struve function beyond its power series.
+ */
+export function besselY1(x: number): number {
+  if (x < 8) throw new RangeError('besselY1 is implemented for x ≥ 8 only');
+  const z = 8 / x;
+  const y = z * z;
+  const xx = x - 2.356194491;
+  const p =
+    1 + y * (0.183105e-2 + y * (-0.3516396496e-4 + y * (0.2457520174e-5 + y * -0.240337019e-6)));
+  const q =
+    0.04687499995 +
+    y * (-0.2002690873e-3 + y * (0.8449199096e-5 + y * (-0.88228987e-6 + y * 0.105787412e-6)));
+  return Math.sqrt(0.636619772 / x) * (Math.sin(xx) * p + z * Math.cos(xx) * q);
+}
+
+/**
  * Far-field directivity of a baffled circular piston of radius a:
  * D(θ) = 2 J₁(ka sin θ) / (ka sin θ), with D(0) = 1.
  */
