@@ -8,12 +8,14 @@ import { waveEquationScenes } from './wave-equation';
 import { labScenes } from './lab';
 import { planeWaveScenes } from './plane-waves';
 import { guideScenes } from './guides';
+import { radiationScenes } from './radiation';
 
 const all: SceneSpec[] = [
   ...fluidScenes,
   ...waveEquationScenes,
   ...planeWaveScenes,
   ...guideScenes,
+  ...radiationScenes,
   ...labScenes,
 ];
 

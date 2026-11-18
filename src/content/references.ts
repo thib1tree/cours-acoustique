@@ -101,4 +101,9 @@ export const REFERENCES: Record<string, Reference> = {
     full: 'M. Abramowitz, I. A. Stegun (dir.), <i>Handbook of Mathematical Functions</i>, National Bureau of Standards, 1964.',
     note: 'TODO-VERIFY : table des zéros de J′ₙ (chapitre 9).',
   },
+  morse: {
+    short: 'Morse et Ingard, 1968',
+    full: 'P. M. Morse, K. U. Ingard, <i>Theoretical Acoustics</i>, McGraw-Hill, 1968 ; rééd. Princeton University Press, 1986.',
+    note: 'TODO-VERIFY : éditions.',
+  },
 };

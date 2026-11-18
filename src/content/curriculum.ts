@@ -104,6 +104,7 @@ export const CURRICULUM: readonly CurriculumNode[] = [
     title: 'Rayonnement',
     summary: 'Monopôle, dipôle, piston bafflé, champ proche, Kirchhoff-Helmholtz.',
     requires: ['impedance', 'speciales', 'green'],
+    href: 'chapitres/04-rayonnement/',
   },
   {
     id: 'mouvement',

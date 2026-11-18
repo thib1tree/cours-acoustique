@@ -26,6 +26,9 @@ import GapTransmission from '../../components/viz/GapTransmission.svelte';
 import TubeResonances from '../../components/viz/TubeResonances.svelte';
 import HelmholtzResonator from '../../components/viz/HelmholtzResonator.svelte';
 import DuctModes from '../../components/viz/DuctModes.svelte';
+import RadiatingSphere from '../../components/viz/RadiatingSphere.svelte';
+import SourcePair from '../../components/viz/SourcePair.svelte';
+import PistonBeam from '../../components/viz/PistonBeam.svelte';
 import GpuCpuCheck from '../../components/viz/GpuCpuCheck.svelte';
 ---
 
@@ -150,6 +153,15 @@ import GpuCpuCheck from '../../components/viz/GpuCpuCheck.svelte';
     </section>
     <section id="duct">
       <DuctModes client:visible number="L.22" title="Modes d'un conduit" alt="Conduit." />
+    </section>
+    <section id="sphere4">
+      <RadiatingSphere client:visible number="L.23" title="Sphère pulsante" alt="Sphère." />
+    </section>
+    <section id="pair4">
+      <SourcePair client:visible number="L.24" title="Paire de sources" alt="Paire." />
+    </section>
+    <section id="piston4">
+      <PistonBeam client:visible number="L.25" title="Piston bafflé" alt="Piston." />
     </section>
     <section id="polar">
       <PolarPlot client:visible number="L.14" title="Piston bafflé" alt="Directivité." />

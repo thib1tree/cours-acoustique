@@ -1,0 +1,291 @@
+---
+curriculumId: rayonnement
+title: Rayonnement
+summary: Pourquoi une petite source rayonne mal, ce qu'est le champ proche, pourquoi un haut-parleur nu n'a pas de grave, et comment un piston forme un faisceau.
+number: '4'
+level: M1
+duration: 75
+keyConcepts: [onde sphérique, champ proche, champ lointain, impédance de rayonnement, intensité réactive, monopôle, dipôle, court-circuit acoustique, intégrale de Rayleigh, directivité, distance de Rayleigh]
+prerequisites: [impedance]
+references: [pierce, kinsler, bruneau, morse, rayleigh, abramowitz]
+---
+
+import RadiatingSphere from '../../../components/viz/RadiatingSphere.svelte';
+import SourcePair from '../../../components/viz/SourcePair.svelte';
+import PistonBeam from '../../../components/viz/PistonBeam.svelte';
+import LiveEquation from '../../../components/ui/LiveEquation.svelte';
+import MarginNote from '../../../components/content/MarginNote.astro';
+import Insight from '../../../components/content/Insight.astro';
+import Misconception from '../../../components/content/Misconception.astro';
+import ModelLimits from '../../../components/content/ModelLimits.astro';
+import Advanced from '../../../components/content/Advanced.astro';
+import RealWorld from '../../../components/content/RealWorld.astro';
+import Derivation from '../../../components/content/Derivation.astro';
+import Step from '../../../components/content/Step.astro';
+import Prediction from '../../../components/content/Prediction.astro';
+import Quiz from '../../../components/content/Quiz.astro';
+import G from '../../../components/content/G.astro';
+import Cite from '../../../components/content/Cite.astro';
+
+<p class="lede">Sortez un haut-parleur de son enceinte et faites-lui jouer une note grave : elle disparaît presque. La membrane bouge pourtant autant qu'avant. Fixez le même haut-parleur au centre d'un grand panneau percé à sa taille, et le grave revient. Le panneau ne touche pas la membrane, il n'ajoute aucune énergie. Ce chapitre explique où passait le son, et plus généralement comment un corps qui vibre transmet, ou ne transmet pas, son mouvement à l'air.</p>
+
+<Prediction id="baffle" options={['Le grave revient à peine : quelques décibels au plus, puisque la membrane bouge de la même façon.', 'Il gagne environ 3 dB : le panneau renvoie vers l’avant le son qui partait vers l’arrière.', 'Il gagne plus de 20 dB : sans panneau, presque rien n’était rayonné.']}>
+Un haut-parleur nu joue une note à 50 Hz. On le monte sur un grand panneau. Le niveau rayonné à cette fréquence&nbsp;:
+</Prediction>
+
+## Une sphère qui respire
+
+Commençons par la source la plus simple : une sphère de rayon $a$ dont la surface avance et recule uniformément, à la vitesse $U$. Par symétrie, elle émet une onde qui ne dépend que de la distance $r$.
+
+<Derivation title="Onde sphérique et impédance de rayonnement de la sphère" hypotheses="fluide parfait au repos, acoustique linéaire, symétrie sphérique, régime harmonique e^{−iωt}.">
+<Step title="L'équation de Helmholtz en symétrie sphérique" open>
+
+Pour un champ qui ne dépend que de $r$, le laplacien s'écrit $\frac{1}{r}\frac{\partial^2}{\partial r^2}(rP)$. L'équation $\nabla^2P + k^2P = 0$ devient
+
+$$
+\frac{\partial^2 (rP)}{\partial r^2} + k^2 (rP) = 0 .
+$$
+
+C'est l'équation des ondes planes (chapitre 1a), mais pour la variable $rP$.
+
+</Step>
+<Step title="L'onde divergente">
+
+On garde la solution qui s'éloigne de la source (convention $e^{-i\omega t}$) : $rP = A\,e^{ikr}$, soit $P = A\,e^{ikr}/r$. La pression décroît en $1/r$ parce que la même puissance se répartit sur une sphère de surface $4\pi r^2$.
+
+</Step>
+<Step title="La vitesse, par l'équation d'Euler">
+
+$-i\omega\rho_0 V = -\partial P/\partial r$. En dérivant $e^{ikr}/r$ :
+
+$$
+\rho_0 c_0\, V = P\left(1 + \frac{i}{kr}\right).
+$$
+
+Le premier terme est la relation de l'onde plane ; le second, en $1/(kr)$, domine près de la source.
+
+</Step>
+<Step title="Ce que la sphère « ressent »">
+
+À la surface, $V(a) = U$, ce qui fixe $A$. Le rapport $P(a)/U$ est l'<G id="impedance-rayonnement">impédance de rayonnement</G> par unité de surface :
+
+$$
+\frac{Z_r}{\rho_0 c_0} = \frac{1}{1 + i/(ka)} = \frac{-ika}{1 - ika} = \frac{(ka)^2}{1 + (ka)^2} - i\,\frac{ka}{1 + (ka)^2}.
+$$
+
+</Step>
+</Derivation>
+
+<RadiatingSphere client:visible number="4.1" title="Une sphère pulsante et son champ proche" alt="En haut, pression et vitesse le long d'un rayon, depuis la surface de la sphère jusqu'à deux longueurs d'onde : près d'une petite sphère, la vitesse est bien plus grande que la pression et décalée d'un quart de période ; au-delà de kr = 1, les deux courbes se superposent. En bas, résistance et réactance de rayonnement en fonction de ka, pour la sphère et pour un piston bafflé." />
+
+<LiveEquation client:visible scene="4-sphere" tex={String.raw`\frac{Z_r}{\rho_0 c_0} = \frac{-i\,\term{ka}{ka}}{1 - i\,ka} = \val{R} - i\,\val{X}`} number="4.1" label="Impédance de rayonnement de la sphère pulsante" />
+
+Partez de $ka = 0{,}3$, une sphère petite devant la longueur d'onde. À sa surface, la pression n'est que de $0{,}29\,\rho_0c_0U$ et elle est en avance de 73° sur la vitesse. La résistance, la seule partie qui rayonne, ne vaut que 0,08 : la sphère dépense presque tout son effort à bousculer l'air qui l'entoure, sans le comprimer. Augmentez $ka$ : au-delà de $ka \approx 3$, $Z_r$ tend vers $\rho_0c_0$, et la sphère se comporte localement comme un piston qui pousserait une onde plane.
+
+<Insight>
+
+Près d'une petite source, l'air n'a pas le temps d'être comprimé : il est **déplacé**. En une demi-période, une sphère de rayon $a \ll \lambda$ repousse l'air vers une zone où il a toute la place de s'étaler ; il revient la demi-période suivante. Ce va-et-vient est une masse que la source accélère (réactance $-i\,\rho_0c_0\,ka$, une masse égale à trois fois celle de l'air déplacé par la sphère), et il ne rayonne rien. Seule une petite partie du mouvement, proportionnelle à $(ka)^2$, comprime vraiment l'air et part au loin.
+
+</Insight>
+
+<LiveEquation client:visible scene="4-sphere" tex={String.raw`\rho_0 c_0\, V(r) = P(r)\left(1 \term{near}{+ \frac{i}{kr}}\right)`} toggles number="4.2" label="Relation entre vitesse et pression dans une onde sphérique" />
+
+Coupez le terme de champ proche, dans l'équation ou dans la figure. La vitesse change du tout au tout près de la sphère : elle ne vaut même plus $U$ à la surface. Mais l'**intensité active** affichée ne bouge pas. En effet, ce terme est en quadrature avec la pression : $\tfrac12\mathrm{Re}\{P\,(iP/kr)^*\} = 0$. Il porte une <G id="intensite-reactive">intensité réactive</G>, de l'énergie qui va et vient sans s'éloigner, comme celle d'une masse sur un ressort (chapitre 1b).
+
+<Misconception>
+
+« Dans une onde sonore, la pression et la vitesse sont en phase. » C'est vrai pour une onde plane progressive (chapitre 1b), et loin de toute source. Près d'une source petite devant la longueur d'onde, la vitesse est en quadrature de phase avec la pression et bien plus grande que $p/\rho_0c_0$. Un microphone de vitesse (à ruban, par exemple) placé tout près d'une voix accentue donc le grave : c'est l'**effet de proximité**, la trace audible du champ proche.
+
+</Misconception>
+
+{/* TODO-VERIFY: effet de proximité des microphones à gradient de pression (formulation et source). */}
+
+## Deux sources : le court-circuit acoustique
+
+Un haut-parleur nu est, vu de loin, une paire de sources : la face avant de la membrane pousse l'air pendant que la face arrière le tire. Modélisons-le par deux sources ponctuelles identiques, distantes de $d$, en opposition de phase : un <G id="dipole">dipôle</G>.
+
+<SourcePair client:visible number="4.2" title="Deux sources en phase ou en opposition" alt="À gauche, champ de pression autour de deux sources ponctuelles proches, en opposition de phase : la pression est forte entre elles et faible au loin, avec un plan de pression nulle entre les deux. À droite, diagramme de directivité en forme de huit." />
+
+<Derivation title="Puissance rayonnée par une paire de sources" hypotheses="deux sources ponctuelles de même amplitude, champ lointain (r ≫ d, r ≫ λ).">
+<Step title="Différence de marche" open>
+
+Loin de la paire, les chemins vers chacune des sources diffèrent de $d\cos\theta$, $\theta$ étant mesuré depuis l'axe qui les joint. Les deux ondes ont la même amplitude, et le champ est proportionnel à $1 \pm e^{ikd\cos\theta}$.
+
+</Step>
+<Step title="Puissance totale">
+
+On intègre $|1 \pm e^{ikd\cos\theta}|^2 = 2 \pm 2\cos(kd\cos\theta)$ sur la sphère, avec $\mathrm{d}\Omega = 2\pi\sin\theta\,\mathrm{d}\theta$ :
+
+$$
+\int_0^\pi \cos(kd\cos\theta)\sin\theta\,\mathrm{d}\theta = \frac{2\sin kd}{kd}.
+$$
+
+Rapportée à la puissance de deux sources isolées :
+
+$$
+\frac{W}{2W_1} = 1 \pm \frac{\sin kd}{kd}.
+$$
+
+</Step>
+<Step title="Le dipôle compact">
+
+En opposition et pour $kd \ll 1$, $\sin kd/kd \approx 1 - (kd)^2/6$ : la puissance tombe à $(kd)^2/6$. Elle chute de 6 dB par octave quand on descend en fréquence.
+
+</Step>
+</Derivation>
+
+<LiveEquation client:visible scene="4-pair" tex={String.raw`\frac{W}{2W_1} = 1 \pm \frac{\sin k\term{d}{d}}{kd}, \qquad kd = \val{kd} \;\Rightarrow\; \val{ratio}\ \text{dB}`} number="4.3" label="Puissance rayonnée par la paire, rapportée à deux sources isolées" />
+
+Avec les réglages initiaux (200 Hz, 20 cm), le dipôle rayonne 10,6 dB de moins que ses deux sources prises séparément. Descendez à 50 Hz : il perd 22,5 dB. Regardez le champ : entre les deux sources, la pression est forte et change de signe d'une source à l'autre, mais elle ne va presque nulle part. L'air chassé par l'une est aspiré par l'autre, à quelques centimètres de distance, bien avant d'avoir pu comprimer l'air lointain. C'est le <G id="court-circuit-acoustique">court-circuit acoustique</G>. Écoutez la note grave : en opposition, la fondamentale disparaît et il ne reste que les harmoniques aigus.
+
+<Insight>
+
+C'est le même mécanisme que pour la sphère, poussé plus loin. Une petite sphère pousse l'air sur le côté au lieu de le comprimer ; deux sources opposées font mieux encore, puisque l'air poussé d'un côté trouve tout près un endroit qui l'aspire. Le panneau de la prédiction allonge le chemin de l'avant vers l'arrière : à 50 Hz, si ce chemin dépasse largement une demi-longueur d'onde (3,4 m), l'air ne peut plus faire le tour à temps. Une enceinte fermée supprime l'onde arrière ; un panneau infini donne à l'avant toute la puissance d'une source dans un demi-espace. Réponse à la prédiction : plus de 20 dB.
+
+</Insight>
+
+<Misconception>
+
+« Deux sources rayonnent deux fois plus qu'une. » Basculez sur « En phase » avec $kd$ petit : la puissance est **quatre fois** celle d'une source seule (+3 dB par rapport aux deux sources isolées). Les pressions s'ajoutent, donc l'intensité quadruple, et chaque source pousse contre la surpression créée par l'autre : sa résistance de rayonnement double. En opposition, c'est l'inverse : chaque source est aidée, et presque plus rien ne sort. Deux sources proches ne s'ignorent pas.
+
+</Misconception>
+
+## Le piston bafflé : former un faisceau
+
+Une membrane réelle n'est pas un point. Considérons un disque rigide de rayon $a$ qui vibre à la vitesse $U$ dans un plan rigide infini (le baffle). Chaque élément de sa surface rayonne comme une petite source ; le champ est la somme de toutes ces contributions, avec leurs retards.
+
+<Derivation title="Intégrale de Rayleigh et directivité du piston" hypotheses="piston rigide plan dans un baffle rigide infini, fluide parfait, acoustique linéaire.">
+<Step title="Une petite source au ras d'un plan rigide" open>
+
+Un élément de surface $\mathrm{d}S$ qui bouge à la vitesse $U$ injecte un débit $U\,\mathrm{d}S$. Seul, dans l'espace libre, il produirait la pression $-i\omega\rho_0\,U\mathrm{d}S\,e^{ikR}/(4\pi R)$ (la sphère de la première section, réduite à un point). Le baffle rigide réfléchit son onde comme une source image collée à lui, ce qui double la pression :
+
+$$
+p(\mathbf{x}) = -\frac{i\omega\rho_0}{2\pi} \int_S U\,\frac{e^{ikR}}{R}\,\mathrm{d}S .
+$$
+
+C'est l'<G id="integrale-rayleigh">intégrale de Rayleigh</G> <Cite k="rayleigh" />.
+
+</Step>
+<Step title="Sur l'axe : une forme exacte">
+
+Sur l'axe, à la distance $z$, tous les points d'un anneau de rayon $\rho$ sont à la même distance $R = \sqrt{z^2 + \rho^2}$, et $\rho\,\mathrm{d}\rho = R\,\mathrm{d}R$. L'intégrale se calcule :
+
+$$
+\frac{|p(z)|}{\rho_0c_0U} = 2\left|\sin\!\left(\frac{k}{2}\Big(\sqrt{z^2 + a^2} - z\Big)\right)\right| .
+$$
+
+La pression s'annule chaque fois que la différence de marche entre le centre et le bord vaut un nombre entier de longueurs d'onde.
+
+</Step>
+<Step title="Loin : la directivité">
+
+Loin du piston, $R \approx r - \rho\sin\theta\cos\varphi$. L'intégrale angulaire donne $2\pi J_0(k\rho\sin\theta)$, puis $\int_0^a J_0(k\rho\sin\theta)\,\rho\,\mathrm{d}\rho = a^2 J_1(ka\sin\theta)/(ka\sin\theta)$ <Cite k="abramowitz" /> :
+
+$$
+\begin{aligned}
+p &\approx -i\omega\rho_0\,U\,\frac{a^2}{2r}\,e^{ikr}\,D(\theta), \\
+D(\theta) &= \frac{2J_1(ka\sin\theta)}{ka\sin\theta}.
+\end{aligned}
+$$
+
+</Step>
+</Derivation>
+
+<PistonBeam client:visible number="4.3" title="Le champ d'un piston bafflé" alt="En haut, champ de pression devant un piston encastré dans un mur à gauche : près du piston, une zone d'interférences complexe ; au-delà de la distance de Rayleigh, des fronts d'onde courbes concentrés dans un faisceau. En bas, amplitude de la pression sur l'axe, qui oscille en champ proche puis décroît, et diagramme de directivité en champ lointain." />
+
+<LiveEquation client:visible scene="4-piston" tex={String.raw`D(\theta) = \frac{2J_1(\term{ka}{ka}\sin\theta)}{ka\sin\theta}, \qquad \theta_{-3\,\text{dB}} = \val{theta3}^\circ, \qquad z_R = \frac{\pi a^2}{\lambda} = \val{zR}\,a`} number="4.4" label="Directivité du piston bafflé et distance de Rayleigh" />
+
+Faites varier $ka$. Sous $ka \approx 1{,}6$, le piston rayonne dans tout le demi-espace avec moins de 3 dB d'écart : il est trop petit pour que les retards entre ses points comptent. Au-dessus, un faisceau se forme, de demi-angle $\arcsin(1{,}616/ka)$, et des lobes secondaires apparaissent quand $ka$ dépasse 3,83, le premier zéro de $J_1$. La directivité n'est pas une affaire de taille ni de fréquence séparément, mais de leur produit $ka$.
+
+<Insight>
+
+Un faisceau naît d'interférences. Dans l'axe, toutes les contributions du piston arrivent presque en même temps et s'ajoutent. En biais, les points du bord proche et du bord lointain arrivent avec des retards différents ; dès que l'écart atteint une fraction de période, ils se détruisent. Il faut donc un piston grand devant $\lambda$ pour que ces retards existent : une source petite devant la longueur d'onde est forcément omnidirectionnelle. C'est le même calcul que la diffraction par une ouverture circulaire (chapitre 6), et le même principe que les antennes (chapitre 12).
+
+</Insight>
+
+<Misconception>
+
+« En se rapprochant d'une source, le niveau monte toujours : +6 dB à chaque fois qu'on divise la distance par deux. » Sur l'axe d'un piston grand devant $\lambda$, c'est faux dans toute la zone de <G id="champ-proche">champ proche</G>. Pour $ka = 12$, la pression oscille entre 0 et $2\rho_0c_0U$ en s'approchant, avec des zéros exacts. La loi en $1/r$ ne s'installe qu'au-delà de la <G id="distance-rayleigh">distance de Rayleigh</G> $z_R = \pi a^2/\lambda$, au-delà de laquelle la différence de marche entre le centre et le bord, $a^2/2z$, reste inférieure à $\lambda/2\pi$ : toutes les contributions arrivent presque en phase.
+
+</Misconception>
+
+<Advanced title="Pour le lecteur avancé : l'impédance de rayonnement du piston">
+
+La force que l'air exerce sur le piston donne son impédance de rayonnement, tracée en tirets dans la figure 4.1 :
+
+$$
+\frac{Z_r}{\rho_0 c_0 S} = 1 - \frac{J_1(2ka)}{ka} - i\,\frac{H_1(2ka)}{ka},
+$$
+
+où $H_1$ est la fonction de Struve <Cite k="morse" />{/* TODO-VERIFY: forme et notation de l'impédance du piston bafflé dans Morse et Ingard ou Pierce. */}. Pour $ka \ll 1$, la résistance vaut $(ka)^2/2$ et la réactance $8ka/(3\pi)$ : c'est la masse d'un cylindre d'air de longueur $8a/(3\pi) \approx 0{,}85\,a$. On reconnaît la correction de bout bafflée du chapitre 3 : un tube qui débouche sur un plan est exactement un piston d'air. Le code de ce cours calcule $H_1$ par sa série entière, et les tests vérifient cette limite.
+
+</Advanced>
+
+<ModelLimits>
+
+- **Piston rigide.** Une membrane réelle se déforme à haute fréquence : seul son centre bouge encore, ce qui réduit le rayon effectif et élargit le faisceau.
+- **Baffle infini.** Sans baffle, le piston devient un dipôle aux basses fréquences (section précédente). Un baffle fini diffracte à ses bords et rend le rayonnement intermédiaire entre les deux cas.
+- **Champ lointain.** La formule de directivité suppose $r$ grand devant $a$, devant $\lambda$ et devant la distance de Rayleigh ; la figure montre ce qui se passe en deçà.
+- **Linéarité.** À très fort niveau, l'onde se raidit en se propageant (chapitre 11) et le champ n'est plus la somme des contributions.
+
+</ModelLimits>
+
+## Monde réel
+
+<RealWorld title="L'enceinte, une solution au court-circuit">
+
+Une membrane non bafflée de 20 cm de diamètre, modélisée comme une paire opposée dont les sources sont séparées de 20 cm, rayonne à 50 Hz 22,5 dB de moins que deux sources isolées, et 25,5 dB de moins qu'avec un baffle infini. Ce n'est qu'un ordre de grandeur : la distance effective entre l'avant et l'arrière dépend de la forme du saladier et de la membrane. Tous les remèdes visent la même chose, empêcher l'onde arrière de rejoindre l'avant : le baffle, l'enceinte close, ou le bass-reflex du chapitre 3, qui récupère l'onde arrière et la remet en phase dans le grave. Les enceintes « à baffle ouvert » assument au contraire le dipôle et sa directivité en huit.
+
+</RealWorld>
+
+<RealWorld title="Le faisceau d'un haut-parleur">
+
+Pour un piston de 10 cm de rayon, $ka = 1$ vers 550 Hz. À 2,7 kHz, $ka = 5$ : le faisceau n'a plus que 19° de demi-angle à −3 dB, et un premier zéro à 50°. Un auditeur placé de côté entend donc un son plus terne. C'est l'une des raisons pour lesquelles les enceintes confient l'aigu à un petit tweeter : il garde $ka$ petit, donc une large dispersion, jusqu'à des fréquences élevées.
+
+</RealWorld>
+
+<RealWorld title="Sonde d'échographie">
+
+Prenons un transducteur de 5 mm de rayon émettant à 3 MHz dans l'eau ($c_0 \approx 1\,482$ m/s, chapitre 1a){/* TODO-VERIFY: ordre de grandeur réaliste du rayon et de la fréquence d'une sonde d'échographie mono-élément. */}. Alors $\lambda \approx 0{,}49$ mm et $ka \approx 64$ : le faisceau a un demi-angle d'environ 1,5° et la distance de Rayleigh vaut 16 cm. Toute la profondeur utile est dans le champ proche, où la pression oscille sur l'axe ; c'est pourquoi les sondes focalisent, avec une lentille ou une barrette de petits éléments déphasés (chapitre 12).
+
+</RealWorld>
+
+## Vérification
+
+<Quiz kind="numeric" answer={0.99} tolerance={0.03} unit="%">
+<Fragment slot="question">Une sphère pulsante a un rayon égal à un soixantième de la longueur d'onde ($ka \approx 0{,}1$). Sa résistance de rayonnement représente quel pourcentage de $\rho_0c_0$&nbsp;?</Fragment>
+<Fragment slot="explanation">$R/\rho_0c_0 = (ka)^2/(1 + (ka)^2) = 0{,}01/1{,}01 \approx 0{,}99\,\%$. La réactance vaut environ $0{,}099$, dix fois plus : la sphère accélère surtout une masse d'air qui ne rayonne pas.</Fragment>
+</Quiz>
+
+<Quiz kind="choice" answer="b">
+<Fragment slot="question">Deux sources identiques, en phase, sont distantes de 1 cm. À 100 Hz, la puissance rayonnée vaut, par rapport à celle d'une seule source&nbsp;:</Fragment>
+<Fragment slot="a">deux fois plus ;</Fragment>
+<Fragment slot="b">quatre fois plus ;</Fragment>
+<Fragment slot="c">autant : le son de l'une masque celui de l'autre.</Fragment>
+<Fragment slot="explanation">$kd \approx 0{,}018$, donc $W/2W_1 \approx 2$ et $W \approx 4W_1$. Les pressions s'ajoutent et l'intensité quadruple partout. L'énergie supplémentaire vient de ce que chaque source pousse contre la surpression de l'autre : sa résistance de rayonnement double.</Fragment>
+</Quiz>
+
+<Quiz kind="numeric" answer={9.3} tolerance={0.03} unit="°">
+<Fragment slot="question">Quel est le demi-angle à −3 dB du faisceau d'un piston bafflé pour $ka = 10$&nbsp;?</Fragment>
+<Fragment slot="explanation">$2J_1(x)/x = 1/\sqrt 2$ pour $x \approx 1{,}616$, donc $\sin\theta = 1{,}616/10$ et $\theta \approx 9{,}3°$.</Fragment>
+</Quiz>
+
+<Quiz kind="numeric" answer={0.183} tolerance={0.03} unit="m">
+<Fragment slot="question">Un piston de 10 cm de rayon émet à 2 kHz dans l'air ($c_0 = 343{,}2$ m/s). À partir de quelle distance, environ, la pression sur l'axe décroît-elle en $1/z$ (distance de Rayleigh)&nbsp;?</Fragment>
+<Fragment slot="explanation">$\lambda = 343{,}2/2000 \approx 0{,}172$ m et $z_R = \pi a^2/\lambda = \pi \times 0{,}01/0{,}172 \approx 0{,}18$ m. En deçà, la pression sur l'axe oscille.</Fragment>
+</Quiz>
+
+<Quiz kind="choice" answer="c">
+<Fragment slot="question">Près d'une petite source, la vitesse particulaire contient un terme $i\,p/(\rho_0c_0\,kr)$. Quelle part de l'énergie rayonnée transporte-t-il, en moyenne&nbsp;?</Fragment>
+<Fragment slot="a">La plus grande, puisqu'il domine près de la source.</Fragment>
+<Fragment slot="b">La moitié.</Fragment>
+<Fragment slot="c">Aucune : il est en quadrature avec la pression.</Fragment>
+<Fragment slot="explanation">L'intensité moyenne vaut $\tfrac12\mathrm{Re}\{P V^*\}$. Avec $V \propto P\,(1 + i/kr)$, le second terme donne $\mathrm{Re}\{-i|P|^2/kr\} = 0$. Il décrit de l'énergie qui va et vient près de la source (intensité réactive), comme dans une masse qui oscille.</Fragment>
+</Quiz>
+
+## Pour aller plus loin
+
+- **Intégrale de Kirchhoff-Helmholtz.** Elle exprime le champ dans un volume à partir de la pression et de la vitesse sur sa frontière ; l'intégrale de Rayleigh en est le cas particulier d'un plan rigide. C'est la base des méthodes d'éléments de frontière et de l'holographie acoustique <Cite k="pierce" />.
+- **Développement multipolaire.** Toute source compacte se décompose en monopôle, dipôle, quadripôle… dont les puissances décroissent comme $(ka)^{2n}$ ; c'est ce qui explique que le bruit d'un jet soit quadripolaire (analogie de Lighthill, chapitre 14) <Cite k="morse" />.
+- **Impédance mutuelle.** Deux pistons voisins se chargent mutuellement ; c'est un point clé du calcul des antennes et des haut-parleurs groupés <Cite k="kinsler" />.
+- **Références.** Bruneau <Cite k="bruneau" /> et Pierce <Cite k="pierce" /> pour l'onde sphérique et le piston ; Morse et Ingard <Cite k="morse" /> pour l'impédance de rayonnement.

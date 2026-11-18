@@ -108,3 +108,17 @@ test('chapter 3: doubling the bottle volume lowers the note by √2', async ({ p
   await eq.scrollIntoViewIfNeeded();
   await expect(eq).toContainText('74 Hz');
 });
+
+test('chapter 4: a larger piston narrows the beam', async ({ page }) => {
+  await page.goto('chapitres/04-rayonnement/');
+  const eq = page.locator('figure.eq[aria-label^="Directivité du piston"]');
+  await hydrated(page, eq);
+  await expect(eq).toContainText('19');
+  const field = page.getByLabel('rayon du piston rapporté à la longueur d’onde, valeur').first();
+  await hydrated(page, field);
+  await field.fill('10');
+  await field.press('Enter');
+  await eq.scrollIntoViewIfNeeded();
+  await expect(eq).toContainText('9');
+  await expect(eq).not.toContainText('19');
+});
