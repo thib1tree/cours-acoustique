@@ -1,0 +1,212 @@
+---
+curriculumId: vibro
+title: Vibroacoustique
+summary: Pourquoi une paroi isole d'abord par sa masse, pourquoi elle devient presque transparente à certaines fréquences, et pourquoi deux parois légères valent mieux qu'une lourde.
+number: '8'
+level: M1
+duration: 60
+keyConcepts: [loi de masse, onde de flexion, dispersion, coïncidence, fréquence critique, indice d'affaiblissement, double paroi, résonance masse-air-masse]
+prerequisites: [planes, rayonnement]
+references: [fahy, cremer, pierce, kinsler]
+---
+
+import WallTransmission from '../../../components/viz/WallTransmission.svelte';
+import CoincidenceField from '../../../components/viz/CoincidenceField.svelte';
+import DoubleWall from '../../../components/viz/DoubleWall.svelte';
+import LiveEquation from '../../../components/ui/LiveEquation.svelte';
+import MarginNote from '../../../components/content/MarginNote.astro';
+import Insight from '../../../components/content/Insight.astro';
+import Misconception from '../../../components/content/Misconception.astro';
+import ModelLimits from '../../../components/content/ModelLimits.astro';
+import RealWorld from '../../../components/content/RealWorld.astro';
+import Derivation from '../../../components/content/Derivation.astro';
+import Step from '../../../components/content/Step.astro';
+import Prediction from '../../../components/content/Prediction.astro';
+import Quiz from '../../../components/content/Quiz.astro';
+import G from '../../../components/content/G.astro';
+import Cite from '../../../components/content/Cite.astro';
+
+<p class="lede">Une fenêtre laisse passer le bruit de la rue. On la remplace par une vitre deux fois plus épaisse, donc deux fois plus lourde. On s'attend à ce que le bruit baisse. Pourtant, à certaines fréquences, il augmente. Pour comprendre pourquoi, il faut regarder la vitre comme ce qu'elle est : une plaque qui vibre, que le son fait bouger d'un côté et qui fait du son de l'autre.</p>
+
+<Prediction id="glass" options={['Il gagne environ 6 dB, comme à toutes les fréquences.', 'Il gagne un peu, moins de 6 dB.', 'Il perd plusieurs décibels.']}>
+On remplace une vitre de 4 mm par une vitre de 8 mm. En champ diffus, à 2 kHz, l'isolement&nbsp;:
+</Prediction>
+
+## La paroi, une masse que l'on pousse
+
+Une onde frappe une paroi. La pression la pousse ; la paroi bouge, et en bougeant elle rayonne de l'autre côté une onde dont la pression vaut $\rho_0c_0$ fois sa vitesse (chapitre 1b). Si la paroi est souple, seule son inertie s'oppose au mouvement.
+
+<Derivation title="Transmission par une paroi (loi de masse)" hypotheses="paroi mince, infinie, de masse surfacique m, sans raideur ; même fluide des deux côtés ; incidence θ ; convention e^{−iωt}.">
+<Step title="Trois ondes, une paroi" open>
+
+Comme au chapitre 2, une onde incidente, une onde réfléchie et une onde transmise. La vitesse normale est continue à travers la paroi : $1 - R = T$. La différence de pression accélère la paroi : $(1 + R) - T = Z\,v$, avec l'impédance de masse $Z = -i\omega m$ (chapitre 1b) et $v = T\cos\theta/\rho_0c_0$.
+
+</Step>
+<Step title="Coefficient de transmission">
+
+En éliminant $R$ :
+
+$$
+T = \frac{1}{1 + \dfrac{Z\cos\theta}{2\rho_0c_0}} .
+$$
+
+</Step>
+<Step title="La loi de masse">
+
+Pour une paroi lourde ($\omega m \gg 2\rho_0c_0$), en incidence normale, l'indice d'affaiblissement vaut
+
+$$
+R = -20\log_{10}|T| \approx 20\log_{10}\frac{\omega m}{2\rho_0c_0}.
+$$
+
+Il gagne 6 dB chaque fois qu'on double la masse ou la fréquence.
+
+</Step>
+</Derivation>
+
+<WallTransmission client:visible number="8.1" title="Isolement d'une paroi simple" alt="Indice d'affaiblissement d'une paroi en fonction de la fréquence, en échelle logarithmique : il croît de 6 dB par octave en suivant la loi de masse, chute brutalement à la fréquence de coïncidence, puis remonte." />
+
+<LiveEquation client:visible scene="8-wall" tex={String.raw`\begin{aligned} \frac{Z}{-i\omega m} &= 1 \term{bending}{- \frac{f^2}{f_c^2}\sin^4\theta\,(1 - i\eta)}, \\ m &= \val{m}\ \text{kg/m}^2, \quad f_c = \val{fc}\ \text{Hz}, \quad R_{500} = \val{TL}\ \text{dB} \end{aligned}`} toggles number="8.1" label="Impédance d'une paroi simple" />
+
+Coupez la rigidité de flexion : la courbe suit la loi de masse jusqu'au bout. En champ diffus, elle se tient de 5 à 10 décibels sous la loi en incidence normale, parce que les ondes obliques ($\cos\theta$ plus petit) passent plus facilement. Remettez la rigidité : au-dessus d'une certaine fréquence, l'isolement s'effondre.
+
+<Insight>
+
+Aux basses fréquences, une paroi isole par **inertie** : la pression n'a qu'une demi-période pour l'accélérer, et plus la fréquence est haute ou la paroi lourde, moins elle bouge. C'est pourquoi on ne gagne que 6 dB en doublant la masse : la vitesse de la paroi est divisée par deux, pas davantage. Et c'est pourquoi les basses fréquences traversent les murs : à 100 Hz, une cloison légère est encore presque « transparente ».
+
+</Insight>
+
+## Les ondes de flexion et la coïncidence
+
+Une paroi réelle n'est pas qu'une masse : c'est une plaque qui résiste à la flexion. Les ondes qui s'y propagent ne sont pas des ondes de compression, mais des **ondes de flexion**, et elles ont une propriété décisive : leur vitesse dépend de la fréquence.
+
+<Derivation title="Ondes de flexion et fréquence de coïncidence" hypotheses="plaque mince (épaisseur petite devant la longueur d'onde de flexion), isotrope, de raideur de flexion D = Eh³/12(1 − ν²) ; amortissement par un facteur de perte η.">
+<Step title="Équation de la plaque" open>
+
+Le déplacement $w$ obéit à $D\nabla^4 w + m\,\ddot w = \Delta p$. Sans forçage, une onde $e^{i(k_Bx - \omega t)}$ exige
+
+$$
+k_B = \left(\frac{m\,\omega^2}{D}\right)^{1/4}, \qquad c_B = \frac{\omega}{k_B} \propto \sqrt{\omega}.
+$$
+
+Les ondes de flexion sont **dispersives** : les aigus vont plus vite que les graves.
+
+</Step>
+<Step title="Le forçage par une onde oblique">
+
+Une onde sonore d'angle $\theta$ impose à la paroi une trace de nombre d'onde $k\sin\theta$ (chapitre 2). La paroi répond avec l'impédance
+
+$$
+Z = -i\omega m + \frac{iD(1 - i\eta)\,(k\sin\theta)^4}{\omega} .
+$$
+
+</Step>
+<Step title="Coïncidence">
+
+Les deux termes s'annulent quand $k\sin\theta = k_B$ : la longueur d'onde imposée par l'onde sonore est exactement celle des ondes libres de la plaque. Cela n'est possible que si $\sin\theta \le 1$, donc au-dessus de la fréquence critique
+
+$$
+f_c = \frac{c_0^2}{2\pi}\sqrt{\frac{m}{D}} .
+$$
+
+Il ne reste alors que l'amortissement, $\eta$ : sans lui, la paroi serait parfaitement transparente.
+
+</Step>
+</Derivation>
+
+<CoincidenceField client:visible number="8.2" title="La coïncidence" alt="Champ de pression de part et d'autre d'une vitre horizontale : au-dessus, l'onde incidente et l'onde réfléchie forment un damier ; en dessous, l'onde transmise, invisible sauf quand l'angle d'incidence atteint l'angle de coïncidence. En bas, l'isolement en fonction de l'angle, avec un creux profond à l'angle de coïncidence." />
+
+<LiveEquation client:visible scene="8-coinc" tex={String.raw`\frac{\lambda_B}{\lambda/\sin\theta} = \sin\term{theta}{\theta}\,\sqrt{\term{fr}{f/f_c}} = \val{ratio}, \qquad R_\theta = \val{TL}\ \text{dB}`} toggles number="8.2" label="Condition de coïncidence" />
+
+Avec $f = 1{,}6\,f_c$ et $\theta = 30°$, la vitre isole de 48 dB : on ne voit rien sous elle. Inclinez l'onde jusqu'à 52° : le rapport atteint 1, l'onde traverse presque sans perte. Coupez l'amortissement : le creux devient une transparence totale.
+
+<Insight>
+
+La coïncidence est l'accord des traces du chapitre 2, appliqué à une structure. À l'interface entre deux fluides, l'onde transmise devait avoir la même trace que l'onde incidente ; ici, c'est l'onde de flexion qui doit l'avoir. Quand la plaque peut porter librement cette trace, elle ne résiste plus : sa raideur compense exactement son inertie. Sous $f_c$, les ondes de flexion sont plus lentes que le son ; une plaque qui vibre ainsi rayonne mal, ses zones voisines de signes opposés se court-circuitant comme le dipôle du chapitre 4. Au-dessus, elles sont plus rapides que le son, et la plaque rayonne efficacement.
+
+</Insight>
+
+Revenons à la prédiction. Une vitre de 4 mm a sa fréquence critique vers 3 kHz ; une vitre de 8 mm, dont la raideur rapportée à la masse est quatre fois plus grande, vers 1,5 kHz. À 2 kHz, la vitre épaisse est juste au-dessus de sa coïncidence, et le modèle donne 22,4 dB contre 29,8 dB pour la vitre mince : elle isole **7 dB moins bien**. Vérifiez-le dans la figure 8.1, en passant de 4 à 8 mm.
+
+<Misconception>
+
+« Doubler l'épaisseur d'une paroi double son isolement. » En décibels, la loi de masse ne donne que +6 dB par doublement. Et comme $f_c \propto 1/h$, la coïncidence descend dans le domaine utile : autour d'elle, une paroi plus épaisse peut isoler moins bien. C'est pour cela que les vitrages acoustiques associent des épaisseurs différentes, ou des verres feuilletés dont le film intercalaire amortit la flexion.
+
+</Misconception>
+
+{/* TODO-VERIFY: rôle du film PVB des verres feuilletés acoustiques (amortissement de la coïncidence), à sourcer. */}
+
+## Deux parois valent mieux qu'une
+
+Séparez une paroi de 20 kg/m² en deux parois de 10 kg/m², espacées de quelques centimètres. Aux basses fréquences, rien ne change, puis, à une fréquence précise, l'isolement s'effondre, avant de monter beaucoup plus vite que la loi de masse.
+
+<DoubleWall client:visible number="8.3" title="Une double paroi" alt="Indice d'affaiblissement d'une double paroi en fonction de la fréquence, comparé à une paroi simple de même masse totale : un creux à la résonance masse-air-masse, puis une montée bien plus rapide, et de petites résonances de la lame d'air si elle n'est pas garnie d'absorbant." />
+
+<LiveEquation client:visible scene="8-double" tex={String.raw`f_0 = \frac{1}{2\pi}\sqrt{\frac{\rho_0c_0^2}{\term{d}{d}}\left(\frac{1}{\term{m1}{m_1}} + \frac{1}{\term{m2}{m_2}}\right)} = \val{f0}\ \text{Hz}`} number="8.3" label="Résonance masse-air-masse" />
+
+<Insight>
+
+La lame d'air est un ressort, exactement comme la cavité du résonateur de Helmholtz (chapitre 3) : sa raideur par unité de surface vaut $\rho_0c_0^2/d$. Les deux parois sont deux masses accrochées à ce ressort. À la résonance $f_0$, le ressort transmet tout le mouvement : la double paroi isole moins bien que la paroi simple. Au-dessus, chaque étage filtre : la première paroi (6 dB par octave), le ressort, puis la seconde paroi (6 dB par octave chacun), d'où 18 dB par octave. Quand la lame d'air atteint une demi-longueur d'onde, elle cesse d'être un ressort et résonne à son tour ; un absorbant dans la cavité amortit ces résonances. Coupez la laine minérale pour les voir.
+
+</Insight>
+
+<ModelLimits>
+
+- **Plaque infinie.** Une paroi réelle est finie : elle a ses propres modes, et sous $f_c$ ce sont eux, plus que la loi de masse, qui fixent l'isolement aux basses fréquences.
+- **Plaque mince.** Quand l'épaisseur devient comparable à la longueur d'onde de flexion, le cisaillement et l'inertie de rotation modifient la dispersion{/* TODO-VERIFY: critère de validité de la plaque mince (h < λ_B/6 ?). */}.
+- **Fuites et transmissions latérales.** Une ouverture laisse passer toute l'énergie qui la frappe : avec 1 % de surface ouverte, l'isolement ne peut dépasser $-10\log_{10}0{,}01 = 20$ dB, quelle que soit la paroi. Le son contourne aussi la paroi par les structures voisines (planchers, ossature) ; les deux parois d'une cloison reliées par des montants rigides ne sont plus indépendantes.
+- **Champ diffus.** La figure moyenne sur tous les angles jusqu'à 90°. Les normes et les manuels limitent souvent l'intégrale à environ 78°, ce qui rapproche le résultat des mesures{/* TODO-VERIFY: convention de « l'incidence de champ » (angle limite ≈ 78°) et source. */}.
+- **Données des matériaux.** Les modules d'Young, masses volumiques et surtout facteurs de perte utilisés ici sont des valeurs génériques{/* TODO-VERIFY: propriétés du verre, de la plaque de plâtre, de l'acier et du béton utilisées dans les figures (Cremer, Heckl et Petersson). */}.
+
+</ModelLimits>
+
+## Monde réel
+
+<RealWorld title="Le double vitrage ordinaire">
+
+Un double vitrage 4-16-4 (deux vitres de 4 mm séparées de 16 mm) a sa résonance masse-air-masse vers 210 Hz, en plein dans le bruit de la circulation. Dans ce domaine, il isole moins bien qu'une vitre simple de même masse ; il a été conçu pour l'isolation thermique. Les vitrages acoustiques augmentent la lame, dissymétrisent les épaisseurs pour décaler les coïncidences, et amortissent la flexion avec du verre feuilleté <Cite k="fahy" />.
+
+</RealWorld>
+
+<RealWorld title="Cloison légère et mur lourd">
+
+Un mur de béton de 20 cm (environ 460 kg/m²) a sa fréquence critique vers 90 Hz : presque tout le domaine audible est au-dessus, et la loi de masse ne s'applique quasiment pas. Une cloison en plaques de plâtre sur ossature est une double paroi : deux plaques légères (environ 10 kg/m² chacune) dont la coïncidence est vers 2,8 kHz, séparées par une lame garnie de laine minérale. Pour une même masse, la seconde isole bien mieux aux fréquences moyennes, à condition que les montants ne relient pas rigidement les deux plaques <Cite k="cremer" />.
+
+</RealWorld>
+
+## Vérification
+
+<Quiz kind="numeric" answer={37.6} tolerance={0.02} unit="dB">
+<Fragment slot="question">Selon la loi de masse en incidence normale, quel est l'isolement d'une paroi de 10 kg/m² à 1 kHz ($\rho_0c_0 = 413$ Pa·s/m)&nbsp;?</Fragment>
+<Fragment slot="explanation">$20\log_{10}(\omega m/2\rho_0c_0) = 20\log_{10}(2\pi \times 1000 \times 10/826) \approx 37{,}6$ dB.</Fragment>
+</Quiz>
+
+<Quiz kind="numeric" answer={2000} tolerance={0.03} unit="Hz">
+<Fragment slot="question">Une vitre de 4 mm a sa fréquence de coïncidence à 3 000 Hz. Quelle est celle d'une vitre de 6 mm du même verre&nbsp;?</Fragment>
+<Fragment slot="explanation">$f_c \propto \sqrt{m/D}$ avec $m \propto h$ et $D \propto h^3$ : $f_c \propto 1/h$. Donc $3000 \times 4/6 = 2000$ Hz.</Fragment>
+</Quiz>
+
+<Quiz kind="choice" answer="b">
+<Fragment slot="question">Pourquoi une paroi devient-elle presque transparente à la coïncidence&nbsp;?</Fragment>
+<Fragment slot="a">Parce qu'elle entre en résonance à sa fréquence propre, comme une corde.</Fragment>
+<Fragment slot="b">Parce que la trace imposée par l'onde sonore a exactement la longueur d'onde des ondes de flexion libres : raideur et inertie s'annulent.</Fragment>
+<Fragment slot="c">Parce que la paroi devient plus légère aux hautes fréquences.</Fragment>
+<Fragment slot="explanation">Il ne s'agit pas d'un mode de la paroi finie mais d'un accord de traces, qui existe pour une paroi infinie, à chaque fréquence au-dessus de $f_c$, pour un angle précis. Seul l'amortissement limite alors la transmission.</Fragment>
+</Quiz>
+
+<Quiz kind="numeric" answer={212} tolerance={0.03} unit="Hz">
+<Fragment slot="question">Quelle est la fréquence de résonance masse-air-masse d'un double vitrage 4-16-4 (deux fois 10 kg/m², lame de 16 mm, $\rho_0c_0^2 \approx 1{,}42 \times 10^5$ Pa)&nbsp;?</Fragment>
+<Fragment slot="explanation">$f_0 = \frac{1}{2\pi}\sqrt{\frac{1{,}42 \times 10^5}{0{,}016}\left(\frac{1}{10} + \frac{1}{10}\right)} \approx 212$ Hz. Le ressort d'une lame mince est très raide.</Fragment>
+</Quiz>
+
+<Quiz kind="numeric" answer={20} tolerance={0.02} unit="dB">
+<Fragment slot="question">Une excellente paroi présente des fentes représentant 1 % de sa surface. Quel isolement maximal peut-elle atteindre&nbsp;?</Fragment>
+<Fragment slot="explanation">Les fentes transmettent au moins 1 % de l'énergie incidente : $\tau \ge 0{,}01$, donc $R \le 20$ dB. Une étanchéité soignée compte autant que la masse.</Fragment>
+</Quiz>
+
+## Pour aller plus loin
+
+- **Efficacité de rayonnement.** Une plaque finie excitée mécaniquement rayonne mal sous $f_c$, sauf par ses bords et ses coins ; c'est la clé du bruit rayonné par les machines <Cite k="fahy" />.
+- **Analyse statistique de l'énergie (SEA).** Aux hautes fréquences, on échange des énergies entre sous-systèmes plutôt que de calculer des modes, comme le chapitre 7 le faisait pour les salles <Cite k="cremer" />.
+- **Indices normalisés.** Les mesures en laboratoire, par bandes de tiers d'octave, sont résumées par un indice unique pondéré selon une courbe de référence.
+- **Références.** Fahy et Gardonio <Cite k="fahy" /> pour la transmission et le rayonnement des structures ; Cremer, Heckl et Petersson <Cite k="cremer" /> pour les ondes dans les structures.

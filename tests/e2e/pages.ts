@@ -12,4 +12,5 @@ export const PAGES = [
   { path: 'chapitres/05-sources-en-mouvement/', name: 'chapitre-5' },
   { path: 'chapitres/06-diffraction-diffusion/', name: 'chapitre-6' },
   { path: 'chapitres/07-acoustique-des-salles/', name: 'chapitre-7' },
+  { path: 'chapitres/08-vibroacoustique/', name: 'chapitre-8' },
 ] as const;

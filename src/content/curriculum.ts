@@ -136,6 +136,7 @@ export const CURRICULUM: readonly CurriculumNode[] = [
     title: 'Vibroacoustique',
     summary: 'Plaques, coïncidence, loi de masse, isolation.',
     requires: ['planes', 'rayonnement'],
+    href: 'chapitres/08-vibroacoustique/',
   },
   {
     id: 'electro',

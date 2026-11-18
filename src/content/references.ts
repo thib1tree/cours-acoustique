@@ -146,4 +146,14 @@ export const REFERENCES: Record<string, Reference> = {
     full: 'ISO 3382 (parties 1 et 2), <i>Acoustique — Mesurage des paramètres acoustiques des salles</i>.',
     note: 'TODO-VERIFY : titres exacts et années des parties.',
   },
+  fahy: {
+    short: 'Fahy et Gardonio, 2007',
+    full: 'F. Fahy, P. Gardonio, <i>Sound and Structural Vibration: Radiation, Transmission and Response</i>, 2<sup>e</sup> éd., Academic Press, 2007.',
+    note: 'TODO-VERIFY : édition.',
+  },
+  cremer: {
+    short: 'Cremer, Heckl et Petersson, 2005',
+    full: 'L. Cremer, M. Heckl, B. A. T. Petersson, <i>Structure-Borne Sound</i>, 3<sup>e</sup> éd., Springer, 2005.',
+    note: 'TODO-VERIFY : édition.',
+  },
 };

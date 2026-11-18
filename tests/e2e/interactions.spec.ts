@@ -159,3 +159,20 @@ test('chapter 7: Eyring falls below Sabine when absorption grows', async ({ page
   await expect(eq).toContainText('0,22');
   await expect(eq).toContainText('0,11');
 });
+
+test('chapter 8: a thicker pane moves the coincidence frequency down', async ({ page }) => {
+  await page.goto('chapitres/08-vibroacoustique/');
+  const eq = page
+    .locator(
+      'figure.eq[aria-label^="Impédance d’une paroi"], figure.eq[aria-label^="Impédance d\'une paroi"]',
+    )
+    .first();
+  await hydrated(page, eq);
+  await expect(eq).toContainText(/2\D?993/);
+  const field = page.getByLabel('épaisseur de la paroi, valeur en mm').first();
+  await hydrated(page, field);
+  await field.fill('8');
+  await field.press('Enter');
+  await eq.scrollIntoViewIfNeeded();
+  await expect(eq).toContainText(/1\D?496/);
+});

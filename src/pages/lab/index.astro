@@ -36,6 +36,9 @@ import SphereScattering from '../../components/viz/SphereScattering.svelte';
 import RoomModes from '../../components/viz/RoomModes.svelte';
 import ImageSources from '../../components/viz/ImageSources.svelte';
 import Reverberation from '../../components/viz/Reverberation.svelte';
+import WallTransmission from '../../components/viz/WallTransmission.svelte';
+import CoincidenceField from '../../components/viz/CoincidenceField.svelte';
+import DoubleWall from '../../components/viz/DoubleWall.svelte';
 import GpuCpuCheck from '../../components/viz/GpuCpuCheck.svelte';
 ---
 
@@ -195,6 +198,15 @@ import GpuCpuCheck from '../../components/viz/GpuCpuCheck.svelte';
     </section>
     <section id="reverb7">
       <Reverberation client:visible number="L.32" title="Réverbération" alt="Réverbération." />
+    </section>
+    <section id="wall8">
+      <WallTransmission client:visible number="L.33" title="Paroi simple" alt="Paroi." />
+    </section>
+    <section id="coinc8">
+      <CoincidenceField client:visible number="L.34" title="Coïncidence" alt="Coïncidence." />
+    </section>
+    <section id="double8">
+      <DoubleWall client:visible number="L.35" title="Double paroi" alt="Double paroi." />
     </section>
     <section id="polar">
       <PolarPlot client:visible number="L.14" title="Piston bafflé" alt="Directivité." />
