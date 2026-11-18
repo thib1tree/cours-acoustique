@@ -106,4 +106,9 @@ export const REFERENCES: Record<string, Reference> = {
     full: 'P. M. Morse, K. U. Ingard, <i>Theoretical Acoustics</i>, McGraw-Hill, 1968 ; rééd. Princeton University Press, 1986.',
     note: 'TODO-VERIFY : éditions.',
   },
+  dowling: {
+    short: 'Dowling et Ffowcs Williams, 1983',
+    full: 'A. P. Dowling, J. E. Ffowcs Williams, <i>Sound and Sources of Sound</i>, Ellis Horwood, 1983.',
+    note: 'TODO-VERIFY : édition, et forme du potentiel d’une source en mouvement.',
+  },
 };

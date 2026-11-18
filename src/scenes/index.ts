@@ -9,6 +9,7 @@ import { labScenes } from './lab';
 import { planeWaveScenes } from './plane-waves';
 import { guideScenes } from './guides';
 import { radiationScenes } from './radiation';
+import { movingScenes } from './moving';
 
 const all: SceneSpec[] = [
   ...fluidScenes,
@@ -16,6 +17,7 @@ const all: SceneSpec[] = [
   ...planeWaveScenes,
   ...guideScenes,
   ...radiationScenes,
+  ...movingScenes,
   ...labScenes,
 ];
 

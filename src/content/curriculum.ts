@@ -112,6 +112,7 @@ export const CURRICULUM: readonly CurriculumNode[] = [
     title: 'Sources en mouvement',
     summary: 'Doppler, amplification convective, cône de Mach.',
     requires: ['rayonnement'],
+    href: 'chapitres/05-sources-en-mouvement/',
   },
   {
     id: 'diffraction',

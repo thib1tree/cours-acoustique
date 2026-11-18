@@ -79,7 +79,7 @@
     margin: var(--space-3) auto;
   }
   .polar.full {
-    max-width: 380px;
+    max-width: min(380px, 75%);
   }
   .ring {
     fill: none;

@@ -122,3 +122,15 @@ test('chapter 4: a larger piston narrows the beam', async ({ page }) => {
   await expect(eq).toContainText('9');
   await expect(eq).not.toContainText('19');
 });
+
+test('chapter 5: a moving observer hears less than a moving source', async ({ page }) => {
+  await page.goto('chapitres/05-sources-en-mouvement/');
+  const eq = page.locator('figure.eq[aria-label^="Effet Doppler"]');
+  await hydrated(page, eq);
+  await expect(eq).toContainText('2,00');
+  const toggle = page.getByRole('radio', { name: 'Les auditeurs' }).first();
+  await hydrated(page, toggle);
+  await toggle.click();
+  await eq.scrollIntoViewIfNeeded();
+  await expect(eq).toContainText('1,50');
+});

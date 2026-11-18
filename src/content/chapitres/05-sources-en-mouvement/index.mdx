@@ -1,0 +1,216 @@
+---
+curriculumId: mouvement
+title: Sources en mouvement
+summary: Pourquoi la sirène baisse brusquement au passage, pourquoi bouger la source n'est pas bouger l'oreille, pourquoi une source rapide est plus forte vers l'avant, et d'où vient le cône de Mach.
+number: '5'
+level: M1
+duration: 50
+keyConcepts: [effet Doppler, temps retardé, nombre de Mach, amplification convective, cône de Mach, bang supersonique]
+prerequisites: [rayonnement]
+references: [pierce, morse, dowling, hamilton]
+---
+
+import MovingSource from '../../../components/viz/MovingSource.svelte';
+import PassBy from '../../../components/viz/PassBy.svelte';
+import LiveEquation from '../../../components/ui/LiveEquation.svelte';
+import MarginNote from '../../../components/content/MarginNote.astro';
+import Insight from '../../../components/content/Insight.astro';
+import Misconception from '../../../components/content/Misconception.astro';
+import ModelLimits from '../../../components/content/ModelLimits.astro';
+import RealWorld from '../../../components/content/RealWorld.astro';
+import Derivation from '../../../components/content/Derivation.astro';
+import Step from '../../../components/content/Step.astro';
+import Prediction from '../../../components/content/Prediction.astro';
+import Quiz from '../../../components/content/Quiz.astro';
+import G from '../../../components/content/G.astro';
+import Cite from '../../../components/content/Cite.astro';
+
+<p class="lede">Une ambulance arrive au loin, sirène allumée, passe devant vous et s'éloigne. Tout le monde sait que le son « baisse » au passage. Mais que fait-il pendant l'approche ? Pour répondre, il faut suivre chaque crête depuis l'endroit où elle a été émise jusqu'à votre oreille. C'est l'idée de ce chapitre : le son reçu à un instant a été émis plus tôt, ailleurs.</p>
+
+<Prediction id="siren" options={['Elle monte peu à peu pendant toute l’approche, puis redescend.', 'Elle reste presque constante, plus aiguë que la note émise, puis chute en quelques instants au passage.', 'Elle est égale à la note émise tant que l’ambulance est loin, et ne change qu’au passage.']}>
+Pendant que l'ambulance s'approche à vitesse constante sur une route droite, la hauteur du son que vous entendez&nbsp;:
+</Prediction>
+
+## Des crêtes émises d'endroits différents
+
+Une source émet une crête de pression à chaque période $T$. Dans l'air au repos, chaque crête s'étend en cercle à la vitesse $c_0$, **centré là où la source se trouvait quand elle l'a émise**. Si la source avance, les centres avancent avec elle : devant, les crêtes se tassent ; derrière, elles s'écartent.
+
+<MovingSource client:visible number="5.1" title="Les fronts d'onde d'une source en mouvement" alt="Cercles de crêtes de pression émis à intervalles réguliers par une source qui se déplace vers la droite : ils sont resserrés devant la source et espacés derrière. Au-delà de la vitesse du son, ils s'accumulent sur un cône en pointillés. À droite, un diagramme montre que l'amplitude rayonnée est plus forte vers l'avant." />
+
+<Derivation title="Fréquence reçue d'une source en mouvement" hypotheses="air homogène au repos, source ponctuelle de vitesse V constante, M = V/c₀ < 1.">
+<Step title="Le temps retardé" open>
+
+Le son reçu à l'instant $t$ a été émis à l'instant $t'$ tel que
+
+$$
+t = t' + \frac{R(t')}{c_0},
+$$
+
+où $R(t')$ est la distance entre la source au moment de l'émission et l'auditeur. C'est le <G id="temps-retarde">temps retardé</G>.
+
+</Step>
+<Step title="Deux crêtes successives">
+
+Entre deux crêtes, $\mathrm{d}t' = T$. La distance à parcourir a changé de $\mathrm{d}R = -V\cos\theta\,\mathrm{d}t'$, $\theta$ étant l'angle entre la vitesse et la direction de l'auditeur. L'écart entre les arrivées vaut donc
+
+$$
+\mathrm{d}t = \mathrm{d}t'\left(1 - M\cos\theta\right).
+$$
+
+</Step>
+<Step title="Fréquence reçue">
+
+$$
+f' = \frac{f}{1 - M\cos\theta}.
+$$
+
+Seule compte la composante de la vitesse dirigée vers l'auditeur, au moment de l'émission.
+
+</Step>
+</Derivation>
+
+<LiveEquation client:visible scene="5-moving" tex={String.raw`\begin{aligned} \frac{f'}{f} &= \frac{1}{1 - \term{M}{M}\cos\theta} \\ &\text{devant : } \val{front}, \quad \text{derrière : } \val{back} \end{aligned}`} number="5.1" label="Effet Doppler d'une source en mouvement" />
+
+Basculez sur « Les auditeurs » : la source est fixe, et ce sont les auditeurs qui se déplacent à la même vitesse. Le résultat n'est plus le même. Celui qui s'approche entend $f(1 + M)$ : il ne déforme pas l'onde, il traverse simplement les crêtes plus vite, à la vitesse $c_0 + V$. Pour $M = 0{,}5$, la source qui s'approche donne $2f$, l'auditeur qui s'approche $1{,}5f$.
+
+<Insight>
+
+L'effet Doppler acoustique n'est pas une affaire de vitesse relative : c'est l'air qui sert de référence. Une source qui bouge **change la longueur d'onde dans l'air**, en émettant chaque crête plus près de la précédente. Un auditeur qui bouge **change la vitesse à laquelle il rencontre** des crêtes qui, elles, n'ont pas changé. Ces deux mécanismes coïncident au premier ordre en $M$, puis divergent. Passez dans le référentiel de l'objet en mouvement : un vent souffle, il emporte les crêtes, et l'on retrouve exactement les mêmes images, décalées.
+
+</Insight>
+
+<Misconception>
+
+« Seule compte la vitesse relative entre la source et l'auditeur. » C'est vrai pour la lumière, qui n'a pas de milieu de propagation, mais pas pour le son. Quand la source et l'auditeur s'approchent l'un de l'autre à la même vitesse relative, l'auditeur entend plus aigu si c'est la source qui bouge. À vitesse relative nulle, en revanche, il n'y a aucun décalage, même s'ils se déplacent ensemble dans l'air (ou si le vent souffle) : les deux effets se compensent exactement.
+
+</Misconception>
+
+## Le passage d'un véhicule
+
+Appliquons ce résultat à un véhicule qui passe à la distance $d$. Loin en amont, il vient presque droit sur vous ($\cos\theta \approx 1$) : la fréquence reçue est presque constante et vaut $f_0/(1 - M)$. Au passage, $\cos\theta$ bascule de $+1$ à $-1$ en un temps de l'ordre de $d/V$. Loin en aval, la fréquence se stabilise à $f_0/(1 + M)$.
+
+<PassBy client:visible number="5.2" title="Un véhicule passe" alt="Deux courbes en fonction du temps : la fréquence reçue, presque constante et plus haute que la fréquence émise à l'approche, chute rapidement au passage puis se stabilise plus bas ; le niveau reçu monte jusqu'au passage puis redescend, plus lentement à l'approche qu'en s'éloignant." />
+
+Voici la réponse à la prédiction : la hauteur **ne monte pas** pendant l'approche. Elle est déjà maximale quand le véhicule est loin, et ne fait que baisser, de plus en plus vite à l'approche du passage. Ce qui monte, c'est le niveau. Écoutez le passage, puis coupez la divergence sphérique : le niveau devient constant, et l'on entend mieux que la hauteur ne fait que descendre. Enfin, réduisez $d$ : plus vous êtes près de la route, plus la chute est brusque.
+
+<LiveEquation client:visible scene="5-passby" tex={String.raw`\begin{aligned} p(t) &\propto \term{spreading}{\frac{d}{R}}\;\term{convective}{\frac{1}{(1 - M\cos\theta)^2}}\; s\big(\term{doppler}{t'}\big), \\ t' &= t - \frac{R}{c_0} \end{aligned}`} toggles number="5.2" label="Signal reçu d'un véhicule qui passe" />
+
+<Misconception>
+
+« La sirène monte en s'approchant et descend en s'éloignant. » À 90 km/h, avec une note émise à 440 Hz, la fréquence reçue part de 475 Hz et ne fait que décroître vers 410 Hz, soit une chute de 2,5 demi-tons. L'impression de montée vient du niveau qui croît : à hauteur égale, un son plus fort paraît souvent plus présent, voire plus aigu{/* TODO-VERIFY: dépendance de la hauteur perçue au niveau (effet de Stevens) : ampleur et sens selon la fréquence. */}. Le retard de propagation s'ajoute : la chute est centrée sur $t = d/c_0$, un peu après le passage.
+
+</Misconception>
+
+## Plus fort vers l'avant : l'amplification convective
+
+Une source qui avance ne change pas seulement la fréquence. Elle rayonne aussi plus fort vers l'avant, à la même distance d'émission, et plus faiblement vers l'arrière.
+
+<Derivation title="Champ lointain d'un monopôle en mouvement" hypotheses="source de débit Q(t) ponctuelle, vitesse constante, M < 1, champ lointain (kR ≫ 1).">
+<Step title="Le potentiel retardé" open>
+
+Pour une source immobile de débit $Q(t)$, le potentiel des vitesses ($\mathbf v = \nabla\varphi$) vaut $\varphi = -Q(t - R/c_0)/(4\pi R)$, d'où $p = -\rho_0\,\partial\varphi/\partial t = \rho_0\dot Q(t - R/c_0)/(4\pi R)$, la pression du monopôle du chapitre 4. Pour une source en mouvement, la solution de l'équation des ondes s'écrit
+
+$$
+\varphi(\mathbf{x}, t) = -\frac{Q(t')}{4\pi R\,(1 - M\cos\theta)},
+$$
+
+$R$ et $\theta$ étant pris au temps retardé $t'$ <Cite k="dowling" />. Le facteur $1/(1 - M\cos\theta)$ vient de ce que la source court après les ondes qu'elle émet vers l'avant : le volume qu'elle injecte pendant une période se retrouve dans une coquille plus mince.
+
+</Step>
+<Step title="La pression">
+
+$p = -\rho_0\,\partial\varphi/\partial t$. En champ lointain, seule compte la dérivée de $Q(t')$, et $\partial t'/\partial t = 1/(1 - M\cos\theta)$ (la même compression du temps qui produit l'effet Doppler) :
+
+$$
+p \approx \frac{\rho_0\,\dot Q(t')}{4\pi R\,(1 - M\cos\theta)^2}.
+$$
+
+</Step>
+</Derivation>
+
+Le code de ce cours vérifie cette formule sans la supposer : il calcule le champ par l'intégrale du potentiel retardé, numériquement, et compare l'amplitude obtenue à $1/(1 - M\cos\theta)^2$ dans cinq directions. Pour $M = 0{,}5$, la figure 5.1 donne +12 dB vers l'avant et −7 dB vers l'arrière.
+
+<Insight>
+
+L'amplification convective est la même compression du temps que l'effet Doppler, comptée deux fois. Le signal reçu devant est le signal émis, joué plus vite : ses variations, donc la pression, sont plus rapides et plus fortes. Et chaque période d'émission est entassée dans une couche d'air plus mince, ce qui concentre le débit. Derrière, c'est l'inverse.
+
+</Insight>
+
+<ModelLimits>
+
+- **Type de source.** L'exposant 2 vaut pour un monopôle de débit. Un dipôle ou un quadripôle en mouvement ont d'autres exposants{/* TODO-VERIFY: exposants de l'amplification convective pour dipôle et quadripôle (Dowling et Ffowcs Williams). */}, et une source réelle mêle plusieurs mécanismes.
+- **Air au repos.** Un vent uniforme équivaut à déplacer à la fois la source et l'auditeur. Un vent qui varie avec l'altitude courbe en plus les rayons (chapitre 10).
+- **Champ lointain.** Le facteur $1/(1 - M\cos\theta)^2$ néglige les termes en $1/R^2$ ; près de la source, le champ proche du chapitre 4 s'ajoute.
+- **$M < 1$.** Quand $M \to 1$ vers l'avant, le dénominateur s'annule : l'onde ne s'éloigne plus de la source, et l'acoustique linéaire ne suffit plus.
+
+</ModelLimits>
+
+## Au-delà de la vitesse du son : le cône de Mach
+
+Poussez $M$ au-delà de 1 dans la figure 5.1. La source dépasse ses propres crêtes. Pendant une durée $t$, elle parcourt $Vt$ et la crête émise au début a un rayon $c_0t$ : toutes les crêtes sont tangentes à un cône de demi-angle $\alpha$ tel que
+
+$$
+\sin\alpha = \frac{c_0}{V} = \frac{1}{M}.
+$$
+
+Devant ce <G id="cone-mach">cône de Mach</G>, il ne parvient aucun son. Sur le cône, toutes les crêtes émises arrivent en même temps : la pression y saute. C'est le **bang**. L'onde est alors forte, et la non-linéarité la transforme en onde de choc, une onde en N dont l'avant et l'arrière sont deux sauts de pression ; on les entend parfois comme un double bang <Cite k="hamilton" />{/* TODO-VERIFY: description de l'onde en N et du double bang. */}.
+
+<Misconception>
+
+« Le bang se produit au moment où l'avion passe le mur du son. » Le cône accompagne l'avion pendant toute la durée de son vol supersonique, et balaie le sol sur toute sa trace. Chaque observateur sous la trajectoire entend le bang au moment où le cône l'atteint, longtemps après le passage de l'avion à la verticale. Il n'y a pas d'événement unique au franchissement de $M = 1$.
+
+</Misconception>
+
+## Monde réel
+
+<RealWorld title="Écouter le sang">
+
+En échographie Doppler, la sonde émet une onde ultrasonore qui se réfléchit sur les globules rouges en mouvement. Le globule reçoit l'onde comme un auditeur mobile, puis la renvoie comme une source mobile : le décalage est doublé, $\Delta f \approx 2fV\cos\theta/c_0$ pour $M \ll 1$. Avec $f = 4$ MHz, $V = 0{,}4$ m/s dans l'axe du faisceau et $c_0 \approx 1\,540$ m/s dans les tissus mous{/* TODO-VERIFY: célérité de référence dans les tissus mous (1540 m/s) et vitesses sanguines typiques. */}, $\Delta f \approx 2{,}1$ kHz : une fréquence audible. Les appareils font d'ailleurs entendre ce décalage, et l'on « entend » le flux sanguin.
+
+</RealWorld>
+
+<RealWorld title="Les véhicules rapides">
+
+À 300 km/h, $M \approx 0{,}24$. Une source ponctuelle de type monopôle verrait sa fréquence chuter de 8,6 demi-tons au passage, et rayonnerait 4,8 dB de plus vers l'avant qu'à l'arrêt. Le bruit d'un train à grande vitesse ne vient pas d'un seul monopôle : roulement, aérodynamique et équipements y ont chacun leur directivité. L'ordre de grandeur montre néanmoins qu'aux grandes vitesses, le mouvement ne se contente plus de déplacer la hauteur.
+
+</RealWorld>
+
+## Vérification
+
+<Quiz kind="numeric" answer={475} tolerance={0.01} unit="Hz">
+<Fragment slot="question">Un véhicule roule à 90 km/h vers vous avec un klaxon à 440 Hz ($c_0 = 343{,}2$ m/s). Quelle fréquence entendez-vous tant qu'il est loin&nbsp;?</Fragment>
+<Fragment slot="explanation">$M = 25/343{,}2 \approx 0{,}073$ et $f' = 440/(1 - 0{,}073) \approx 475$ Hz. Tant que le véhicule est loin, il vient presque droit sur vous ($\cos\theta \approx 1$) : la fréquence reste à cette valeur pendant l'approche.</Fragment>
+</Quiz>
+
+<Quiz kind="choice" answer="a">
+<Fragment slot="question">Cas 1 : une source à 1 kHz s'approche d'un auditeur immobile à $M = 0{,}5$. Cas 2 : l'auditeur court vers la source immobile à $M = 0{,}5$. Qui entend le son le plus aigu&nbsp;?</Fragment>
+<Fragment slot="a">L'auditeur du cas 1 (2 kHz contre 1,5 kHz).</Fragment>
+<Fragment slot="b">L'auditeur du cas 2.</Fragment>
+<Fragment slot="c">Les deux entendent la même fréquence : seule compte la vitesse relative.</Fragment>
+<Fragment slot="explanation">Source mobile : $f/(1 - M) = 2$ kHz, car la longueur d'onde dans l'air est divisée par deux. Auditeur mobile : $f(1 + M) = 1{,}5$ kHz, car il rencontre des crêtes inchangées à la vitesse $1{,}5\,c_0$. L'air est le référentiel privilégié.</Fragment>
+</Quiz>
+
+<Quiz kind="numeric" answer={41.8} tolerance={0.01} unit="°">
+<Fragment slot="question">Quel est le demi-angle du cône de Mach d'un projectile à $M = 1{,}5$&nbsp;?</Fragment>
+<Fragment slot="explanation">$\sin\alpha = 1/1{,}5$, donc $\alpha \approx 41{,}8°$. Plus le projectile est rapide, plus le cône est fermé.</Fragment>
+</Quiz>
+
+<Quiz kind="choice" answer="b">
+<Fragment slot="question">Un avion vole à $M = 2$, à altitude et vitesse constantes, au-dessus d'une région. Qui entend un bang&nbsp;?</Fragment>
+<Fragment slot="a">Seulement les habitants situés sous l'endroit où l'avion a dépassé $M = 1$.</Fragment>
+<Fragment slot="b">Tous ceux que le cône atteint, le long de toute la trajectoire supersonique.</Fragment>
+<Fragment slot="c">Personne : à altitude constante, le cône reste au-dessus de l'avion.</Fragment>
+<Fragment slot="explanation">Le cône de Mach est attaché à l'avion tant qu'il vole plus vite que le son ; il balaie le sol en continu. Le bang est un « tapis » qui suit la trajectoire.</Fragment>
+</Quiz>
+
+<Quiz kind="numeric" answer={2078} tolerance={0.02} unit="Hz">
+<Fragment slot="question">Une sonde Doppler émet à 4 MHz. Le sang s'écoule à 0,4 m/s exactement dans l'axe du faisceau, vers la sonde. En prenant $c_0 = 1\,540$ m/s, quel est le décalage de fréquence de l'écho&nbsp;?</Fragment>
+<Fragment slot="explanation">Le globule est d'abord un auditeur mobile, puis une source mobile : $\Delta f \approx 2fV/c_0 = 2 \times 4 \times 10^6 \times 0{,}4/1540 \approx 2\,078$ Hz.</Fragment>
+</Quiz>
+
+## Pour aller plus loin
+
+- **Sources quelconques en mouvement.** L'équation de Ffowcs Williams et Hawkings généralise ce chapitre aux surfaces en mouvement (pales, hélices) ; c'est l'outil de base de l'aéroacoustique <Cite k="dowling" />.
+- **Milieu en mouvement.** Propagation dans un écoulement uniforme ou cisaillé, effet du vent sur la portée du son (chapitre 10) <Cite k="pierce" />.
+- **Bang sonique.** Formation de l'onde en N, son vieillissement non linéaire et les recherches sur les bangs atténués <Cite k="hamilton" />.
+- **Références.** Morse et Ingard <Cite k="morse" /> pour les sources en mouvement ; Dowling et Ffowcs Williams <Cite k="dowling" /> pour l'amplification convective.
